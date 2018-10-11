@@ -33,8 +33,8 @@
 ### 个人中心
 ![](http://pgf1db9j6.bkt.clouddn.com/Advertisement1.png "个人中心")
 ### 专题
-![](http://pgf1db9j6.bkt.clouddn.com/Advertisement1.png "专题")
+![](http://pgf1db9j6.bkt.clouddn.com/Advertisement2.png "专题")
 ### 分类
-![](http://pgf1db9j6.bkt.clouddn.com/Advertisement1.png "分类")
+![](http://pgf1db9j6.bkt.clouddn.com/Advertisement3.png "分类")
 ### 演示地址
 ![](http://pgf1db9j6.bkt.clouddn.com/Advertisement4.jpg "演示地址")
