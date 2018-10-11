@@ -29,91 +29,12 @@
     * 2.7 ztree3.5.26
     * 2.8 froala_editor1.2.2
 
-## 项目结构
-~~~
-platform-wechat-mall
-|--platform-admin 后台管理
-|--platform-api 微信小程序商城api接口
-|--platform-common 公共模块
-|--platform-framework 系统WEB合并
-|--platform-gen 代码生成
-|--platform-schedule 定时任务
-|--platform-shop 商城后台管理
-|--wx-mall 微信小程序商城
-|--platform-vue 微信公众号商城（待开发）
-~~~
-
-## 自动代码生成结构
-~~~
-AutoCode
-├─menu.sql                      创建菜单的sql
-│ 
-└─main    
-     ├─java                     生成的java代码
-     │    └─com
-     │       └─platform
-     │            ├─controller
-     │            ├─dao
-     │            ├─entity
-     │            └─service
-     │                └─impl
-     └─webapp                   生成的页面文件
-         ├─js   
-         │  └─shop   
-         └─WEB-INF 
-             └─page  
-                └─shop  
-
-~~~
-## 实现功能
-
-* 一：会员管理
-    * a 会员管理
-    * b 会员等级
-    * c 收货地址管理
-    * d 会员优惠劵
-    * e 会员收藏
-    * f 会员足迹
-    * g 搜索历史
-    * h 购物车
-
-* 二：商城配置
-    * a 区域配置
-    * b 商品属性种类
-    * c 品牌制造商
-    * d 商品规格
-    * e 订单管理
-    * f 商品类型
-    * g 渠道管理
-    * h 商品问答
-    * i 反馈
-    * j 关键词
-
-* 三：商品编辑
-    * a 所有商品
-    * b 用户评论
-    * c 产品设置
-    * d 商品规格
-    * e 商品回收站
-
-* 四：推广管理
-    * a 广告列表
-    * b 广告位置
-    * c 优惠劵管理
-    * d 专题管理
-    * e 专题分类
-
-* 五：订单管理
-    * a 所有订单管理
-
-* 六：系统管理
-    * a 管理员列表
-    * b 角色管理
-    * c 菜单管理
-    * d SQL监控
-    * e 定时任务
-    * f 参数管理
-    * g 代码生成器
-    * h 系统日志
-    * i 文件上传
-    * j 通用字典表
+## 页面展示
+### 个人中心
+![](http://pgf1db9j6.bkt.clouddn.com/Advertisement1.png "个人中心")
+### 专题
+![](http://pgf1db9j6.bkt.clouddn.com/Advertisement1.png "专题")
+### 分类
+![](http://pgf1db9j6.bkt.clouddn.com/Advertisement1.png "分类")
+### 演示地址
+![](http://pgf1db9j6.bkt.clouddn.com/Advertisement4.jpg "演示地址")
