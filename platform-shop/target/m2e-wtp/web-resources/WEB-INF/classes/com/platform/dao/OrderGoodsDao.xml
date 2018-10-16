@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.platform.dao.OrderGoodsDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.platform.entity.OrderGoodsEntity" id="orderGoodsMap">
+        <result property="id" column="id"/>
+        <result property="orderId" column="order_id"/>
+        <result property="goodsId" column="goods_id"/>
+        <result property="goodsName" column="goods_name"/>
+        <result property="goodsSn" column="goods_sn"/>
+        <result property="productId" column="product_id"/>
+        <result property="number" column="number"/>
+        <result property="marketPrice" column="market_price"/>
+        <result property="retailPrice" column="retail_price"/>
+        <result property="goodsSpecifitionNameValue" column="goods_specifition_name_value"/>
+        <result property="isReal" column="is_real"/>
+        <result property="goodsSpecifitionIds" column="goods_specifition_ids"/>
+        <result property="listPicUrl" column="list_pic_url"/>
+    </resultMap>
+
+	<select id="queryObject" resultType="com.platform.entity.OrderGoodsEntity">
+		select * from nideshop_order_goods where id = #{value}
+	</select>
+
+	<select id="queryList" resultType="com.platform.entity.OrderGoodsEntity">
+		select * from nideshop_order_goods
+		WHERE 1=1
+		<if test="orderId != null and orderId != ''">
+			AND order_id = #{orderId}
+		</if>
+        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by ${sidx} ${order}
+            </when>
+			<otherwise>
+                order by id desc
+			</otherwise>
+        </choose>
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	
+ 	<select id="queryTotal" resultType="int">
+		select count(*) from nideshop_order_goods
+		WHERE 1=1
+		<if test="orderId != null and orderId != ''">
+			AND order_id = #{orderId}
+		</if>
+	</select>
+	 
+	<insert id="save" parameterType="com.platform.entity.OrderGoodsEntity" useGeneratedKeys="true" keyProperty="id">
+		insert into nideshop_order_goods
+		(
+			`order_id`, 
+			`goods_id`, 
+			`goods_name`, 
+			`goods_sn`, 
+			`product_id`, 
+			`number`, 
+			`market_price`, 
+			`retail_price`, 
+			`goods_specifition_name_value`, 
+			`is_real`, 
+			`goods_specifition_ids`, 
+			`list_pic_url`
+		)
+		values
+		(
+			#{orderId}, 
+			#{goodsId}, 
+			#{goodsName}, 
+			#{goodsSn}, 
+			#{productId}, 
+			#{number}, 
+			#{marketPrice}, 
+			#{retailPrice}, 
+			#{goodsSpecifitionNameValue}, 
+			#{isReal}, 
+			#{goodsSpecifitionIds}, 
+			#{listPicUrl}
+		)
+	</insert>
+	 
+	<update id="update" parameterType="com.platform.entity.OrderGoodsEntity">
+		update nideshop_order_goods 
+		<set>
+			<if test="orderId != null">`order_id` = #{orderId}, </if>
+			<if test="goodsId != null">`goods_id` = #{goodsId}, </if>
+			<if test="goodsName != null">`goods_name` = #{goodsName}, </if>
+			<if test="goodsSn != null">`goods_sn` = #{goodsSn}, </if>
+			<if test="productId != null">`product_id` = #{productId}, </if>
+			<if test="number != null">`number` = #{number}, </if>
+			<if test="marketPrice != null">`market_price` = #{marketPrice}, </if>
+			<if test="retailPrice != null">`retail_price` = #{retailPrice}, </if>
+			<if test="goodsSpecifitionNameValue != null">`goods_specifition_name_value` = #{goodsSpecifitionNameValue}, </if>
+			<if test="isReal != null">`is_real` = #{isReal}, </if>
+			<if test="goodsSpecifitionIds != null">`goods_specifition_ids` = #{goodsSpecifitionIds}, </if>
+			<if test="listPicUrl != null">`list_pic_url` = #{listPicUrl}</if>
+		</set>
+		where id = #{id}
+	</update>
+	
+	<delete id="delete">
+		delete from nideshop_order_goods where id = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from nideshop_order_goods where id in 
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+
+</mapper>

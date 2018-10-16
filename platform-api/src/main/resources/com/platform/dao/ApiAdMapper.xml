@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.platform.dao.ApiAdMapper">
+
+    <!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.platform.entity.AdVo" id="adMap">
+        <result property="id" column="id"/>
+        <result property="ad_position_id" column="ad_position_id"/>
+        <result property="media_type" column="media_type"/>
+        <result property="name" column="name"/>
+        <result property="link" column="link"/>
+        <result property="image_url" column="image_url"/>
+        <result property="content" column="content"/>
+        <result property="end_time" column="end_time"/>
+        <result property="enabled" column="enabled"/>
+    </resultMap>
+
+    <select id="queryObject" resultMap="adMap">
+		select * from nideshop_ad where id = #{value}
+	</select>
+
+    <select id="queryList" resultMap="adMap">
+        select * from nideshop_ad
+        where 1 = 1
+        AND enabled = 1
+        <if test="ad_position_id != null and ad_position_id != null">
+            and ad_position_id = #{ad_position_id}
+        </if>
+        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by ${sidx} ${order}
+            </when>
+            <otherwise>
+                order by id desc
+            </otherwise>
+        </choose>
+        <if test="offset != null and limit != null">
+            limit #{offset}, #{limit}
+        </if>
+    </select>
+
+    <select id="queryTotal" resultType="int">
+		select count(*) from nideshop_ad 
+	</select>
+
+    <insert id="save" parameterType="com.platform.entity.AdVo" useGeneratedKeys="true" keyProperty="id">
+		insert into nideshop_ad
+		(
+			`ad_position_id`, 
+			`media_type`, 
+			`name`, 
+			`link`, 
+			`image_url`, 
+			`content`, 
+			`end_time`, 
+			`enabled`
+		)
+		values
+		(
+			#{ad_position_id},
+			#{media_type},
+			#{name}, 
+			#{link}, 
+			#{image_url},
+			#{content}, 
+			#{end_time},
+			#{enabled}
+		)
+	</insert>
+
+    <update id="update" parameterType="com.platform.entity.AdVo">
+        update nideshop_ad
+        <set>
+            <if test="ad_position_id != null">`ad_position_id` = #{adPositionId},</if>
+            <if test="media_type != null">`media_type` = #{mediaType},</if>
+            <if test="name != null">`name` = #{name},</if>
+            <if test="link != null">`link` = #{link},</if>
+            <if test="image_url != null">`image_url` = #{imageUrl},</if>
+            <if test="content != null">`content` = #{content},</if>
+            <if test="end_time != null">`end_time` = #{endTime},</if>
+            <if test="enabled != null">`enabled` = #{enabled}</if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <delete id="delete">
+		delete from nideshop_ad where id = #{value}
+	</delete>
+
+    <delete id="deleteBatch">
+        delete from nideshop_ad where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>

@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.platform.dao.ProductDao">
+
+    <resultMap type="com.platform.entity.ProductEntity" id="productMap">
+        <result property="id" column="id"/>
+        <result property="goodsId" column="goods_id"/>
+        <result property="goodsSpecificationIds" column="goods_specification_ids"/>
+        <result property="goodsSn" column="goods_sn"/>
+        <result property="goodsNumber" column="goods_number"/>
+        <result property="retailPrice" column="retail_price"/>
+        <result property="marketPrice" column="market_price"/>
+    </resultMap>
+
+    <select id="queryObject" resultType="com.platform.entity.ProductEntity">
+		select
+			id,
+			goods_id,
+			goods_specification_ids,
+			goods_sn,
+			goods_number,
+			retail_price,
+			market_price
+		from nideshop_product
+		where id = #{id}
+	</select>
+
+    <select id="queryList" resultType="com.platform.entity.ProductEntity">
+        select
+        nideshop_product.id,
+        nideshop_product.goods_id,
+        nideshop_product.goods_specification_ids,
+        nideshop_product.goods_sn,
+        nideshop_product.goods_number,
+        nideshop_product.retail_price,
+        nideshop_product.market_price,
+        nideshop_goods.name goods_name
+        from nideshop_product
+        LEFT JOIN nideshop_goods ON nideshop_product.goods_id = nideshop_goods.id
+        WHERE 1=1
+        <if test="goodsId != null and goodsId.trim() != ''">
+            AND nideshop_product.goods_id = #{goodsId}
+        </if>
+        <if test="goodsName != null and goodsName.trim() != ''">
+            AND nideshop_goods.name LIKE concat('%',#{goodsName},'%')
+        </if>
+        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by ${sidx} ${order}
+            </when>
+            <otherwise>
+                order by nideshop_product.id desc
+            </otherwise>
+        </choose>
+        <if test="offset != null and limit != null">
+            limit #{offset}, #{limit}
+        </if>
+    </select>
+
+    <select id="queryTotal" resultType="int">
+        select count(*) from nideshop_product
+        LEFT JOIN nideshop_goods ON nideshop_product.goods_id = nideshop_goods.id
+        WHERE 1=1
+        <if test="goodsId != null and goodsId.trim() != ''">
+            AND nideshop_product.goods_id = #{goodsId}
+        </if>
+        <if test="goodsName != null and goodsName.trim() != ''">
+            AND nideshop_goods.name LIKE concat('%',#{goodsName},'%')
+        </if>
+    </select>
+
+    <insert id="save" parameterType="com.platform.entity.ProductEntity" useGeneratedKeys="true" keyProperty="id">
+		insert into nideshop_product(
+			`goods_id`,
+			`goods_specification_ids`,
+			`goods_sn`,
+			`goods_number`,
+			`retail_price`,
+			`market_price`)
+		values(
+			#{goodsId},
+			#{goodsSpecificationIds},
+			#{goodsSn},
+			#{goodsNumber},
+			#{retailPrice},
+			#{marketPrice})
+	</insert>
+
+    <update id="update" parameterType="com.platform.entity.ProductEntity">
+        update nideshop_product
+        <set>
+            <if test="goodsId != null">`goods_id` = #{goodsId},</if>
+            <if test="goodsSpecificationIds != null">`goods_specification_ids` = #{goodsSpecificationIds},</if>
+            <if test="goodsSn != null">`goods_sn` = #{goodsSn},</if>
+            <if test="goodsNumber != null">`goods_number` = #{goodsNumber},</if>
+            <if test="retailPrice != null">`retail_price` = #{retailPrice},</if>
+            <if test="marketPrice != null">`market_price` = #{marketPrice}</if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <delete id="delete">
+		delete from nideshop_product where id = #{value}
+	</delete>
+
+    <delete id="deleteBatch">
+        delete from nideshop_product where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>

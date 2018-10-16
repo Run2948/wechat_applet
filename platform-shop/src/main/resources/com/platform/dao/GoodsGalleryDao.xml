@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.platform.dao.GoodsGalleryDao">
+
+    <resultMap type="com.platform.entity.GoodsGalleryEntity" id="goodsGalleryMap">
+        <result property="id" column="id"/>
+        <result property="goodsId" column="goods_id"/>
+        <result property="imgUrl" column="img_url"/>
+        <result property="imgDesc" column="img_desc"/>
+        <result property="sortOrder" column="sort_order"/>
+    </resultMap>
+
+    <select id="queryObject" resultType="com.platform.entity.GoodsGalleryEntity">
+        select
+        `id`,
+        `goods_id`,
+        `img_url`,
+        `img_desc`,
+        `sort_order`
+        from nideshop_goods_gallery
+        where id = #{id}
+    </select>
+
+    <select id="queryList" resultType="com.platform.entity.GoodsGalleryEntity">
+        select
+        nideshop_goods_gallery.id,
+        nideshop_goods_gallery.goods_id,
+        nideshop_goods_gallery.img_url,
+        nideshop_goods_gallery.img_desc,
+        nideshop_goods_gallery.sort_order,
+        nideshop_goods.name goods_name
+        from nideshop_goods_gallery
+        LEFT JOIN nideshop_goods ON nideshop_goods_gallery.goods_id = nideshop_goods.id
+        WHERE 1=1
+        <if test="goodsName != null and goodsName.trim() != ''">
+            AND nideshop_goods.name LIKE concat('%',#{goodsName},'%')
+        </if>
+        <if test="goodsId != null">
+            AND nideshop_goods_gallery.goods_id = #{goodsId}
+        </if>
+        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by ${sidx} ${order}
+            </when>
+            <otherwise>
+                order by id desc
+            </otherwise>
+        </choose>
+        <if test="offset != null and limit != null">
+            limit #{offset}, #{limit}
+        </if>
+    </select>
+
+    <select id="queryTotal" resultType="int">
+        select count(*) from nideshop_goods_gallery
+        LEFT JOIN nideshop_goods ON nideshop_goods_gallery.goods_id = nideshop_goods.id
+        WHERE 1=1
+        <if test="goodsName != null and goodsName.trim() != ''">
+            AND nideshop_goods.name LIKE concat('%',#{goodsName},'%')
+        </if>
+    </select>
+
+    <insert id="save" parameterType="com.platform.entity.GoodsGalleryEntity" useGeneratedKeys="true" keyProperty="id">
+        insert into nideshop_goods_gallery(
+        `goods_id`,
+        `img_url`,
+        `img_desc`,
+        `sort_order`)
+        values(
+        #{goodsId},
+        #{imgUrl},
+        #{imgDesc},
+        #{sortOrder})
+    </insert>
+
+    <update id="update" parameterType="com.platform.entity.GoodsGalleryEntity">
+        update nideshop_goods_gallery
+        <set>
+            <if test="goodsId != null">`goods_id` = #{goodsId},</if>
+            <if test="imgUrl != null">`img_url` = #{imgUrl},</if>
+            <if test="imgDesc != null">`img_desc` = #{imgDesc},</if>
+            <if test="sortOrder != null">`sort_order` = #{sortOrder}</if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <delete id="delete">
+        delete from nideshop_goods_gallery where id = #{value}
+    </delete>
+
+    <delete id="deleteByGoodsId">
+        delete from nideshop_goods_gallery where goods_id = #{goodsId}
+    </delete>
+
+    <delete id="deleteBatch">
+        delete from nideshop_goods_gallery where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>

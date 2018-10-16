@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.platform.dao.ApiCollectMapper">
+
+    <!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.platform.entity.CollectVo" id="collectMap">
+        <result property="id" column="id"/>
+        <result property="user_id" column="user_id"/>
+        <result property="value_id" column="value_id"/>
+        <result property="add_time" column="add_time"/>
+        <result property="is_attention" column="is_attention"/>
+        <result property="type_id" column="type_id"/>
+        <result property="name" column="name"/>
+        <result property="list_pic_url" column="list_pic_url"/>
+        <result property="goods_brief" column="goods_brief"/>
+        <result property="retail_price" column="retail_price"/>
+    </resultMap>
+
+    <select id="queryObject" resultMap="collectMap">
+		select * from nideshop_collect where id = #{value}
+	</select>
+
+    <select id="queryList" resultMap="collectMap">
+        select c.*,g.name, g.list_pic_url as list_pic_url, g.goods_brief as goods_brief, g.retail_price as retail_price
+        from nideshop_collect c
+        left join nideshop_goods g on c.value_id = g.id
+        where 1 = 1
+        <if test="user_id != null and user_id != ''">
+            and c.user_id = #{user_id}
+        </if>
+        <if test="value_id != null and value_id != ''">
+            and c.value_id = #{value_id}
+        </if>
+        <if test="type_id != null and type_id != ''">
+            and c.type_id = #{type_id}
+        </if>
+        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by ${sidx} ${order}
+            </when>
+            <otherwise>
+                order by c.id desc
+            </otherwise>
+        </choose>
+        <if test="offset != null and limit != null">
+            limit #{offset}, #{limit}
+        </if>
+    </select>
+
+    <select id="queryTotal" resultType="int">
+        select count(*)
+        from nideshop_collect c
+        where 1 = 1
+        <if test="user_id != null and user_id != ''">
+            and c.user_id = #{user_id}
+        </if>
+        <if test="value_id != null and value_id != ''">
+            and c.value_id = #{value_id}
+        </if>
+        <if test="type_id != null and type_id != ''">
+            and c.type_id = #{type_id}
+        </if>
+    </select>
+
+    <insert id="save" parameterType="com.platform.entity.CollectVo" useGeneratedKeys="true" keyProperty="id">
+		insert into nideshop_collect
+		(
+			`user_id`, 
+			`value_id`, 
+			`add_time`, 
+			`is_attention`, 
+			`type_id`
+		)
+		values
+		(
+            #{user_id},
+			#{value_id},
+			#{add_time},
+			#{is_attention},
+			#{type_id}
+		)
+	</insert>
+
+    <update id="update" parameterType="com.platform.entity.CollectVo">
+        update nideshop_collect
+        <set>
+            <if test="user_id != null">`user_id` = #{user_id},</if>
+            <if test="value_id != null">`value_id` = #{value_id},</if>
+            <if test="add_time != null">`add_time` = #{add_time},</if>
+            <if test="is_attention != null">`is_attention` = #{is_attention},</if>
+            <if test="type_id != null">`type_id` = #{type_id}</if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <delete id="delete">
+		delete from nideshop_collect where id = #{value}
+	</delete>
+
+    <delete id="deleteBatch">
+        delete from nideshop_collect where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>

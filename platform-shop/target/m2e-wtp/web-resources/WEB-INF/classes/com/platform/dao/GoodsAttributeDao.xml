@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.platform.dao.GoodsAttributeDao">
+
+    <!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.platform.entity.GoodsAttributeEntity" id="goodsAttributeMap">
+        <result property="id" column="id"/>
+        <result property="goodsId" column="goods_id"/>
+        <result property="attributeId" column="attribute_id"/>
+        <result property="value" column="value"/>
+    </resultMap>
+
+    <select id="queryObject" resultType="com.platform.entity.GoodsAttributeEntity">
+		select * from nideshop_goods_attribute where id = #{value}
+	</select>
+
+    <select id="queryList" resultType="com.platform.entity.GoodsAttributeEntity">
+        select * from nideshop_goods_attribute
+        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by ${sidx} ${order}
+            </when>
+            <otherwise>
+                order by id desc
+            </otherwise>
+        </choose>
+        <if test="offset != null and limit != null">
+            limit #{offset}, #{limit}
+        </if>
+    </select>
+
+    <select id="queryTotal" resultType="int">
+		select count(*) from nideshop_goods_attribute 
+	</select>
+
+    <insert id="save" parameterType="com.platform.entity.GoodsAttributeEntity" useGeneratedKeys="true" keyProperty="id">
+		insert into nideshop_goods_attribute
+		(
+			`goods_id`, 
+			`attribute_id`, 
+			`value`
+		)
+		values
+		(
+			#{goodsId}, 
+			#{attributeId}, 
+			#{value}
+		)
+	</insert>
+
+    <update id="update" parameterType="com.platform.entity.GoodsAttributeEntity">
+        update nideshop_goods_attribute
+        <set>
+            <if test="goodsId != null">`goods_id` = #{goodsId},</if>
+            <if test="attributeId != null">`attribute_id` = #{attributeId},</if>
+            <if test="value != null">`value` = #{value}</if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <update id="updateByGoodsIdAttributeId" parameterType="com.platform.entity.GoodsAttributeEntity">
+        update nideshop_goods_attribute
+        <set>
+            <if test="value != null">`value` = #{value}</if>
+        </set>
+        where goods_id = #{goodsId} AND attribute_id = #{attributeId}
+    </update>
+
+    <delete id="delete">
+		delete from nideshop_goods_attribute where id = #{value}
+	</delete>
+
+    <delete id="deleteBatch">
+        delete from nideshop_goods_attribute where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>

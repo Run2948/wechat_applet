@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.platform.dao.FootprintDao">
+
+    <!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.platform.entity.FootprintEntity" id="footprintMap">
+        <result property="id" column="id"/>
+        <result property="userId" column="user_id"/>
+        <result property="userName" column="user_name"/>
+        <result property="goodsId" column="goods_id"/>
+        <result property="goodsName" column="goods_name"/>
+        <result property="addTime" column="add_time"/>
+    </resultMap>
+
+    <select id="queryObject" resultType="com.platform.entity.FootprintEntity">
+		select * from nideshop_footprint where id = #{value}
+	</select>
+
+    <select id="queryList" resultMap="footprintMap">
+        select a.* ,b.username as user_name,c.name as goods_name
+        from nideshop_footprint a
+        left join nideshop_user b on a.user_id = b.id
+        left join nideshop_goods c on a.goods_id = c.id
+        <if test="name != null and name.trim() != ''">
+        	WHERE (b.username LIKE concat('%',#{name},'%') OR c.name LIKE concat('%',#{name},'%'))
+        </if>
+        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by ${sidx} ${order}
+            </when>
+            <otherwise>
+                order by a.id desc
+            </otherwise>
+        </choose>
+        <if test="offset != null and limit != null">
+            limit #{offset}, #{limit}
+        </if>
+    </select>
+
+    <select id="queryTotal" resultType="int">
+		select count(*) from nideshop_footprint 
+	</select>
+
+    <insert id="save" parameterType="com.platform.entity.FootprintEntity" useGeneratedKeys="true" keyProperty="id">
+		insert into nideshop_footprint
+		(
+			`user_id`, 
+			`goods_id`, 
+			`add_time`
+		)
+		values
+		(
+			#{userId}, 
+			#{goodsId}, 
+			#{addTime}
+		)
+	</insert>
+
+    <update id="update" parameterType="com.platform.entity.FootprintEntity">
+        update nideshop_footprint
+        <set>
+            <if test="userId != null">`user_id` = #{userId},</if>
+            <if test="goodsId != null">`goods_id` = #{goodsId},</if>
+            <if test="addTime != null">`add_time` = #{addTime}</if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <delete id="delete">
+		delete from nideshop_footprint where id = #{value}
+	</delete>
+
+    <delete id="deleteBatch">
+        delete from nideshop_footprint where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>

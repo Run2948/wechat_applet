@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.platform.dao.ApiFootprintMapper">
+
+    <!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.platform.entity.FootprintVo" id="footprintMap">
+        <result property="id" column="id"/>
+        <result property="user_id" column="user_id"/>
+        <result property="goods_id" column="goods_id"/>
+        <result property="add_time" column="add_time"/>
+        <result property="name" column="name"/>
+        <result property="list_pic_url" column="list_pic_url"/>
+        <result property="goods_brief" column="goods_brief"/>
+        <result property="retail_price" column="retail_price"/>
+        <result property="referrer" column="referrer"/>
+        <result property="nickname" column="nickname"/>
+        <result property="avatar" column="avatar"/>
+    </resultMap>
+
+    <select id="queryObject" resultMap="footprintMap">
+		select f.id,f.user_id,f.goods_id,f.add_time add_time,f.referrer from nideshop_footprint f where id = #{value}
+	</select>
+
+    <select id="queryList" resultMap="footprintMap">
+        select f.id,f.user_id,f.goods_id,f.add_time add_time,f.referrer,
+        g.name as name, g.list_pic_url as list_pic_url, g.goods_brief as goods_brief, g.retail_price as
+        retail_price
+        from nideshop_footprint f
+        <if test="maxFoot == true">
+            left join nideshop_footprint max on f.goods_id = max.goods_id and f.user_id = max.user_id
+            and max.add_time > f.add_time
+        </if>
+        left join nideshop_goods g on f.goods_id = g.id
+        <where>
+            <if test="user_id != null">
+                and f.user_id = #{user_id}
+            </if>
+            <if test="maxFoot == true">
+                and max.id is null
+            </if>
+        </where>
+        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by ${sidx} ${order}
+            </when>
+            <otherwise>
+                order by f.id desc
+            </otherwise>
+        </choose>
+        <if test="offset != null and limit != null">
+            limit #{offset}, #{limit}
+        </if>
+    </select>
+    <select id="queryListFootprint" resultMap="footprintMap">
+			         SELECT
+				f.id,
+				f.user_id,
+				f.goods_id,
+				f.add_time add_time,
+				f.referrer,
+				g. NAME AS NAME,
+				g.list_pic_url AS list_pic_url,
+				g.goods_brief AS goods_brief,
+				g.retail_price AS retail_price
+			FROM
+				nideshop_footprint f
+			  LEFT JOIN nideshop_goods g ON f.goods_id = g.id
+			WHERE
+				f.user_id = #{0} 
+			AND f.id
+			IN(SELECT MAX(id) FROM nideshop_footprint WHERE  user_id = #{0} GROUP BY goods_id)
+			 ORDER BY
+				 id DESC
+    </select>
+
+    <select id="queryTotal" resultType="int">
+        select count(*) from nideshop_footprint f
+        <where>
+            <if test="user_id != null">
+                and f.user_id = #{user_id}
+            </if>
+            <if test="goods_id != null">
+                and f.goods_id = #{goods_id}
+            </if>
+            <if test="referrer != null">
+                and f.referrer = #{referrer}
+            </if>
+        </where>
+    </select>
+
+    <insert id="save" parameterType="com.platform.entity.FootprintVo" useGeneratedKeys="true" keyProperty="id">
+		insert into nideshop_footprint
+		(
+			`user_id`, 
+			`goods_id`, 
+			`add_time`,
+			`referrer`
+		)
+		values
+		(
+			#{user_id},
+			#{goods_id},
+			#{add_time},
+			#{referrer}
+		)
+	</insert>
+
+    <update id="update" parameterType="com.platform.entity.FootprintVo">
+        update nideshop_footprint
+        <set>
+            <if test="user_id != null">`user_id` = #{user_id},</if>
+            <if test="goods_id != null">`goods_id` = #{goods_id},</if>
+            <if test="add_time != null">`add_time` = #{add_time}</if>
+            <if test="referrer != null">`referrer` = #{referrer}</if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <delete id="delete">
+		delete from nideshop_footprint where id = #{value}
+	</delete>
+
+    <delete id="deleteByParam">
+        delete from nideshop_footprint
+        where 1 = 1
+        <if test="userId != null">and `user_id` = #{userId} </if>
+        <if test="goodsId != null">and `goods_id` = #{goodsId} </if>
+    </delete>
+
+    <delete id="deleteBatch">
+        delete from nideshop_footprint where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <select id="shareList" resultMap="footprintMap">
+        select f.id,f.user_id,f.goods_id,f.add_time add_time,f.referrer,
+        g.name as name, g.list_pic_url as list_pic_url, g.goods_brief as goods_brief,
+        g.retail_price as retail_price,
+        u.nickname as nickname,u.avatar as avatar
+        from nideshop_footprint f
+        left join nideshop_goods g on f.goods_id = g.id
+        left join nideshop_user u on u.id = f.user_id
+        <where>
+            u.id is not null
+            <if test="user_id != null">
+                and f.user_id = #{user_id}
+            </if>
+            <if test="referrer != null">
+                and f.referrer = #{referrer}
+            </if>
+        </where>
+        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by ${sidx} ${order}
+            </when>
+            <otherwise>
+                order by f.id desc
+            </otherwise>
+        </choose>
+        <if test="offset != null and limit != null">
+            limit #{offset}, #{limit}
+        </if>
+    </select>
+
+
+</mapper>

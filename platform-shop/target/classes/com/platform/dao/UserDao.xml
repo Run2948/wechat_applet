@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.platform.dao.UserDao">
+
+    <resultMap type="com.platform.entity.UserEntity" id="userMap">
+        <result property="id" column="id"/>
+        <result property="username" column="username"/>
+        <result property="password" column="password"/>
+        <result property="gender" column="gender"/>
+        <result property="birthday" column="birthday"/>
+        <result property="registerTime" column="register_time"/>
+        <result property="lastLoginTime" column="last_login_time"/>
+        <result property="lastLoginIp" column="last_login_ip"/>
+        <result property="userLevelId" column="user_level_id"/>
+        <result property="nickname" column="nickname"/>
+        <result property="mobile" column="mobile"/>
+        <result property="registerIp" column="register_ip"/>
+        <result property="avatar" column="avatar"/>
+        <result property="weixinOpenid" column="weixin_openid"/>
+    </resultMap>
+
+    <select id="queryObject" resultType="com.platform.entity.UserEntity">
+		select
+			id,
+			username,
+			password,
+			gender,
+			birthday,
+			register_time,
+			last_login_time,
+			last_login_ip,
+			user_level_id,
+			nickname,
+			mobile,
+			register_ip,
+			avatar,
+			weixin_openid
+		from nideshop_user
+		where id = #{id}
+	</select>
+
+    <select id="queryList" resultType="com.platform.entity.UserEntity">
+        select
+        nideshop_user.id,
+        nideshop_user.username,
+        nideshop_user.password,
+        nideshop_user.gender,
+        nideshop_user.birthday,
+        nideshop_user.register_time,
+        nideshop_user.last_login_time,
+        nideshop_user.last_login_ip,
+        nideshop_user.user_level_id,
+        nideshop_user.nickname,
+        nideshop_user.mobile,
+        nideshop_user.register_ip,
+        nideshop_user.avatar,
+        nideshop_user.weixin_openid,
+        nideshop_user_level.name levelName
+        from nideshop_user LEFT JOIN nideshop_user_level ON nideshop_user.user_level_id=nideshop_user_level.id
+        WHERE 1=1
+        <if test="username != null and username.trim() != ''">
+            and username like concat('%',#{username},'%')
+        </if>
+        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by ${sidx} ${order}
+            </when>
+            <otherwise>
+                order by id desc
+            </otherwise>
+        </choose>
+        <if test="offset != null and limit != null">
+            limit #{offset}, #{limit}
+        </if>
+    </select>
+
+    <select id="queryTotal" resultType="int">
+        select count(*) from nideshop_user
+        WHERE 1=1
+        <if test="username != null and username.trim() != ''">
+            and username like concat('%',#{username},'%')
+        </if>
+    </select>
+
+    <insert id="save" parameterType="com.platform.entity.UserEntity" useGeneratedKeys="true" keyProperty="id">
+		insert into nideshop_user(
+			`username`,
+			`password`,
+			`gender`,
+			`birthday`,
+			`register_time`,
+			`last_login_time`,
+			`last_login_ip`,
+			`user_level_id`,
+			`nickname`,
+			`mobile`,
+			`register_ip`,
+			`avatar`,
+			`weixin_openid`)
+		values(
+			#{username},
+			#{password},
+			#{gender},
+			#{birthday},
+			#{registerTime},
+			#{lastLoginTime},
+			#{lastLoginIp},
+			#{userLevelId},
+			#{nickname},
+			#{mobile},
+			#{registerIp},
+			#{avatar},
+			#{weixinOpenid})
+	</insert>
+
+    <update id="update" parameterType="com.platform.entity.UserEntity">
+        update nideshop_user
+        <set>
+            <if test="username != null">`username` = #{username},</if>
+            <if test="password != null">`password` = #{password},</if>
+            <if test="gender != null">`gender` = #{gender},</if>
+            <if test="birthday != null">`birthday` = #{birthday},</if>
+            <if test="registerTime != null">`register_time` = #{registerTime},</if>
+            <if test="lastLoginTime != null">`last_login_time` = #{lastLoginTime},</if>
+            <if test="lastLoginIp != null">`last_login_ip` = #{lastLoginIp},</if>
+            <if test="userLevelId != null">`user_level_id` = #{userLevelId},</if>
+            <if test="nickname != null">`nickname` = #{nickname},</if>
+            <if test="mobile != null">`mobile` = #{mobile},</if>
+            <if test="registerIp != null">`register_ip` = #{registerIp},</if>
+            <if test="avatar != null">`avatar` = #{avatar},</if>
+            <if test="weixinOpenid != null">`weixin_openid` = #{weixinOpenid}</if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <delete id="delete">
+		delete from nideshop_user where id = #{value}
+	</delete>
+
+    <delete id="deleteBatch">
+        delete from nideshop_user where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>

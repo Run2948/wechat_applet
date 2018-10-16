@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.platform.dao.ApiTopicMapper">
+
+    <!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.platform.entity.TopicVo" id="topicMap">
+        <result property="id" column="id"/>
+        <result property="title" column="title"/>
+        <result property="content" column="content"/>
+        <result property="avatar" column="avatar"/>
+        <result property="item_pic_url" column="item_pic_url"/>
+        <result property="subtitle" column="subtitle"/>
+        <result property="topic_category_id" column="topic_category_id"/>
+        <result property="price_info" column="price_info"/>
+        <result property="read_count" column="read_count"/>
+        <result property="scene_pic_url" column="scene_pic_url"/>
+        <result property="topic_template_id" column="topic_template_id"/>
+        <result property="topic_tag_id" column="topic_tag_id"/>
+    </resultMap>
+
+    <select id="queryObject" resultMap="topicMap">
+		select * from nideshop_topic where id = #{value}
+	</select>
+
+    <select id="queryList" resultMap="topicMap">
+        select
+        <if test="fields != null and fields != ''">
+            ${fields}
+        </if>
+        <if test="fields == null or fields == ''">
+            *
+        </if>
+        from nideshop_topic
+        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by ${sidx} ${order}
+            </when>
+            <otherwise>
+                order by id desc
+            </otherwise>
+        </choose>
+        <if test="offset != null and limit != null">
+            limit #{offset}, #{limit}
+        </if>
+    </select>
+
+    <select id="queryTotal" resultType="int">
+		select count(*) from nideshop_topic 
+	</select>
+
+    <insert id="save" parameterType="com.platform.entity.TopicVo" useGeneratedKeys="true" keyProperty="id">
+		insert into nideshop_topic
+		(
+			`title`, 
+			`content`, 
+			`avatar`, 
+			`item_pic_url`, 
+			`subtitle`, 
+			`topic_category_id`, 
+			`price_info`, 
+			`read_count`, 
+			`scene_pic_url`, 
+			`topic_template_id`, 
+			`topic_tag_id`
+		)
+		values
+		(
+			#{title}, 
+			#{content}, 
+			#{avatar}, 
+			#{item_pic_url},
+			#{subtitle},
+			#{topic_category_id},
+			#{price_info},
+			#{read_count},
+			#{scene_pic_url},
+			#{topic_template_id},
+			#{topic_tag_id}
+		)
+	</insert>
+
+    <update id="update" parameterType="com.platform.entity.TopicVo">
+        update nideshop_topic
+        <set>
+            <if test="title != null">`title` = #{title},</if>
+            <if test="content != null">`content` = #{content},</if>
+            <if test="avatar != null">`avatar` = #{avatar},</if>
+            <if test="item_pic_url != null">`item_pic_url` = #{item_pic_url},</if>
+            <if test="subtitle != null">`subtitle` = #{subtitle},</if>
+            <if test="topic_category_id != null">`topic_category_id` = #{topic_category_id},</if>
+            <if test="price_info != null">`price_info` = #{price_info},</if>
+            <if test="read_count != null">`read_count` = #{read_count},</if>
+            <if test="scene_pic_url != null">`scene_pic_url` = #{scene_pic_url},</if>
+            <if test="topic_template_id != null">`topic_template_id` = #{topic_template_id},</if>
+            <if test="topic_tag_id != null">`topic_tag_id` = #{topic_tag_id}</if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <delete id="delete">
+		delete from nideshop_topic where id = #{value}
+	</delete>
+
+    <delete id="deleteBatch">
+        delete from nideshop_topic where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>

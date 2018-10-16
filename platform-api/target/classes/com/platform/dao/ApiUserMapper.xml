@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.platform.dao.ApiUserMapper">
+
+    <!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.platform.entity.UserVo" id="userMap">
+        <result property="userId" column="id"/>
+        <result property="username" column="username"/>
+        <result property="password" column="password"/>
+        <result property="gender" column="gender"/>
+        <result property="birthday" column="birthday"/>
+        <result property="register_time" column="register_time"/>
+        <result property="last_login_time" column="last_login_time"/>
+        <result property="last_login_ip" column="last_login_ip"/>
+        <result property="user_level_id" column="user_level_id"/>
+        <result property="nickname" column="nickname"/>
+        <result property="mobile" column="mobile"/>
+        <result property="register_ip" column="register_ip"/>
+        <result property="avatar" column="avatar"/>
+        <result property="weixin_openid" column="weixin_openid"/>
+    </resultMap>
+
+    <select id="queryObject" resultMap="userMap">
+		select * from nideshop_user where id = #{value}
+	</select>
+
+    <select id="queryByOpenId" resultMap="userMap">
+        select * from nideshop_user
+        where 1 = 1
+        <if test="openId != null">
+            and `weixin_openid` = #{openId}
+        </if>
+    </select>
+
+    <select id="queryList" resultMap="userMap">
+        select * from nideshop_user
+        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by ${sidx} ${order}
+            </when>
+            <otherwise>
+                order by id desc
+            </otherwise>
+        </choose>
+        <if test="offset != null and limit != null">
+            limit #{offset}, #{limit}
+        </if>
+    </select>
+
+    <select id="queryTotal" resultType="int">
+		select count(*) from nideshop_user 
+	</select>
+
+    <insert id="save" parameterType="com.platform.entity.UserVo" useGeneratedKeys="true" keyProperty="userId">
+		insert into nideshop_user
+		(
+			`username`, 
+			`password`, 
+			`gender`, 
+			`birthday`, 
+			`register_time`, 
+			`last_login_time`, 
+			`last_login_ip`, 
+			`user_level_id`, 
+			`nickname`, 
+			`mobile`, 
+			`register_ip`, 
+			`avatar`, 
+			`weixin_openid`
+		)
+		values
+		(
+			#{username}, 
+			#{password}, 
+			#{gender}, 
+			#{birthday}, 
+			#{register_time},
+			#{last_login_time},
+			#{last_login_ip},
+			#{user_level_id},
+			#{nickname},
+			#{mobile},
+			#{register_ip},
+			#{avatar},
+			#{weixin_openid}
+		)
+	</insert>
+
+    <update id="update" parameterType="com.platform.entity.UserVo">
+        update nideshop_user
+        <set>
+            <if test="username != null">`username` = #{username},</if>
+            <if test="password != null">`password` = #{password},</if>
+            <if test="gender != null">`gender` = #{gender},</if>
+            <if test="birthday != null">`birthday` = #{birthday},</if>
+            <if test="register_time != null">`register_time` = #{register_time},</if>
+            <if test="last_login_time != null">`last_login_time` = #{last_login_time},</if>
+            <if test="last_login_ip != null">`last_login_ip` = #{last_login_ip},</if>
+            <if test="user_level_id != null">`user_level_id` = #{user_level_id},</if>
+            <if test="nickname != null">`nickname` = #{nickname},</if>
+            <if test="mobile != null">`mobile` = #{mobile},</if>
+            <if test="register_ip != null">`register_ip` = #{register_ip},</if>
+            <if test="avatar != null">`avatar` = #{avatar},</if>
+            <if test="weixin_openid != null">`weixin_openid` = #{weixin_openid}</if>
+        </set>
+        where id = #{userId}
+    </update>
+
+    <!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.platform.entity.SmsLogVo" id="smslogMap">
+        <result property="id" column="id"/>
+        <result property="user_id" column="user_id"/>
+        <result property="phone" column="phone"/>
+        <result property="log_date" column="log_date"/>
+        <result property="sms_code" column="sms_code"/>
+        <result property="send_status" column="send_status"/>
+        <result property="sms_text" column="sms_text"/>
+    </resultMap>
+
+    <select id="querySmsCodeByUserId" resultMap="smslogMap">
+        select
+        a.id,
+        a.user_id,
+        a.phone,
+        a.log_date,
+        a.sms_code,
+        a.send_status,
+        a.sms_text
+        from nideshop_sms_log a
+        left join nideshop_sms_log b on a.user_id = b.user_id and b.log_date > a.log_date
+        where a.user_id = #{user_id} and b.id is null
+    </select>
+
+    <insert id="saveSmsCodeLog" parameterType="com.platform.entity.SmsLogVo">
+        insert into nideshop_sms_log(
+        `id`,
+        `user_id`,
+        `phone`,
+        `log_date`,
+        `sms_code`,
+        `send_status`,
+        `sms_text`)
+        values(
+        #{id},
+        #{user_id},
+        #{phone},
+        #{log_date},
+        #{sms_code},
+        #{send_status},
+        #{sms_text}
+        )
+    </insert>
+
+</mapper>

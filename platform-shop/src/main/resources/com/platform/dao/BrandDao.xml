@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.platform.dao.BrandDao">
+
+    <resultMap type="com.platform.entity.BrandEntity" id="brandMap">
+        <result property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="listPicUrl" column="list_pic_url"/>
+        <result property="simpleDesc" column="simple_desc"/>
+        <result property="picUrl" column="pic_url"/>
+        <result property="sortOrder" column="sort_order"/>
+        <result property="isShow" column="is_show"/>
+        <result property="floorPrice" column="floor_price"/>
+        <result property="appListPicUrl" column="app_list_pic_url"/>
+        <result property="isNew" column="is_new"/>
+        <result property="newPicUrl" column="new_pic_url"/>
+        <result property="newSortOrder" column="new_sort_order"/>
+    </resultMap>
+
+    <select id="queryObject" resultType="com.platform.entity.BrandEntity">
+		select
+			`id`,
+			`name`,
+			`list_pic_url`,
+			`simple_desc`,
+			`pic_url`,
+			`sort_order`,
+			`is_show`,
+			`floor_price`,
+			`app_list_pic_url`,
+			`is_new`,
+			`new_pic_url`,
+			`new_sort_order`
+		from nideshop_brand
+		where id = #{id}
+	</select>
+
+    <select id="queryList" resultType="com.platform.entity.BrandEntity">
+        select
+        `id`,
+        `name`,
+        `list_pic_url`,
+        `simple_desc`,
+        `pic_url`,
+        `sort_order`,
+        `is_show`,
+        `floor_price`,
+        `app_list_pic_url`,
+        `is_new`,
+        `new_pic_url`,
+        `new_sort_order`
+        from nideshop_brand
+        WHERE 1=1
+        <if test="name != null and name.trim() != ''">
+            AND name LIKE concat('%',#{name},'%')
+        </if>
+        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by ${sidx} ${order}
+            </when>
+            <otherwise>
+                order by id desc
+            </otherwise>
+        </choose>
+        <if test="offset != null and limit != null">
+            limit #{offset}, #{limit}
+        </if>
+    </select>
+
+    <select id="queryTotal" resultType="int">
+        select count(*) from nideshop_brand
+        WHERE 1=1
+        <if test="name != null and name.trim() != ''">
+            AND name LIKE concat('%',#{name},'%')
+        </if>
+    </select>
+
+    <insert id="save" parameterType="com.platform.entity.BrandEntity" useGeneratedKeys="true" keyProperty="id">
+		insert into nideshop_brand(
+			`name`,
+			`list_pic_url`,
+			`simple_desc`,
+			`pic_url`,
+			`sort_order`,
+			`is_show`,
+			`floor_price`,
+			`app_list_pic_url`,
+			`is_new`,
+			`new_pic_url`,
+			`new_sort_order`)
+		values(
+			#{name},
+			#{listPicUrl},
+			#{simpleDesc},
+			#{picUrl},
+			#{sortOrder},
+			#{isShow},
+			#{floorPrice},
+			#{appListPicUrl},
+			#{isNew},
+			#{newPicUrl},
+			#{newSortOrder})
+	</insert>
+
+    <update id="update" parameterType="com.platform.entity.BrandEntity">
+        update nideshop_brand
+        <set>
+            <if test="name != null">`name` = #{name},</if>
+            <if test="listPicUrl != null">`list_pic_url` = #{listPicUrl},</if>
+            <if test="simpleDesc != null">`simple_desc` = #{simpleDesc},</if>
+            <if test="picUrl != null">`pic_url` = #{picUrl},</if>
+            <if test="sortOrder != null">`sort_order` = #{sortOrder},</if>
+            <if test="isShow != null">`is_show` = #{isShow},</if>
+            <if test="floorPrice != null">`floor_price` = #{floorPrice},</if>
+            <if test="appListPicUrl != null">`app_list_pic_url` = #{appListPicUrl},</if>
+            <if test="isNew != null">`is_new` = #{isNew},</if>
+            <if test="newPicUrl != null">`new_pic_url` = #{newPicUrl},</if>
+            <if test="newSortOrder != null">`new_sort_order` = #{newSortOrder}</if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <delete id="delete">
+		delete from nideshop_brand where id = #{value}
+	</delete>
+
+    <delete id="deleteBatch">
+        delete from nideshop_brand where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>

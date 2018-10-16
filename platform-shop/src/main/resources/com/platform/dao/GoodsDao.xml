@@ -1,0 +1,257 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.platform.dao.GoodsDao">
+
+    <resultMap type="com.platform.entity.GoodsEntity" id="goodsMap">
+        <result property="id" column="id"/>
+        <result property="categoryId" column="category_id"/>
+        <result property="goodsSn" column="goods_sn"/>
+        <result property="name" column="name"/>
+        <result property="brandId" column="brand_id"/>
+        <result property="goodsNumber" column="goods_number"/>
+        <result property="keywords" column="keywords"/>
+        <result property="goodsBrief" column="goods_brief"/>
+        <result property="goodsDesc" column="goods_desc"/>
+        <result property="isOnSale" column="is_on_sale"/>
+        <result property="addTime" column="add_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="sortOrder" column="sort_order"/>
+        <result property="isDelete" column="is_delete"/>
+        <result property="attributeCategory" column="attribute_category"/>
+        <result property="counterPrice" column="counter_price"/>
+        <result property="extraPrice" column="extra_price"/>
+        <result property="isNew" column="is_new"/>
+        <result property="goodsUnit" column="goods_unit"/>
+        <result property="primaryPicUrl" column="primary_pic_url"/>
+        <result property="listPicUrl" column="list_pic_url"/>
+        <result property="retailPrice" column="retail_price"/>
+        <result property="sellVolume" column="sell_volume"/>
+        <result property="primaryProductId" column="primary_product_id"/>
+        <result property="unitPrice" column="unit_price"/>
+        <result property="promotionDesc" column="promotion_desc"/>
+        <result property="promotionTag" column="promotion_tag"/>
+        <result property="appExclusivePrice" column="app_exclusive_price"/>
+        <result property="isAppExclusive" column="is_app_exclusive"/>
+        <result property="isLimited" column="is_limited"/>
+        <result property="isHot" column="is_hot"/>
+        <result property="marketPrice" column="market_price"/>
+        <result property="createUserId" column="create_user_id"/>
+        <result property="createUserDeptId" column="create_user_dept_id"/>
+        <result property="updateUserId" column="update_user_id"/>
+    </resultMap>
+
+    <select id="queryObject" resultType="com.platform.entity.GoodsEntity">
+		select * from nideshop_goods where id = #{value}
+	</select>
+
+    <select id="queryList" resultType="com.platform.entity.GoodsEntity">
+        select
+        nideshop_goods.id,
+        nideshop_goods.category_id,
+        nideshop_goods.goods_sn,
+        nideshop_goods.name,
+        nideshop_goods.brand_id,
+        nideshop_goods.goods_number,
+        nideshop_goods.keywords,
+        nideshop_goods.goods_brief,
+        nideshop_goods.goods_desc,
+        nideshop_goods.is_on_sale,
+        nideshop_goods.add_time,
+        nideshop_goods.update_time,
+        nideshop_goods.sort_order,
+        nideshop_goods.is_delete,
+        nideshop_goods.attribute_category,
+        nideshop_goods.counter_price,
+        nideshop_goods.extra_price,
+        nideshop_goods.is_new,
+        nideshop_goods.goods_unit,
+        nideshop_goods.primary_pic_url,
+        nideshop_goods.list_pic_url,
+        nideshop_goods.retail_price,
+        nideshop_goods.sell_volume,
+        nideshop_goods.primary_product_id,
+        nideshop_goods.unit_price,
+        nideshop_goods.promotion_desc,
+        nideshop_goods.promotion_tag,
+        nideshop_goods.app_exclusive_price,
+        nideshop_goods.is_app_exclusive,
+        nideshop_goods.is_limited,
+        nideshop_goods.is_hot,
+        nideshop_goods.market_price,
+        nideshop_goods.create_user_id,
+        nideshop_goods.create_user_dept_id,
+        nideshop_goods.update_user_id,
+        nideshop_category.name category_name,
+        nideshop_attribute_category.name attribute_category_name,
+        nideshop_brand.name brand_name
+        from nideshop_goods
+        LEFT JOIN nideshop_category
+        ON nideshop_goods.category_id = nideshop_category.id
+        LEFT JOIN nideshop_attribute_category ON nideshop_goods.attribute_category = nideshop_attribute_category.id
+        LEFT JOIN nideshop_brand ON nideshop_brand.id = nideshop_goods.brand_id
+        WHERE 1=1
+        <!--  数据过滤  -->
+        ${filterSql}
+        <if test="name != null and name != ''">
+            AND nideshop_goods.name LIKE concat('%',#{name},'%')
+        </if>
+        AND nideshop_goods.is_Delete = #{isDelete}
+        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by ${sidx} ${order}
+            </when>
+            <otherwise>
+                order by nideshop_goods.id desc
+            </otherwise>
+        </choose>
+        <if test="offset != null and limit != null">
+            limit #{offset}, #{limit}
+        </if>
+    </select>
+
+    <select id="queryTotal" resultType="int">
+        select count(*) from nideshop_goods WHERE 1=1
+        <!--  数据过滤  -->
+        ${filterSql}
+        <if test="name != null and name != ''">
+            AND name LIKE concat('%',#{name},'%')
+        </if>
+        AND nideshop_goods.is_Delete = #{isDelete}
+    </select>
+
+    <insert id="save" parameterType="com.platform.entity.GoodsEntity">
+        insert into nideshop_goods
+        (
+        `id`,
+        `category_id`,
+        `goods_sn`,
+        `name`,
+        `brand_id`,
+        `goods_number`,
+        `keywords`,
+        `goods_brief`,
+        `goods_desc`,
+        `is_on_sale`,
+        `add_time`,
+        `update_time`,
+        `sort_order`,
+        `is_delete`,
+        `attribute_category`,
+        `counter_price`,
+        `extra_price`,
+        `is_new`,
+        `goods_unit`,
+        `primary_pic_url`,
+        `list_pic_url`,
+        `retail_price`,
+        `sell_volume`,
+        `primary_product_id`,
+        `unit_price`,
+        `promotion_desc`,
+        `promotion_tag`,
+        `app_exclusive_price`,
+        `is_app_exclusive`,
+        `is_limited`,
+        `is_hot`,
+        `market_price`,
+        `create_user_id`,
+        `create_user_dept_id`,
+        `update_user_id`
+        )
+        values
+        (
+        #{id},
+        #{categoryId},
+        #{goodsSn},
+        #{name},
+        #{brandId},
+        #{goodsNumber},
+        #{keywords},
+        #{goodsBrief},
+        #{goodsDesc},
+        #{isOnSale},
+        #{addTime},
+        #{updateTime},
+        #{sortOrder},
+        #{isDelete},
+        #{attributeCategory},
+        #{counterPrice},
+        #{extraPrice},
+        #{isNew},
+        #{goodsUnit},
+        #{primaryPicUrl},
+        #{listPicUrl},
+        #{retailPrice},
+        #{sellVolume},
+        #{primaryProductId},
+        #{unitPrice},
+        #{promotionDesc},
+        #{promotionTag},
+        #{appExclusivePrice},
+        #{isAppExclusive},
+        #{isLimited},
+        #{isHot},
+        #{marketPrice},
+        #{createUserId},
+        #{createUserDeptId},
+        #{updateUserId}
+        )
+    </insert>
+
+    <update id="update" parameterType="com.platform.entity.GoodsEntity">
+        update nideshop_goods
+        <set>
+            <if test="categoryId != null">`category_id` = #{categoryId},</if>
+            <if test="goodsSn != null">`goods_sn` = #{goodsSn},</if>
+            <if test="name != null">`name` = #{name},</if>
+            <if test="brandId != null">`brand_id` = #{brandId},</if>
+            <if test="goodsNumber != null">`goods_number` = #{goodsNumber},</if>
+            <if test="keywords != null">`keywords` = #{keywords},</if>
+            <if test="goodsBrief != null">`goods_brief` = #{goodsBrief},</if>
+            <if test="goodsDesc != null">`goods_desc` = #{goodsDesc},</if>
+            <if test="isOnSale != null">`is_on_sale` = #{isOnSale},</if>
+            <if test="addTime != null">`add_time` = #{addTime},</if>
+            <if test="updateTime != null">`update_time` = #{updateTime},</if>
+            <if test="sortOrder != null">`sort_order` = #{sortOrder},</if>
+            <if test="isDelete != null">`is_delete` = #{isDelete},</if>
+            <if test="attributeCategory != null">`attribute_category` = #{attributeCategory},</if>
+            <if test="counterPrice != null">`counter_price` = #{counterPrice},</if>
+            <if test="extraPrice != null">`extra_price` = #{extraPrice},</if>
+            <if test="isNew != null">`is_new` = #{isNew},</if>
+            <if test="goodsUnit != null">`goods_unit` = #{goodsUnit},</if>
+            <if test="primaryPicUrl != null">`primary_pic_url` = #{primaryPicUrl},</if>
+            <if test="listPicUrl != null">`list_pic_url` = #{listPicUrl},</if>
+            <if test="retailPrice != null">`retail_price` = #{retailPrice},</if>
+            <if test="sellVolume != null">`sell_volume` = #{sellVolume},</if>
+            <if test="primaryProductId != null">`primary_product_id` = #{primaryProductId},</if>
+            <if test="unitPrice != null">`unit_price` = #{unitPrice},</if>
+            <if test="promotionDesc != null">`promotion_desc` = #{promotionDesc},</if>
+            <if test="promotionTag != null">`promotion_tag` = #{promotionTag},</if>
+            <if test="appExclusivePrice != null">`app_exclusive_price` = #{appExclusivePrice},</if>
+            <if test="isAppExclusive != null">`is_app_exclusive` = #{isAppExclusive},</if>
+            <if test="isLimited != null">`is_limited` = #{isLimited},</if>
+            <if test="isHot != null">`is_hot` = #{isHot},</if>
+            <if test="marketPrice != null">`market_price` = #{marketPrice},</if>
+            <if test="createUserId != null">`create_user_id` = #{createUserId},</if>
+            <if test="createUserId != null">`create_user_dept_id` = #{createUserDeptId},</if>
+            <if test="updateUserId != null">`update_user_id` = #{updateUserId},</if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <delete id="delete">
+        delete from nideshop_goods where id = #{value}
+    </delete>
+
+    <delete id="deleteBatch">
+        delete from nideshop_goods where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <select id="queryMaxId" resultType="java.lang.Integer" parameterType="map">
+        SELECT MAX(id) FROM nideshop_goods
+    </select>
+</mapper>

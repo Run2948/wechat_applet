@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.platform.dao.TopicCategoryDao">
+
+    <resultMap type="com.platform.entity.TopicCategoryEntity" id="topicCategoryMap">
+        <result property="id" column="id"/>
+        <result property="title" column="title"/>
+        <result property="picUrl" column="pic_url"/>
+    </resultMap>
+
+    <select id="queryObject" resultType="com.platform.entity.TopicCategoryEntity">
+		select
+			`id`,
+			`title`,
+			`pic_url`
+		from nideshop_topic_category
+		where id = #{id}
+	</select>
+
+    <select id="queryList" resultType="com.platform.entity.TopicCategoryEntity">
+        select
+        `id`,
+        `title`,
+        `pic_url`
+        from nideshop_topic_category
+        WHERE 1=1
+        <if test="title != null and title.trim() != ''">
+            AND title LIKE concat('%',#{title},'%')
+        </if>
+        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by ${sidx} ${order}
+            </when>
+            <otherwise>
+                order by id desc
+            </otherwise>
+        </choose>
+        <if test="offset != null and limit != null">
+            limit #{offset}, #{limit}
+        </if>
+    </select>
+
+    <select id="queryTotal" resultType="int">
+        select count(*) from nideshop_topic_category
+        WHERE 1=1
+        <if test="title != null and title.trim() != ''">
+            AND title LIKE concat('%',#{title},'%')
+        </if>
+    </select>
+
+    <insert id="save" parameterType="com.platform.entity.TopicCategoryEntity" useGeneratedKeys="true" keyProperty="id">
+		insert into nideshop_topic_category(
+			`title`,
+			`pic_url`)
+		values(
+			#{title},
+			#{picUrl})
+	</insert>
+
+    <update id="update" parameterType="com.platform.entity.TopicCategoryEntity">
+        update nideshop_topic_category
+        <set>
+            <if test="title != null">`title` = #{title},</if>
+            <if test="picUrl != null">`pic_url` = #{picUrl}</if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <delete id="delete">
+		delete from nideshop_topic_category where id = #{value}
+	</delete>
+
+    <delete id="deleteBatch">
+        delete from nideshop_topic_category where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>

@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.platform.dao.ApiUserCouponMapper">
+
+    <!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.platform.entity.UserCouponVo" id="userCouponMap">
+        <result property="id" column="id"/>
+        <result property="coupon_id" column="coupon_id"/>
+        <result property="coupon_number" column="coupon_number"/>
+        <result property="user_id" column="user_id"/>
+        <result property="used_time" column="used_time"/>
+        <result property="add_time" column="add_time"/>
+        <result property="order_id" column="order_id"/>
+        <result property="source_key" column="source_key"/>
+        <result property="referrer" column="referrer"/>
+    </resultMap>
+
+    <select id="queryObject" resultMap="userCouponMap">
+		select * from nideshop_user_coupon where id = #{value}
+	</select>
+
+    <select id="queryByCouponNumber" resultMap="userCouponMap">
+        select * from nideshop_user_coupon where coupon_number = #{coupon_number}
+    </select>
+
+    <select id="queryList" resultMap="userCouponMap">
+        select a.* from nideshop_user_coupon a
+        left join nideshop_coupon b on b.id = a.coupon_id
+        where 1 = 1
+        <if test="coupon_number != null">
+            and a.coupon_number = #{coupon_number}
+        </if>
+        <if test="user_id != null">
+            and a.user_id = #{user_id}
+        </if>
+        <if test="send_type != null">
+            and b.send_type = #{send_type}
+        </if>
+        <if test="referrer != null">
+            and a.referrer = #{referrer}
+        </if>
+        <if test="source_key != null">
+            and a.source_key = #{source_key}
+        </if>
+        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by ${sidx} ${order}
+            </when>
+            <otherwise>
+                order by id desc
+            </otherwise>
+        </choose>
+        <if test="offset != null and limit != null">
+            limit #{offset}, #{limit}
+        </if>
+    </select>
+
+    <select id="queryTotal" resultType="int">
+		select count(*) from nideshop_user_coupon 
+	</select>
+
+    <insert id="save" parameterType="com.platform.entity.UserCouponVo" useGeneratedKeys="true" keyProperty="id">
+		insert into nideshop_user_coupon
+		(
+			`coupon_id`, 
+			`coupon_number`, 
+			`user_id`, 
+			`used_time`, 
+			`order_id`,
+			`add_time`,
+			`source_key`,
+			`referrer`
+		)
+		values
+		(
+            #{coupon_id},
+			#{coupon_number},
+			#{user_id},
+			#{used_time},
+			#{order_id},
+			#{add_time},
+			#{source_key},
+			#{referrer}
+		)
+	</insert>
+
+    <update id="update" parameterType="com.platform.entity.UserCouponVo">
+        update nideshop_user_coupon
+        <set>
+            <if test="coupon_id != null">`coupon_id` = #{coupon_id},</if>
+            <if test="coupon_number != null">`coupon_number` = #{coupon_number},</if>
+            <if test="user_id != null">`user_id` = #{user_id},</if>
+            <if test="used_time != null">`used_time` = #{used_time},</if>
+            <if test="order_id != null">`order_id` = #{order_id}</if>
+            <if test="add_time != null">`add_time` = #{add_time}</if>
+            <if test="source_key != null">`source_key` = #{source_key}</if>
+            <if test="referrer != null">`referrer` = #{referrer}</if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <delete id="delete">
+		delete from nideshop_user_coupon where id = #{value}
+	</delete>
+
+    <delete id="deleteBatch">
+        delete from nideshop_user_coupon where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

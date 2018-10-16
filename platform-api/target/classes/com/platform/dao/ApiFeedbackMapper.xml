@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.platform.dao.ApiFeedbackMapper">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.platform.entity.FeedbackVo" id="feedbackMap">
+		<result property="msgId" column="msg_id"/>
+		<result property="userId" column="user_id"/>
+		<result property="userName" column="user_name"/>
+		<result property="mobile" column="mobile"/>
+		<result property="feedType" column="feed_Type"/>
+		<result property="content" column="content"/>
+		<result property="addTime" column="add_time"/>
+		<result property="status" column="status"/>
+    </resultMap>
+
+	<select id="queryObject" resultMap="feedbackMap">
+		select * from nideshop_feedback where msg_id = #{value}
+	</select>
+
+	<select id="queryList" resultMap="feedbackMap">
+		select * from nideshop_feedback
+        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by ${sidx} ${order}
+            </when>
+			<otherwise>
+                order by msg_id desc
+			</otherwise>
+        </choose>
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	
+ 	<select id="queryTotal" resultType="int">
+		select count(*) from nideshop_feedback 
+	</select>
+	 
+	<insert id="save" parameterType="com.platform.entity.FeedbackVo" useGeneratedKeys="true" keyProperty="msgId">
+		insert into nideshop_feedback(
+			`user_id`,
+			`user_name`,
+			`mobile`,
+			`feed_Type`,
+			`content`,
+			`add_time`,
+			`status` )
+		values(
+			#{userId},
+			#{userName},
+			#{mobile},
+			#{feedType},
+			#{content},
+			#{addTime},
+			#{status}
+			)
+	</insert>
+	 
+	<update id="update" parameterType="com.platform.entity.FeedbackVo">
+		update nideshop_feedback
+		<set>
+			<if test="userId != null">`user_id` = #{userId}, </if>
+			<if test="userName != null">`user_name` = #{userName}, </if>
+			<if test="mobile != null">`mobile` = #{mobile}, </if>
+			<if test="feedType != null">`feed_Type` = #{feedType}, </if>
+			<if test="content != null">`content` = #{content}, </if>
+			<if test="addTime != null">`add_time` = #{addTime}, </if>
+			<if test="status != null">`status` = #{status}, </if>
+		</set>
+		where msg_id = #{msgId}
+	</update>
+	
+	<delete id="delete">
+		delete from nideshop_feedback where msg_id = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from nideshop_feedback where msg_id in 
+		<foreach item="msgId" collection="array" open="(" separator="," close=")">
+			#{msgId}
+		</foreach>
+	</delete>
+
+</mapper>

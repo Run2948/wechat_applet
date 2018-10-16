@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.platform.dao.CommentPictureDao">
+
+    <resultMap type="com.platform.entity.CommentPictureEntity" id="commentPictureMap">
+        <result property="id" column="id"/>
+        <result property="commentId" column="comment_id"/>
+        <result property="picUrl" column="pic_url"/>
+        <result property="sortOrder" column="sort_order"/>
+    </resultMap>
+
+    <select id="queryObject" resultType="com.platform.entity.CommentPictureEntity">
+		select
+			`id`,
+			`comment_id`,
+			`pic_url`,
+			`sort_order`
+		from nideshop_comment_picture
+		where id = #{id}
+	</select>
+
+    <select id="queryList" resultType="com.platform.entity.CommentPictureEntity">
+        select
+        `id`,
+        `comment_id`,
+        `pic_url`,
+        `sort_order`
+        from nideshop_comment_picture
+        WHERE 1=1
+        <if test="commentId != null and commentId.trim() != ''">
+            AND comment_id = #{commentId}
+        </if>
+        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by ${sidx} ${order}
+            </when>
+            <otherwise>
+                order by id desc
+            </otherwise>
+        </choose>
+        <if test="offset != null and limit != null">
+            limit #{offset}, #{limit}
+        </if>
+    </select>
+
+    <select id="queryTotal" resultType="int">
+        select count(*) from nideshop_comment_picture
+        WHERE 1=1
+        <if test="commentId != null and commentId.trim() != ''">
+            AND comment_id = #{commentId}
+        </if>
+    </select>
+
+    <insert id="save" parameterType="com.platform.entity.CommentPictureEntity" useGeneratedKeys="true" keyProperty="id">
+		insert into nideshop_comment_picture(
+			`comment_id`,
+			`pic_url`,
+			`sort_order`)
+		values(
+			#{commentId},
+			#{picUrl},
+			#{sortOrder})
+	</insert>
+
+    <update id="update" parameterType="com.platform.entity.CommentPictureEntity">
+        update nideshop_comment_picture
+        <set>
+            <if test="commentId != null">`comment_id` = #{commentId},</if>
+            <if test="picUrl != null">`pic_url` = #{picUrl},</if>
+            <if test="sortOrder != null">`sort_order` = #{sortOrder}</if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <delete id="delete">
+		delete from nideshop_comment_picture where id = #{value}
+	</delete>
+
+    <delete id="deleteBatch">
+        delete from nideshop_comment_picture where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <delete id="deleteByCommentId">
+        delete from nideshop_comment_picture where comment_id = #{commentId}
+    </delete>
+</mapper>

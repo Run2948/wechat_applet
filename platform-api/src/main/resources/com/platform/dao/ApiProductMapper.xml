@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.platform.dao.ApiProductMapper">
+
+    <!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.platform.entity.ProductVo" id="productMap">
+        <result property="id" column="id"/>
+        <result property="goods_id" column="goods_id"/>
+        <result property="goods_specification_ids" column="goods_specification_ids"/>
+        <result property="goods_sn" column="goods_sn"/>
+        <result property="goods_number" column="goods_number"/>
+        <result property="retail_price" column="retail_price"/>
+        <result property="market_price" column="market_price"/>
+        <result property="goods_name" column="goods_name"/>
+        <result property="list_pic_url" column="list_pic_url"/>
+    </resultMap>
+
+    <select id="queryObject" resultMap="productMap">
+		select a.*, b.name as goods_name, b.list_pic_url as list_pic_url
+		from nideshop_product a left join nideshop_goods b on a.goods_id = b.id
+		where a.id = #{value}
+	</select>
+
+    <select id="queryList" resultMap="productMap">
+        select a.*,
+        b.name as goods_name,
+        b.list_pic_url as list_pic_url
+        from nideshop_product a
+        left join nideshop_goods b on a.goods_id = b.id
+        <where>
+            <if test="goods_id != null">
+                and a.goods_id = #{goods_id}
+            </if>
+        </where>
+        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by ${sidx} ${order}
+            </when>
+            <otherwise>
+                order by a.id desc
+            </otherwise>
+        </choose>
+        <if test="offset != null and limit != null">
+            limit #{offset}, #{limit}
+        </if>
+    </select>
+
+    <select id="queryTotal" resultType="int">
+		select count(*) from nideshop_product 
+	</select>
+</mapper>

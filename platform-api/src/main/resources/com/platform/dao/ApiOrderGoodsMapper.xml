@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.platform.dao.ApiOrderGoodsMapper">
+
+    <!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.platform.entity.OrderGoodsVo" id="orderGoodsMap">
+        <result property="id" column="id"/>
+        <result property="order_id" column="order_id"/>
+        <result property="goods_id" column="goods_id"/>
+        <result property="goods_name" column="goods_name"/>
+        <result property="goods_sn" column="goods_sn"/>
+        <result property="product_id" column="product_id"/>
+        <result property="number" column="number"/>
+        <result property="market_price" column="market_price"/>
+        <result property="retail_price" column="retail_price"/>
+        <result property="goods_specifition_name_value" column="goods_specifition_name_value"/>
+        <result property="is_real" column="is_real"/>
+        <result property="goods_specifition_ids" column="goods_specifition_ids"/>
+        <result property="list_pic_url" column="list_pic_url"/>
+    </resultMap>
+
+    <select id="queryObject" resultMap="orderGoodsMap">
+		select * from nideshop_order_goods where id = #{value}
+	</select>
+
+    <select id="queryList" resultMap="orderGoodsMap">
+        select * from nideshop_order_goods
+        <where>
+            <if test="order_id != null and order_id != ''">
+                and order_id = #{order_id}
+            </if>
+        </where>
+        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by ${sidx} ${order}
+            </when>
+            <otherwise>
+                order by id desc
+            </otherwise>
+        </choose>
+        <if test="offset != null and limit != null">
+            limit #{offset}, #{limit}
+        </if>
+    </select>
+
+    <select id="queryTotal" resultType="int">
+		select count(*) from nideshop_order_goods 
+	</select>
+
+    <insert id="save" parameterType="com.platform.entity.OrderGoodsVo" useGeneratedKeys="true" keyProperty="id">
+		insert into nideshop_order_goods
+		(
+			`order_id`, 
+			`goods_id`, 
+			`goods_name`, 
+			`goods_sn`, 
+			`product_id`, 
+			`number`, 
+			`market_price`, 
+			`retail_price`, 
+			`goods_specifition_name_value`, 
+			`is_real`, 
+			`goods_specifition_ids`, 
+			`list_pic_url`
+		)
+		values
+		(
+		#{order_id},
+			#{goods_id},
+			#{goods_name},
+			#{goods_sn},
+			#{product_id},
+			#{number},
+			#{market_price},
+			#{retail_price},
+			#{goods_specifition_name_value},
+			#{is_real},
+			#{goods_specifition_ids},
+			#{list_pic_url}
+		)
+	</insert>
+
+    <update id="update" parameterType="com.platform.entity.OrderGoodsVo">
+        update nideshop_order_goods
+        <set>
+            <if test="order_id != null">`order_id` = #{order_id},</if>
+            <if test="goods_id != null">`goods_id` = #{goods_id},</if>
+            <if test="goods_name != null">`goods_name` = #{goods_name},</if>
+            <if test="goods_sn != null">`goods_sn` = #{goods_sn},</if>
+            <if test="product_id != null">`product_id` = #{product_id},</if>
+            <if test="number != null">`number` = #{number},</if>
+            <if test="market_price != null">`market_price` = #{market_price},</if>
+            <if test="retail_price != null">`retail_price` = #{retail_price},</if>
+            <if test="goods_specifition_name_value != null">`goods_specifition_name_value` =
+                #{goods_specifition_name_value},
+            </if>
+            <if test="is_real != null">`is_real` = #{is_real},</if>
+            <if test="goods_specifition_ids != null">`goods_specifition_ids` = #{goods_specifition_ids},</if>
+            <if test="list_pic_url != null">`list_pic_url` = #{list_pic_url}</if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <delete id="delete">
+		delete from nideshop_order_goods where id = #{value}
+	</delete>
+
+    <delete id="deleteBatch">
+        delete from nideshop_order_goods where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>

@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.platform.dao.SysSmsLogDao">
+
+    <resultMap type="com.platform.entity.SysSmsLogEntity" id="smsLogMap">
+        <result property="id" column="id"/>
+        <result property="userId" column="user_id"/>
+        <result property="content" column="content"/>
+        <result property="mobile" column="mobile"/>
+        <result property="stime" column="stime"/>
+        <result property="sign" column="sign"/>
+        <result property="type" column="type"/>
+        <result property="extno" column="extno"/>
+        <result property="sendStatus" column="send_status"/>
+        <result property="sendId" column="send_id"/>
+        <result property="invalidNum" column="invalid_num"/>
+        <result property="successNum" column="success_num"/>
+        <result property="blackNum" column="black_num"/>
+        <result property="returnMsg" column="return_msg"/>
+    </resultMap>
+
+	<select id="queryObject" resultType="com.platform.entity.SysSmsLogEntity">
+		select
+			`id`,
+			`user_id`,
+			`content`,
+			`mobile`,
+			`stime`,
+			`sign`,
+			`type`,
+			`extno`,
+			`send_status`,
+			`send_id`,
+			`invalid_num`,
+			`success_num`,
+			`black_num`,
+			`return_msg`
+		from sys_sms_log
+		where id = #{id}
+	</select>
+
+	<select id="queryList" resultType="com.platform.entity.SysSmsLogEntity">
+		select
+		sys_sms_log.id,
+		sys_sms_log.user_id,
+		sys_sms_log.content,
+		sys_sms_log.mobile,
+		sys_sms_log.stime,
+		sys_sms_log.sign,
+		sys_sms_log.type,
+		sys_sms_log.extno,
+		sys_sms_log.send_status,
+		sys_sms_log.send_id,
+		sys_sms_log.invalid_num,
+		sys_sms_log.success_num,
+		sys_sms_log.black_num,
+		sys_sms_log.return_msg,
+		sys_user.username user_name
+		from sys_sms_log
+		LEFT JOIN sys_user ON sys_user.user_id = sys_sms_log.user_id
+		WHERE 1=1
+		<if test="sendId != null and sendId != ''">
+			AND sys_sms_log.send_id LIKE concat('%',#{sendId},'%')
+		</if>
+        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by ${sidx} ${order}
+            </when>
+			<otherwise>
+                order by stime DESC
+			</otherwise>
+        </choose>
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	
+ 	<select id="queryTotal" resultType="int">
+		select count(*) from sys_sms_log
+		WHERE 1=1
+		<if test="sendId != null and sendId != ''">
+			AND send_id LIKE concat('%',#{sendId},'%')
+		</if>
+	</select>
+	 
+	<insert id="save" parameterType="com.platform.entity.SysSmsLogEntity">
+		insert into sys_sms_log(
+			`id`,
+			`user_id`,
+			`content`,
+			`mobile`,
+			`stime`,
+			`sign`,
+			`type`,
+			`extno`,
+			`send_status`,
+			`send_id`,
+			`invalid_num`,
+			`success_num`,
+			`black_num`,
+			`return_msg`)
+		values(
+			#{id},
+			#{userId},
+			#{content},
+			#{mobile},
+			#{stime},
+			#{sign},
+			#{type},
+			#{extno},
+			#{sendStatus},
+			#{sendId},
+			#{invalidNum},
+			#{successNum},
+			#{blackNum},
+			#{returnMsg})
+	</insert>
+	 
+	<update id="update" parameterType="com.platform.entity.SysSmsLogEntity">
+		update sys_sms_log 
+		<set>
+			<if test="userId != null">`user_id` = #{userId}, </if>
+			<if test="content != null">`content` = #{content}, </if>
+			<if test="mobile != null">`mobile` = #{mobile}, </if>
+			<if test="stime != null">`stime` = #{stime}, </if>
+			<if test="sign != null">`sign` = #{sign}, </if>
+			<if test="type != null">`type` = #{type}, </if>
+			<if test="extno != null">`extno` = #{extno}, </if>
+			<if test="sendStatus != null">`send_status` = #{sendStatus}, </if>
+			<if test="sendId != null">`send_id` = #{sendId}, </if>
+			<if test="invalidNum != null">`invalid_num` = #{invalidNum}, </if>
+			<if test="successNum != null">`success_num` = #{successNum}, </if>
+			<if test="blackNum != null">`black_num` = #{blackNum}, </if>
+			<if test="returnMsg != null">`return_msg` = #{returnMsg}</if>
+		</set>
+		where id = #{id}
+	</update>
+	
+	<delete id="delete">
+		delete from sys_sms_log where id = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from sys_sms_log where id in 
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+
+</mapper>

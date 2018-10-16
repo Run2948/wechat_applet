@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.platform.dao.UserCouponDao">
+
+    <resultMap type="com.platform.entity.UserCouponEntity" id="userCouponMap">
+        <result property="id" column="id"/>
+        <result property="couponId" column="coupon_id"/>
+        <result property="couponNumber" column="coupon_number"/>
+        <result property="userId" column="user_id"/>
+        <result property="usedTime" column="used_time"/>
+        <result property="orderId" column="order_id"/>
+        <result property="addTime" column="add_time"/>
+    </resultMap>
+
+    <select id="queryObject" resultType="com.platform.entity.UserCouponEntity">
+		select
+			`id`,
+			`coupon_id`,
+			`coupon_number`,
+			`user_id`,
+			`used_time`,
+			`add_time`,
+			`order_id`
+		from nideshop_user_coupon
+		where id = #{id}
+	</select>
+
+    <select id="queryList" resultType="com.platform.entity.UserCouponEntity">
+        select
+        nideshop_user_coupon.id,
+        nideshop_user_coupon.coupon_id,
+        nideshop_user_coupon.coupon_number,
+        nideshop_user_coupon.user_id,
+        nideshop_user_coupon.used_time,
+        nideshop_user_coupon.add_time,
+        nideshop_user_coupon.order_id,
+        nideshop_user.username user_name,
+        nideshop_coupon.name coupon_name
+        from nideshop_user_coupon
+        LEFT JOIN nideshop_user ON nideshop_user_coupon.user_id = nideshop_user.id
+        LEFT JOIN nideshop_coupon ON nideshop_user_coupon.coupon_id = nideshop_coupon.id
+        WHERE 1=1
+        <if test="userName != null and userName.trim() != ''">
+            AND nideshop_user.username LIKE concat('%',#{userName},'%')
+        </if>
+        <if test="couponName != null and couponName.trim() != ''">
+            AND nideshop_coupon.name LIKE concat('%',#{couponName},'%')
+        </if>
+        <if test="userId != null and userId != ''">
+            AND nideshop_user_coupon.user_id = #{userId}
+        </if>
+        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by ${sidx} ${order}
+            </when>
+            <otherwise>
+                order by nideshop_user_coupon.id desc
+            </otherwise>
+        </choose>
+        <if test="offset != null and limit != null">
+            limit #{offset}, #{limit}
+        </if>
+    </select>
+
+    <select id="queryTotal" resultType="int">
+        select count(*)
+        from nideshop_user_coupon 
+        LEFT JOIN nideshop_user ON nideshop_user_coupon.user_id = nideshop_user.id
+        LEFT JOIN nideshop_coupon ON nideshop_user_coupon.coupon_id = nideshop_coupon.id
+        WHERE 1=1
+        <if test="userName != null and userName.trim() != ''">
+            AND nideshop_user.username LIKE concat('%',#{userName},'%')
+        </if>
+		<if test="userId != null and userId != ''">
+            AND nideshop_user_coupon.user_id = #{userId}
+        </if>
+        <if test="couponName != null and couponName.trim() != ''">
+            AND nideshop_coupon.name LIKE concat('%',#{couponName},'%')
+        </if>
+    </select>
+
+    <insert id="save" parameterType="com.platform.entity.UserCouponEntity" useGeneratedKeys="true" keyProperty="id">
+		insert into nideshop_user_coupon(
+			`coupon_id`,
+			`coupon_number`,
+			`user_id`,
+			`used_time`,
+			`add_time`,
+			`order_id`)
+		values(
+			#{couponId},
+			#{couponNumber},
+			#{userId},
+			#{usedTime},
+			#{addTime},
+			#{orderId})
+	</insert>
+
+    <update id="update" parameterType="com.platform.entity.UserCouponEntity">
+        update nideshop_user_coupon
+        <set>
+            <if test="couponId != null">`coupon_id` = #{couponId},</if>
+            <if test="couponNumber != null">`coupon_number` = #{couponNumber},</if>
+            <if test="userId != null">`user_id` = #{userId},</if>
+            <if test="usedTime != null">`used_time` = #{usedTime},</if>
+            <if test="addTime != null">`add_time` = #{addTime},</if>
+            <if test="orderId != null">`order_id` = #{orderId}</if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <delete id="delete">
+		delete from nideshop_user_coupon where id = #{value}
+	</delete>
+
+    <delete id="deleteBatch">
+        delete from nideshop_user_coupon where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>

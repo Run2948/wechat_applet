@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.platform.dao.ApiCartMapper">
+
+    <!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.platform.entity.CartVo" id="cartMap">
+        <result property="id" column="id"/>
+        <result property="user_id" column="user_id"/>
+        <result property="session_id" column="session_id"/>
+        <result property="goods_id" column="goods_id"/>
+        <result property="goods_sn" column="goods_sn"/>
+        <result property="product_id" column="product_id"/>
+        <result property="goods_name" column="goods_name"/>
+        <result property="market_price" column="market_price"/>
+        <result property="retail_price" column="retail_price"/>
+        <result property="retail_product_price" column="retail_product_price"/>
+        <result property="number" column="number"/>
+        <result property="goods_specifition_name_value" column="goods_specifition_name_value"/>
+        <result property="goods_specifition_ids" column="goods_specifition_ids"/>
+        <result property="checked" column="checked"/>
+        <result property="list_pic_url" column="list_pic_url"/>
+    </resultMap>
+
+    <select id="queryObject" resultMap="cartMap">
+		select * from nideshop_cart where id = #{value}
+	</select>
+
+    <select id="queryList" resultMap="cartMap">
+        select a.*,
+        b.list_pic_url as list_pic_url,
+        c.retail_price as retail_product_price
+        from nideshop_cart a
+        left join nideshop_goods b on a.goods_id = b.id
+        left join nideshop_product c on c.goods_id = a.goods_id and c.id = a.product_id
+        where 1 = 1
+        <if test="user_id != null">
+            AND a.user_id = #{user_id}
+        </if>
+        <if test="goods_id != null">
+            AND a.goods_id = #{goods_id}
+        </if>
+        <if test="product_id != null">
+            AND a.product_id = #{product_id}
+        </if>
+        <if test="checked != null">
+            AND a.checked = #{checked}
+        </if>
+        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by ${sidx} ${order}
+            </when>
+            <otherwise>
+                order by a.id desc
+            </otherwise>
+        </choose>
+        <if test="offset != null and limit != null">
+            limit #{offset}, #{limit}
+        </if>
+    </select>
+
+    <select id="queryTotal" resultType="int">
+        select count(*) from nideshop_cart a
+        where 1 = 1
+        <if test="user_id != null">
+            AND a.user_id = #{user_id}
+        </if>
+        <if test="goods_id != null">
+            AND a.goods_id = #{goods_id}
+        </if>
+        <if test="product_id != product_id">
+            AND a.product_id = #{product_id}
+        </if>
+        <if test="checked != null">
+            AND a.checked = #{checked}
+        </if>
+    </select>
+
+    <insert id="save" parameterType="com.platform.entity.CartVo" useGeneratedKeys="true" keyProperty="id">
+		insert into nideshop_cart
+		(
+			`user_id`, 
+			`session_id`, 
+			`goods_id`, 
+			`goods_sn`, 
+			`product_id`, 
+			`goods_name`, 
+			`market_price`, 
+			`retail_price`, 
+			`number`, 
+			`goods_specifition_name_value`, 
+			`goods_specifition_ids`, 
+			`checked`, 
+			`list_pic_url`
+		)
+		values
+		(
+			#{user_id}, 
+			#{session_id}, 
+			#{goods_id}, 
+			#{goods_sn}, 
+			#{product_id}, 
+			#{goods_name}, 
+			#{market_price}, 
+			#{retail_price}, 
+			#{number}, 
+			#{goods_specifition_name_value}, 
+			#{goods_specifition_ids}, 
+			#{checked}, 
+			#{list_pic_url}
+		)
+	</insert>
+
+    <update id="update" parameterType="com.platform.entity.CartVo">
+        update nideshop_cart
+        <set>
+            <if test="user_id != null">`user_id` = #{user_id},</if>
+            <if test="session_id != null">`session_id` = #{session_id},</if>
+            <if test="goods_id != null">`goods_id` = #{goods_id},</if>
+            <if test="goods_sn != null">`goods_sn` = #{goods_sn},</if>
+            <if test="product_id != null">`product_id` = #{product_id},</if>
+            <if test="goods_name != null">`goods_name` = #{goods_name},</if>
+            <if test="market_price != null">`market_price` = #{market_price},</if>
+            <if test="retail_price != null">`retail_price` = #{retail_price},</if>
+            <if test="number != null">`number` = #{number},</if>
+            <if test="goods_specifition_name_value != null">`goods_specifition_name_value` =
+                #{goods_specifition_name_value},
+            </if>
+            <if test="goods_specifition_ids != null">`goods_specifition_ids` = #{goods_specifition_ids},</if>
+            <if test="checked != null">`checked` = #{checked},</if>
+            <if test="list_pic_url != null">`list_pic_url` = #{list_pic_url}</if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <update id="updateCheck">
+        update nideshop_cart
+        set `checked` = #{isChecked}
+        where product_id in
+        <foreach item="product_id" collection="productIds" open="(" separator="," close=")">
+            #{product_id}
+        </foreach>
+        and user_id = #{userId}
+    </update>
+
+    <delete id="delete">
+		delete from nideshop_cart where id = #{value}
+	</delete>
+
+    <delete id="deleteBatch">
+        delete from nideshop_cart where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <delete id="deleteByProductIds">
+        delete from nideshop_cart where product_id in
+        <foreach item="id" collection="productIds" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <delete id="deleteByUserAndProductIds">
+        delete from nideshop_cart where product_id in
+        <foreach item="id" collection="productIds" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+          and user_id = #{user_id}
+    </delete>
+
+    <delete id="deleteByCart">
+        delete from nideshop_cart
+        where  user_id = #{user_id} and  session_id = #{session_id} and  checked = #{checked}
+    </delete>
+
+</mapper>

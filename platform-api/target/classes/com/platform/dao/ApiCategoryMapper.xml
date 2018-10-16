@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.platform.dao.ApiCategoryMapper">
+
+    <!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.platform.entity.CategoryVo" id="categoryMap">
+        <result property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="keywords" column="keywords"/>
+        <result property="front_desc" column="front_desc"/>
+        <result property="parent_id" column="parent_id"/>
+        <result property="sort_order" column="sort_order"/>
+        <result property="show_index" column="show_index"/>
+        <result property="is_show" column="is_show"/>
+        <result property="banner_url" column="banner_url"/>
+        <result property="icon_url" column="icon_url"/>
+        <result property="img_url" column="img_url"/>
+        <result property="wap_banner_url" column="wap_banner_url"/>
+        <result property="level" column="level"/>
+        <result property="type" column="type"/>
+        <result property="front_name" column="front_name"/>
+    </resultMap>
+
+    <select id="queryObject" resultMap="categoryMap">
+		select * from nideshop_category where id = #{value}
+	</select>
+
+    <select id="queryList" resultMap="categoryMap">
+        select
+        <if test="fields != null and fields != ''">
+            ${fields}
+        </if>
+        <if test="fields == null or fields == ''">
+            *
+        </if>
+        from nideshop_category
+        where 1 = 1
+        <if test="parent_id != null and parent_id != null">
+            and parent_id = #{parent_id}
+        </if>
+        <if test="notName != null and notName != null">
+            and 'name' != #{notName}
+        </if>
+        <if test="ids != null">
+            and id in
+            <foreach item="item" collection="ids" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by ${sidx} ${order}
+            </when>
+            <otherwise>
+                order by id asc
+            </otherwise>
+        </choose>
+        <if test="offset != null and limit != null">
+            limit #{offset}, #{limit}
+        </if>
+    </select>
+
+    <select id="queryTotal" resultType="int">
+		select count(*) from nideshop_category 
+	</select>
+
+    <insert id="save" parameterType="com.platform.entity.CategoryVo">
+		insert into nideshop_category
+		(
+			`id`, 
+			`name`, 
+			`keywords`, 
+			`front_desc`, 
+			`parent_id`, 
+			`sort_order`, 
+			`show_index`, 
+			`is_show`, 
+			`banner_url`, 
+			`icon_url`, 
+			`img_url`, 
+			`wap_banner_url`, 
+			`level`, 
+			`type`, 
+			`front_name`
+		)
+		values
+		(
+			#{id}, 
+			#{name}, 
+			#{keywords}, 
+			#{front_desc},
+			#{parent_id},
+			#{sort_order},
+			#{show_index},
+			#{is_show},
+			#{banner_url},
+			#{icon_url},
+			#{img_url},
+			#{wap_banner_url},
+			#{level},
+			#{type},
+			#{front_name}
+		)
+	</insert>
+
+    <update id="update" parameterType="com.platform.entity.CategoryVo">
+        update nideshop_category
+        <set>
+            <if test="name != null">`name` = #{name},</if>
+            <if test="keywords != null">`keywords` = #{keywords},</if>
+            <if test="front_desc != null">`front_desc` = #{front_desc},</if>
+            <if test="parent_id != null">`parent_id` = #{parent_id},</if>
+            <if test="sort_order != null">`sort_order` = #{sort_order},</if>
+            <if test="show_index != null">`show_index` = #{show_index},</if>
+            <if test="is_show != null">`is_show` = #{is_show},</if>
+            <if test="banner_url != null">`banner_url` = #{banner_url},</if>
+            <if test="icon_url != null">`icon_url` = #{icon_url},</if>
+            <if test="img_url != null">`img_url` = #{img_url},</if>
+            <if test="wap_banner_url != null">`wap_banner_url` = #{wap_banner_url},</if>
+            <if test="level != null">`level` = #{level},</if>
+            <if test="type != null">`type` = #{type},</if>
+            <if test="front_name != null">`front_name` = #{front_name}</if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <delete id="delete">
+		delete from nideshop_category where id = #{value}
+	</delete>
+
+    <delete id="deleteBatch">
+        delete from nideshop_category where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>

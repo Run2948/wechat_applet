@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.platform.dao.KeywordsDao">
+
+    <resultMap type="com.platform.entity.KeywordsEntity" id="keywordsMap">
+        <result property="id" column="id"/>
+        <result property="keyword" column="keyword"/>
+        <result property="isHot" column="is_hot"/>
+        <result property="isDefault" column="is_default"/>
+        <result property="isShow" column="is_show"/>
+        <result property="sortOrder" column="sort_order"/>
+        <result property="schemeUrl" column="scheme_url"/>
+        <result property="type" column="type"/>
+    </resultMap>
+
+	<select id="queryObject" resultType="com.platform.entity.KeywordsEntity">
+		select
+			`id`,
+			`keyword`,
+			`is_hot`,
+			`is_default`,
+			`is_show`,
+			`sort_order`,
+			`scheme_url`,
+			`type`
+		from nideshop_keywords
+		where id = #{id}
+	</select>
+
+	<select id="queryList" resultType="com.platform.entity.KeywordsEntity">
+		select
+    		`id`,
+    		`keyword`,
+    		`is_hot`,
+    		`is_default`,
+    		`is_show`,
+    		`sort_order`,
+    		`scheme_url`,
+    		`type`
+		from nideshop_keywords
+		WHERE 1=1
+		<if test="keyword != null and keyword.trim() != ''">
+			AND keyword LIKE concat('%',#{keyword},'%')
+		</if>
+        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by ${sidx} ${order}
+            </when>
+			<otherwise>
+                order by id desc
+			</otherwise>
+        </choose>
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	
+ 	<select id="queryTotal" resultType="int">
+		select count(*) from nideshop_keywords
+		WHERE 1=1
+        <if test="keyword != null and keyword.trim() != ''">
+            AND keyword LIKE concat('%',#{keyword},'%')
+        </if>
+	</select>
+	 
+	<insert id="save" parameterType="com.platform.entity.KeywordsEntity" useGeneratedKeys="true" keyProperty="id">
+		insert into nideshop_keywords(
+			`keyword`,
+			`is_hot`,
+			`is_default`,
+			`is_show`,
+			`sort_order`,
+			`scheme_url`,
+			`type`)
+		values(
+			#{keyword},
+			#{isHot},
+			#{isDefault},
+			#{isShow},
+			#{sortOrder},
+			#{schemeUrl},
+			#{type})
+	</insert>
+	 
+	<update id="update" parameterType="com.platform.entity.KeywordsEntity">
+		update nideshop_keywords 
+		<set>
+			<if test="keyword != null">`keyword` = #{keyword}, </if>
+			<if test="isHot != null">`is_hot` = #{isHot}, </if>
+			<if test="isDefault != null">`is_default` = #{isDefault}, </if>
+			<if test="isShow != null">`is_show` = #{isShow}, </if>
+			<if test="sortOrder != null">`sort_order` = #{sortOrder}, </if>
+			<if test="schemeUrl != null">`scheme_url` = #{schemeUrl}, </if>
+			<if test="type != null">`type` = #{type}</if>
+		</set>
+		where id = #{id}
+	</update>
+	
+	<delete id="delete">
+		delete from nideshop_keywords where id = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from nideshop_keywords where id in 
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+
+</mapper>

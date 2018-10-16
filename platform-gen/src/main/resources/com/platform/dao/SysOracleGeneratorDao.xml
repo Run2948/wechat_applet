@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.platform.dao.SysOracleGeneratorDao">
+    <resultMap id="BaseResultMap" type="com.platform.entity.ResultMap">
+        <result column="column_name" property="columnName" jdbcType="VARCHAR"/>
+        <result column="data_type" property="dataType" jdbcType="VARCHAR"/>
+        <result column="column_comment" property="columnComment" jdbcType="VARCHAR"/>
+        <result column="column_key" property="columnKey" jdbcType="VARCHAR"/>
+    </resultMap>
+    <select id="queryList" resultType="map">
+        SELECT TABLE_NAME, COMMENTS table_Comment
+        FROM (SELECT ROWNUM AS RN,
+        USER_TAB_COMMENTS.TABLE_NAME TABLE_NAME,
+        USER_TAB_COMMENTS.COMMENTS COMMENTS,
+        USER_TABLES.TABLESPACE_NAME
+        FROM USER_TAB_COMMENTS
+        LEFT JOIN USER_TABLES
+        ON USER_TABLES.TABLE_NAME = USER_TAB_COMMENTS.TABLE_NAME
+        WHERE 1 = 1
+        <if test="tableName != null and tableName.trim() != ''">
+            AND USER_TABLES.table_Name LIKE concat(concat('%', #{tableName}), '%')
+        </if>
+        )
+        WHERE 1 = 1
+        <if test="offset != null and limit != null">
+            AND rn &gt;= #{offset} AND rn &lt;= #{rnum}
+        </if>
+    </select>
+
+    <select id="queryTotal" resultType="int">
+        SELECT COUNT(*)
+        FROM USER_TAB_COMMENTS
+        LEFT JOIN USER_TABLES
+        ON USER_TABLES.TABLE_NAME = USER_TAB_COMMENTS.TABLE_NAME
+        WHERE 1 = 1
+        <if test="tableName != null and tableName.trim() != ''">
+            and USER_TAB_COMMENTS.table_name like concat(concat('%', #{tableName}), '%')
+        </if>
+    </select>
+
+    <select id="queryTable" resultType="map">
+        SELECT USER_TAB_COMMENTS.TABLE_NAME TABLE_NAME,
+        USER_TAB_COMMENTS.COMMENTS   table_Comment,
+        USER_TABLES.TABLESPACE_NAME
+        FROM USER_TAB_COMMENTS
+        LEFT JOIN USER_TABLES
+        ON USER_TABLES.TABLE_NAME = USER_TAB_COMMENTS.TABLE_NAME
+        WHERE USER_TAB_COMMENTS.table_name = #{tableName}
+    </select>
+
+    <select id="queryColumns" resultMap="BaseResultMap">
+		select column_name column_name,
+       lower(DATA_TYPE ||
+             decode(DATA_TYPE,
+                    'DATE',
+                    '',
+                    '(' || nvl(DATA_PRECISION, data_length) ||
+                    nvl2(nullif(DATA_SCALE, 0), ',' || data_scale, '') || ')')) data_type,
+       (select comments from user_col_comments where table_name = #{tableName} and column_name = user_tab_columns.column_Name) column_comment,
+       (select col.column_name from user_constraints con, user_cons_columns col where con.constraint_name = col.constraint_name and con.constraint_type = 'P' and col.table_name = #{tableName}) column_key
+          from user_tab_columns
+          LEFT JOIN USER_TABLES
+            ON USER_TABLES.TABLE_NAME = user_tab_columns.TABLE_NAME
+         WHERE user_tab_columns.table_name = #{tableName}
+	</select>
+</mapper>

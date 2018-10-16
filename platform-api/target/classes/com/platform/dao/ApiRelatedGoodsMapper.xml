@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.platform.dao.ApiRelatedGoodsMapper">
+
+    <!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.platform.entity.RelatedGoodsVo" id="relatedGoodsMap">
+        <result property="id" column="id"/>
+        <result property="goods_id" column="goods_id"/>
+        <result property="related_goods_id" column="related_goods_id"/>
+    </resultMap>
+
+    <select id="queryObject" resultMap="relatedGoodsMap">
+		select * from nideshop_related_goods where id = #{value}
+	</select>
+
+    <select id="queryList" resultMap="relatedGoodsMap">
+        select
+        <if test="fields != null and fields != ''">
+            ${fields}
+        </if>
+        <if test="fields == null or fields == ''">
+            *
+        </if>
+        from nideshop_related_goods
+        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by ${sidx} ${order}
+            </when>
+            <otherwise>
+                order by id desc
+            </otherwise>
+        </choose>
+        <if test="offset != null and limit != null">
+            limit #{offset}, #{limit}
+        </if>
+    </select>
+
+    <select id="queryTotal" resultType="int">
+		select count(*) from nideshop_related_goods 
+	</select>
+
+    <insert id="save" parameterType="com.platform.entity.RelatedGoodsVo" useGeneratedKeys="true" keyProperty="id">
+		insert into nideshop_related_goods
+		(
+			`goods_id`, 
+			`related_goods_id`
+		)
+		values
+		(
+			#{goods_id}, 
+			#{related_goods_id}
+		)
+	</insert>
+
+    <update id="update" parameterType="com.platform.entity.RelatedGoodsVo">
+        update nideshop_related_goods
+        <set>
+            <if test="goods_id != null">`goods_id` = #{goods_id},</if>
+            <if test="related_goods_id != null">`related_goods_id` = #{related_goods_id}</if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <delete id="delete">
+		delete from nideshop_related_goods where id = #{value}
+	</delete>
+
+    <delete id="deleteBatch">
+        delete from nideshop_related_goods where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>

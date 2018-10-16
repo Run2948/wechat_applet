@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.platform.dao.CouponGoodsDao">
+
+    <resultMap type="com.platform.entity.CouponGoodsEntity" id="couponGoodsMap">
+        <result property="id" column="id"/>
+        <result property="couponId" column="coupon_id"/>
+        <result property="goodsId" column="goods_id"/>
+    </resultMap>
+
+	<select id="queryObject" resultType="com.platform.entity.CouponGoodsEntity">
+		select
+			`id`,
+			`coupon_id`,
+			`goods_id`
+		from nideshop_coupon_goods
+		where id = #{id}
+	</select>
+
+	<select id="queryList" resultType="com.platform.entity.CouponGoodsEntity">
+		select
+    		`id`,
+    		`coupon_id`,
+    		`goods_id`
+		from nideshop_coupon_goods
+		WHERE 1=1
+		<if test="name != null and name.trim() != ''">
+			AND name LIKE concat('%',#{name},'%')
+		</if>
+        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by ${sidx} ${order}
+            </when>
+			<otherwise>
+                order by id desc
+			</otherwise>
+        </choose>
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	
+ 	<select id="queryTotal" resultType="int">
+		select count(*) from nideshop_coupon_goods
+		WHERE 1=1
+        <if test="name != null and name.trim() != ''">
+            AND name LIKE concat('%',#{name},'%')
+        </if>
+	</select>
+	 
+	<insert id="save" parameterType="com.platform.entity.CouponGoodsEntity" useGeneratedKeys="true" keyProperty="id">
+		insert into nideshop_coupon_goods(
+			`coupon_id`,
+			`goods_id`)
+		values(
+			#{couponId},
+			#{goodsId})
+	</insert>
+	 
+	<update id="update" parameterType="com.platform.entity.CouponGoodsEntity">
+		update nideshop_coupon_goods 
+		<set>
+			<if test="couponId != null">`coupon_id` = #{couponId}, </if>
+			<if test="goodsId != null">`goods_id` = #{goodsId}</if>
+		</set>
+		where id = #{id}
+	</update>
+	
+	<delete id="delete">
+		delete from nideshop_coupon_goods where id = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from nideshop_coupon_goods where id in 
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+
+</mapper>

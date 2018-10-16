@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.platform.dao.CategoryDao">
+
+    <resultMap type="com.platform.entity.CategoryEntity" id="categoryMap">
+        <result property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="keywords" column="keywords"/>
+        <result property="frontDesc" column="front_desc"/>
+        <result property="parentId" column="parent_id"/>
+        <result property="sortOrder" column="sort_order"/>
+        <result property="showIndex" column="show_index"/>
+        <result property="isShow" column="is_show"/>
+        <result property="bannerUrl" column="banner_url"/>
+        <result property="iconUrl" column="icon_url"/>
+        <result property="imgUrl" column="img_url"/>
+        <result property="wapBannerUrl" column="wap_banner_url"/>
+        <result property="level" column="level"/>
+        <result property="type" column="type"/>
+        <result property="frontName" column="front_name"/>
+    </resultMap>
+
+	<select id="queryObject" resultType="com.platform.entity.CategoryEntity">
+		select
+			`id`,
+			`name`,
+			`keywords`,
+			`front_desc`,
+			`parent_id`,
+			`sort_order`,
+			`show_index`,
+			`is_show`,
+			`banner_url`,
+			`icon_url`,
+			`img_url`,
+			`wap_banner_url`,
+			`level`,
+			`type`,
+			`front_name`,
+			`is_show` as `show`
+		from nideshop_category
+		where id = #{id}
+	</select>
+
+	<select id="queryList" resultType="com.platform.entity.CategoryEntity">
+		select
+    		`id`,
+    		`name`,
+    		`keywords`,
+    		`front_desc`,
+    		`parent_id`,
+    		`sort_order`,
+    		`show_index`,
+    		`is_show`,
+    		`banner_url`,
+    		`icon_url`,
+    		`img_url`,
+    		`wap_banner_url`,
+    		`level`,
+    		`type`,
+    		`front_name`,
+			`is_show` as `show`
+		from nideshop_category
+		WHERE 1=1
+		<if test="name != null and name.trim() != ''">
+			AND `name` LIKE concat('%',#{name},'%')
+		</if>
+		<if test="parentId != null and parentId != ''">
+			AND `parent_id` = #{parentId}
+		</if>
+        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by ${sidx} ${order}
+            </when>
+			<otherwise>
+                order by id desc
+			</otherwise>
+        </choose>
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	
+ 	<select id="queryTotal" resultType="int">
+		select count(*) from nideshop_category
+		WHERE 1=1
+        <if test="name != null and name.trim() != ''">
+            AND name LIKE concat('%',#{name},'%')
+        </if>
+	</select>
+	 
+	<insert id="save" parameterType="com.platform.entity.CategoryEntity">
+		insert into nideshop_category(
+			`id`,
+			`name`,
+			`keywords`,
+			`front_desc`,
+			`parent_id`,
+			`sort_order`,
+			`show_index`,
+			`is_show`,
+			`banner_url`,
+			`icon_url`,
+			`img_url`,
+			`wap_banner_url`,
+			`level`,
+			`type`,
+			`front_name`)
+		values(
+			#{id},
+			#{name},
+			#{keywords},
+			#{frontDesc},
+			#{parentId},
+			#{sortOrder},
+			#{showIndex},
+			#{isShow},
+			#{bannerUrl},
+			#{iconUrl},
+			#{imgUrl},
+			#{wapBannerUrl},
+			#{level},
+			#{type},
+			#{frontName})
+	</insert>
+	 
+	<update id="update" parameterType="com.platform.entity.CategoryEntity">
+		update nideshop_category 
+		<set>
+			<if test="name != null">`name` = #{name}, </if>
+			<if test="keywords != null">`keywords` = #{keywords}, </if>
+			<if test="frontDesc != null">`front_desc` = #{frontDesc}, </if>
+			<if test="parentId != null">`parent_id` = #{parentId}, </if>
+			<if test="sortOrder != null">`sort_order` = #{sortOrder}, </if>
+			<if test="showIndex != null">`show_index` = #{showIndex}, </if>
+			<if test="isShow != null">`is_show` = #{isShow}, </if>
+			<if test="bannerUrl != null">`banner_url` = #{bannerUrl}, </if>
+			<if test="iconUrl != null">`icon_url` = #{iconUrl}, </if>
+			<if test="imgUrl != null">`img_url` = #{imgUrl}, </if>
+			<if test="wapBannerUrl != null">`wap_banner_url` = #{wapBannerUrl}, </if>
+			<if test="level != null">`level` = #{level}, </if>
+			<if test="type != null">`type` = #{type}, </if>
+			<if test="frontName != null">`front_name` = #{frontName}</if>
+		</set>
+		where id = #{id}
+	</update>
+	
+	<delete id="delete">
+		delete from nideshop_category where id = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from nideshop_category where id in 
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+
+	<delete id="deleteByParentBatch">
+		delete from nideshop_category where parent_id in
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+</mapper>

@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.platform.dao.ApiChannelMapper">
+
+    <!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.platform.entity.ChannelVo" id="channelMap">
+        <result property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="url" column="url"/>
+        <result property="icon_url" column="icon_url"/>
+        <result property="sort_order" column="sort_order"/>
+    </resultMap>
+
+    <select id="queryObject" resultMap="channelMap">
+		select * from nideshop_channel where id = #{value}
+	</select>
+
+    <select id="queryList" resultMap="channelMap">
+        select * from nideshop_channel
+        <if test="ad_position_id != null and ad_position_id != null">
+            and ad_position_id = #{ad_position_id}
+        </if>
+        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by ${sidx} ${order}
+            </when>
+            <otherwise>
+                order by id desc
+            </otherwise>
+        </choose>
+        <if test="offset != null and limit != null">
+            limit #{offset}, #{limit}
+        </if>
+    </select>
+
+    <select id="queryTotal" resultType="int">
+		select count(*) from nideshop_channel 
+	</select>
+
+    <insert id="save" parameterType="com.platform.entity.ChannelVo" useGeneratedKeys="true" keyProperty="id">
+		insert into nideshop_channel
+		(
+			`name`, 
+			`url`, 
+			`icon_url`, 
+			`sort_order`
+		)
+		values
+		(
+			#{name}, 
+			#{url}, 
+			#{icon_url}, 
+			#{sort_order}
+		)
+	</insert>
+
+    <update id="update" parameterType="com.platform.entity.ChannelVo">
+        update nideshop_channel
+        <set>
+            <if test="name != null">`name` = #{name},</if>
+            <if test="url != null">`url` = #{url},</if>
+            <if test="icon_url != null">`icon_url` = #{icon_url},</if>
+            <if test="sort_order != null">`sort_order` = #{sort_order}</if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <delete id="delete">
+		delete from nideshop_channel where id = #{value}
+	</delete>
+
+    <delete id="deleteBatch">
+        delete from nideshop_channel where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>

@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.platform.dao.ShippingDao">
+
+    <resultMap type="com.platform.entity.ShippingEntity" id="shippingMap">
+        <result property="id" column="id"/>
+        <result property="code" column="code"/>
+        <result property="name" column="name"/>
+    </resultMap>
+
+    <select id="queryObject" resultType="com.platform.entity.ShippingEntity">
+		select
+			`id`,
+			`code`,
+			`name`
+		from nideshop_shipping
+		where id = #{id}
+	</select>
+
+    <select id="queryList" resultType="com.platform.entity.ShippingEntity">
+        select
+        `id`,
+        `code`,
+        `name`
+        from nideshop_shipping
+        WHERE 1=1  and status = 0
+        <if test="name != null and name.trim() != ''">
+            AND name LIKE concat('%',#{name},'%')
+        </if>
+        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by ${sidx} ${order}
+            </when>
+            <otherwise>
+                order by id desc
+            </otherwise>
+        </choose>
+        <if test="offset != null and limit != null">
+            limit #{offset}, #{limit}
+        </if>
+    </select>
+
+    <select id="queryTotal" resultType="int">
+        select count(*) from nideshop_shipping
+        WHERE 1=1  and status = 0
+        <if test="name != null and name.trim() != ''">
+            AND name LIKE concat('%',#{name},'%')
+        </if>
+    </select>
+
+    <insert id="save" parameterType="com.platform.entity.ShippingEntity" useGeneratedKeys="true" keyProperty="id">
+		insert into nideshop_shipping(
+			`code`,
+			`name`)
+		values(
+			#{code},
+			#{name})
+	</insert>
+
+    <update id="update" parameterType="com.platform.entity.ShippingEntity">
+        update nideshop_shipping
+        <set>
+            <if test="code != null">`code` = #{code},</if>
+            <if test="name != null">`name` = #{name}</if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <delete id="delete">
+		delete from nideshop_shipping where id = #{value}
+	</delete>
+
+    <delete id="deleteBatch">
+        delete from nideshop_shipping where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>

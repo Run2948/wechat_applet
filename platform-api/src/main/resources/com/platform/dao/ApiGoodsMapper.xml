@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.platform.dao.ApiGoodsMapper">
+
+    <!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.platform.entity.GoodsVo" id="goodsMap">
+        <result property="id" column="id"/>
+        <result property="category_id" column="category_id"/>
+        <result property="goods_sn" column="goods_sn"/>
+        <result property="name" column="name"/>
+        <result property="brand_id" column="brand_id"/>
+        <result property="goods_number" column="goods_number"/>
+        <result property="keywords" column="keywords"/>
+        <result property="goods_brief" column="goods_brief"/>
+        <result property="goods_desc" column="goods_desc"/>
+        <result property="is_on_sale" column="is_on_sale"/>
+        <result property="add_time" column="add_time"/>
+        <result property="sort_order" column="sort_order"/>
+        <result property="is_delete" column="is_delete"/>
+        <result property="attribute_category" column="attribute_category"/>
+        <result property="counter_price" column="counter_price"/>
+        <result property="extra_price" column="extra_price"/>
+        <result property="is_new" column="is_new"/>
+        <result property="goods_unit" column="goods_unit"/>
+        <result property="primary_pic_url" column="primary_pic_url"/>
+        <result property="list_pic_url" column="list_pic_url"/>
+        <result property="retail_price" column="retail_price"/>
+        <result property="market_price" column="market_price"/>
+        <result property="sell_volume" column="sell_volume"/>
+        <result property="primary_product_id" column="primary_product_id"/>
+        <result property="unit_price" column="unit_price"/>
+        <result property="promotion_desc" column="promotion_desc"/>
+        <result property="promotion_tag" column="promotion_tag"/>
+        <result property="app_exclusive_price" column="app_exclusive_price"/>
+        <result property="is_app_exclusive" column="is_app_exclusive"/>
+        <result property="is_limited" column="is_limited"/>
+        <result property="is_hot" column="is_hot"/>
+        <result property="product_id" column="product_id"/>
+    </resultMap>
+
+    <select id="queryObject" resultMap="goodsMap">
+		select * from nideshop_goods where id = #{value}
+	</select>
+
+    <select id="queryList" resultMap="goodsMap">
+        select
+        <if test="fields != null and fields != ''">
+            ${fields}
+        </if>
+        <if test="fields == null or fields == ''">
+            *
+        </if>
+        from nideshop_goods
+        where 1 = 1
+        <if test="is_new != null and is_new != ''">
+            and is_new = #{is_new}
+        </if>
+        <if test="is_hot != null and is_hot != ''">
+            and is_hot = #{is_hot}
+        </if>
+        <if test="brand_id != null and brand_id != ''">
+            and brand_id = #{brand_id}
+        </if>
+        <if test="name != null and name != ''">
+            and 'name' like concat('%',#{keyword},'%')
+        </if>
+        <if test="category_id != null and category_id != ''">
+            and category_id = #{category_id}
+        </if>
+        <if test="keyword != null">
+            and keywords like concat('%',#{keyword},'%')
+        </if>
+        <if test="is_delete != null">
+            and is_delete = #{is_delete}
+        </if>
+        <if test="is_on_sale != null and is_on_sale != ''">
+            and is_on_sale = #{is_on_sale}
+        </if>
+        <if test="categoryIds != null">
+            and category_id in
+            <foreach item="item" collection="categoryIds" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+        <if test="goods_ids != null">
+            and id in
+            <foreach item="item" collection="goods_ids" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by ${sidx} ${order}
+            </when>
+            <otherwise>
+                order by id desc
+            </otherwise>
+        </choose>
+    </select>
+
+    <select id="queryHotGoodsList" resultMap="goodsMap">
+        select a.*,b.id as product_id
+        from nideshop_goods a
+        left join nideshop_product b on a.id = b.goods_id
+        left join nideshop_product c on a.id = c.goods_id and c.retail_price > b.retail_price and b.id != c.id
+        where 1 = 1 and b.id is not null and c.id is null and a.is_delete != 1
+        <if test="is_new != null and is_new != ''">
+            and a.is_new = #{is_new}
+        </if>
+        <if test="is_hot != null and is_hot != ''">
+            and a.is_hot = #{is_hot}
+        </if>
+        <if test="brand_id != null and brand_id != ''">
+            and a.brand_id = #{brand_id}
+        </if>
+        <if test="name != null and name != ''">
+            and a.'name' like concat('%',#{keyword},'%')
+        </if>
+        <if test="category_id != null and category_id != ''">
+            and a.category_id = #{category_id}
+        </if>
+        <if test="keyword != null">
+            and a.keywords like concat('%',#{keyword},'%')
+        </if>
+        <if test="categoryIds != null">
+            and a.category_id in
+            <foreach item="item" collection="categoryIds" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+        <if test="goods_ids != null">
+            and a.id in
+            <foreach item="item" collection="goods_ids" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by ${sidx} ${order}
+            </when>
+            <otherwise>
+                order by a.id desc
+            </otherwise>
+        </choose>
+        <if test="offset != null and limit != null">
+            limit #{offset}, #{limit}
+        </if>
+    </select>
+
+    <select id="queryCatalogProductList" resultMap="goodsMap">
+        select a.id, a.name, a.list_pic_url, a.market_price, a.retail_price, a.goods_brief, b.id AS
+        product_id,count(og.id) as orderNum
+        from nideshop_goods a
+        left join nideshop_product b on a.id = b.goods_id
+        left join nideshop_product c on a.id = c.goods_id and c.retail_price > b.retail_price and b.id != c.id
+        left join nideshop_order_goods og on og.product_id = b.id
+        <if test="is_group != null and is_group == true">
+            left join nideshop_goods_group gg on gg.goods_id = a.id
+        </if>
+        where 1 = 1 and b.id is not null and c.id is null and a.is_delete != 1
+        <if test="is_new != null and is_new != ''">
+            and a.is_new = #{is_new}
+        </if>
+        <if test="is_hot != null and is_hot != ''">
+            and a.is_hot = #{is_hot}
+        </if>
+        <if test="brand_id != null and brand_id != ''">
+            and a.brand_id = #{brand_id}
+        </if>
+        <if test="name != null and name != ''">
+            and a.'name' like concat('%',#{keyword},'%')
+        </if>
+        <if test="category_id != null and category_id != ''">
+            and a.category_id = #{category_id}
+        </if>
+        <if test="keyword != null">
+            and a.keywords like concat('%',#{keyword},'%')
+        </if>
+        <if test="is_group != null and is_group == true">
+            and gg.id is not null
+        </if>
+        <if test="categoryIds != null">
+            and a.category_id in
+            <foreach item="item" collection="categoryIds" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+        <if test="goods_ids != null">
+            and a.id in
+            <foreach item="item" collection="goods_ids" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+        group by a.id, a.name, a.list_pic_url, a.market_price, a.retail_price, a.goods_brief, b.id
+        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by ${sidx} ${order}
+            </when>
+            <otherwise>
+                order by a.id desc
+            </otherwise>
+        </choose>
+        <if test="offset != null and limit != null">
+            limit #{offset}, #{limit}
+        </if>
+    </select>
+
+    <select id="queryTotal" resultType="int">
+		select count(*) from nideshop_goods
+		where 1 = 1
+        <if test="is_delete != null">
+            and is_delete = #{is_delete}
+        </if>
+        <if test="is_on_sale != null and is_on_sale != ''">
+            and is_on_sale = #{is_on_sale}
+        </if>
+	</select>
+</mapper>

@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.platform.dao.ApiCommentMapper">
+
+    <!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.platform.entity.CommentVo" id="commentMap">
+        <result property="id" column="id"/>
+        <result property="type_id" column="type_id"/>
+        <result property="value_id" column="value_id"/>
+        <result property="content" column="content"/>
+        <result property="add_time" column="add_time"/>
+        <result property="status" column="status"/>
+        <result property="user_id" column="user_id"/>
+    </resultMap>
+
+    <select id="queryObject" resultMap="commentMap">
+		select * from nideshop_comment where id = #{value}
+	</select>
+
+    <select id="queryList" resultMap="commentMap">
+        select distinct c.* from nideshop_comment c
+        <if test="hasPic != null and hasPic == 1">
+            left join nideshop_comment_picture cp on cp.comment_id = c.id
+        </if>
+        where 1 = 1
+        <if test="type_id != null and type_id != ''">
+            and c.type_id = #{type_id}
+        </if>
+        <if test="value_id != null and value_id != ''">
+            and c.value_id = #{value_id}
+        </if>
+        <if test="goods_id != null and goods_id != ''">
+            and c.value_id = #{goods_id}
+        </if>
+        <if test="user_id != null and user_id != ''">
+            and c.user_id = #{user_id}
+        </if>
+        <if test="hasPic != null and hasPic == 1">
+            and cp.id is not null
+        </if>
+        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by ${sidx} ${order}
+            </when>
+            <otherwise>
+                order by id desc
+            </otherwise>
+        </choose>
+        <if test="offset != null and limit != null">
+            limit #{offset}, #{limit}
+        </if>
+    </select>
+
+    <select id="queryTotal" resultType="int">
+        select count(c.id) from nideshop_comment c
+        where 1= 1
+        <if test="type_id != null and type_id != ''">
+            and c.type_id = #{type_id}
+        </if>
+        <if test="value_id != null and value_id != ''">
+            and c.value_id = #{value_id}
+        </if>
+        <if test="goods_id != null and goods_id != ''">
+            and c.value_id = #{goods_id}
+        </if>
+    </select>
+
+    <select id="queryhasPicTotal" resultType="int">
+        select count(distinct c.id) from nideshop_comment c
+        left join nideshop_comment_picture cp on cp.comment_id = c.id
+        where 1= 1 and cp.id > 0
+        <if test="type_id != null and type_id != ''">
+            and c.type_id = #{type_id}
+        </if>
+        <if test="value_id != null and value_id != ''">
+            and c.value_id = #{value_id}
+        </if>
+    </select>
+
+    <insert id="save" parameterType="com.platform.entity.CommentVo" useGeneratedKeys="true" keyProperty="id">
+		insert into nideshop_comment
+		(
+			`type_id`, 
+			`value_id`, 
+			`content`, 
+			`add_time`, 
+			`status`, 
+			`user_id`
+		)
+		values
+		(
+			#{type_id},
+			#{value_id},
+			#{content},
+			#{add_time},
+			#{status},
+			#{user_id}
+		)
+	</insert>
+
+    <update id="update" parameterType="com.platform.entity.CommentVo">
+        update nideshop_comment
+        <set>
+            <if test="type_id != null">`type_id` = #{type_id},</if>
+            <if test="value_id != null">`value_id` = #{value_id},</if>
+            <if test="content != null">`content` = #{content},</if>
+            <if test="add_time != null">`add_time` = #{add_time},</if>
+            <if test="status != null">`status` = #{status},</if>
+            <if test="user_id != null">`user_id` = #{user_id}</if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <delete id="delete">
+		delete from nideshop_comment where id = #{value}
+	</delete>
+
+    <delete id="deleteBatch">
+        delete from nideshop_comment where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>

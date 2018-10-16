@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.platform.dao.ApiGoodsIssueMapper">
+
+    <!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.platform.entity.GoodsIssueVo" id="goodsIssueMap">
+        <result property="id" column="id"/>
+        <result property="goods_id" column="goods_id"/>
+        <result property="question" column="question"/>
+        <result property="answer" column="answer"/>
+    </resultMap>
+
+    <select id="queryObject" resultMap="goodsIssueMap">
+		select * from nideshop_goods_issue where id = #{value}
+	</select>
+
+    <select id="queryList" resultMap="goodsIssueMap">
+        select
+        <if test="fields != null and fields != ''">
+            ${fields}
+        </if>
+        <if test="fields == null or fields == ''">
+            *
+        </if>
+        from nideshop_goods_issue
+        <where>
+            <if test="goods_id != null">
+                and goods_id = #{goods_id}
+            </if>
+        </where>
+        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by ${sidx} ${order}
+            </when>
+            <otherwise>
+                order by id desc
+            </otherwise>
+        </choose>
+        <if test="offset != null and limit != null">
+            limit #{offset}, #{limit}
+        </if>
+    </select>
+
+    <select id="queryTotal" resultType="int">
+		select count(*) from nideshop_goods_issue 
+	</select>
+
+    <insert id="save" parameterType="com.platform.entity.GoodsIssueVo" useGeneratedKeys="true" keyProperty="id">
+		insert into nideshop_goods_issue
+		(
+			`goods_id`, 
+			`question`, 
+			`answer`
+		)
+		values
+		(
+			#{goods_id},
+			#{question}, 
+			#{answer}
+		)
+	</insert>
+
+    <update id="update" parameterType="com.platform.entity.GoodsIssueVo">
+        update nideshop_goods_issue
+        <set>
+            <if test="goods_id != null">`goods_id` = #{goods_id},</if>
+            <if test="question != null">`question` = #{question},</if>
+            <if test="answer != null">`answer` = #{answer}</if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <delete id="delete">
+		delete from nideshop_goods_issue where id = #{value}
+	</delete>
+
+    <delete id="deleteBatch">
+        delete from nideshop_goods_issue where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>

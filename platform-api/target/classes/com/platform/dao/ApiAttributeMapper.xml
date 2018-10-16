@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.platform.dao.ApiAttributeMapper">
+
+    <!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.platform.entity.AttributeVo" id="attributeMap">
+        <result property="id" column="id"/>
+        <result property="attribute_category_id" column="attribute_category_id"/>
+        <result property="name" column="name"/>
+        <result property="input_type" column="input_type"/>
+        <result property="value" column="value"/>
+        <result property="sort_order" column="sort_order"/>
+    </resultMap>
+
+    <select id="queryObject" resultMap="attributeMap">
+		select * from nideshop_attribute where id = #{value}
+	</select>
+
+    <select id="queryList" resultMap="attributeMap">
+        select
+        <if test="fields != null and fields != ''">
+            ${fields}
+        </if>
+        <if test="fields == null or fields == ''">
+            *
+        </if>
+        from nideshop_attribute na
+        left join nideshop_goods_attribute nga ON nga.attribute_id=na.id
+        <where>
+            <if test="goods_id != null">
+                and nga.goods_id = #{goods_id}
+            </if>
+        </where>
+        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by ${sidx} ${order}
+            </when>
+            <otherwise>
+                order by na.id desc
+            </otherwise>
+        </choose>
+        <if test="offset != null and limit != null">
+            limit #{offset}, #{limit}
+        </if>
+    </select>
+
+    <select id="queryTotal" resultType="int">
+		select count(*) from nideshop_attribute 
+	</select>
+
+    <insert id="save" parameterType="com.platform.entity.AttributeVo" useGeneratedKeys="true" keyProperty="id">
+		insert into nideshop_attribute
+		(
+			`attribute_category_id`, 
+			`name`, 
+			`input_type`, 
+			`value`,
+			`sort_order`
+		)
+		values
+		(
+			#{attribute_category_id},
+			#{name}, 
+			#{input_type},
+			#{value},
+			#{sort_order}
+		)
+	</insert>
+
+    <update id="update" parameterType="com.platform.entity.AttributeVo">
+        update nideshop_attribute
+        <set>
+            <if test="attribute_category_id != null">`attribute_category_id` = #{attribute_category_id},</if>
+            <if test="name != null">`name` = #{name},</if>
+            <if test="input_type != null">`input_type` = #{input_type},</if>
+            <if test="value != null">`value` = #{value},</if>
+            <if test="sort_order != null">`sort_order` = #{sort_order}</if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <delete id="delete">
+		delete from nideshop_attribute where id = #{value}
+	</delete>
+
+    <delete id="deleteBatch">
+        delete from nideshop_attribute where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>
