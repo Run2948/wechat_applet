@@ -1,9 +1,9 @@
-# 微信小程序 开源
+# 微信小程序商城
 
-#### 项目介绍
-微信小程序 开源  不像很多人一样代码放上面有很多坑，本程序是借鉴码云其他开源项目。把所有坑都已经躺过了，可以直接使用。如需帮助请加qq群：877611106。
+#### Open-Shop项目介绍
+Open-Shop是一个代码全部开源的微信小程序商城。本程序是借鉴码云其他开源项目。把所有坑都已经躺过了，可以直接使用。如需帮助请加qq群：877611106。
 
-## 技术选型
+## Open-Shop技术选型
 * 1 后端使用技术
     * 1.1 springframework4.3.7.RELEASE
     * 1.2 mybatis3.4.1
@@ -29,8 +29,8 @@
     * 2.7 ztree3.5.26
     * 2.8 froala_editor1.2.2
 
-## 页面展示
+## Open-Shop页面展示
 ### 小程序演示效果
 ![](http://pgf1db9j6.bkt.clouddn.com/6.jpg "前段演示")
-### 演示地址
+### Open-Shop演示地址
 ![](http://pgf1db9j6.bkt.clouddn.com/Advertisement4.jpg "演示地址")
