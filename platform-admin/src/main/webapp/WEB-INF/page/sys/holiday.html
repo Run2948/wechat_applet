@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>节假日管理</title>
+    #parse("sys/header.html")
+</head>
+<body>
+<div id="rrapp" v-cloak>
+    <div v-show="showList">
+        <Row :gutter="16">
+            <div class="search-group">
+                <i-col span="4">
+                    <i-input v-model="q.holidayName" @on-enter="query" placeholder="节日名称"/>
+                </i-col>
+                <i-button @click="query">查询</i-button>
+            </div>
+            <div class="buttons-group">
+                #if($shiro.hasPermission("sys:user:save"))
+                <i-button type="info" @click="add"><i class="fa fa-plus"></i>&nbsp;新增</i-button>
+                #end
+                #if($shiro.hasPermission("sys:user:update"))
+                <i-button type="warning" @click="update"><i class="fa fa-pencil-square-o"></i>&nbsp;修改</i-button>
+                #end
+                #if($shiro.hasPermission("sys:user:delete"))
+                <i-button type="error" @click="del"><i class="fa fa-trash-o"></i>&nbsp;删除</i-button>
+                #end
+            </div>
+        </Row>
+        <table id="jqGrid"></table>
+        <div id="jqGridPager"></div>
+    </div>
+
+    <Card v-show="!showList">
+        <p slot="title">{{title}}</p>
+        <i-form ref="formValidate" :model="holiday" :rules="ruleValidate" :label-width="80">
+            <Form-item label="节日名" prop="holidayName">
+                <i-input v-model="holiday.holidayName" placeholder="节日名"/>
+            </Form-item>
+             <Form-item label="时间" prop="holiday">
+                <Date-picker v-model="holiday.holiday" placeholder="时间"></Date-picker>
+            </Form-item>
+            <Form-item>
+                <i-button type="primary" @click="handleSubmit('formValidate')">提交</i-button>
+                <i-button type="warning" @click="reload" style="margin-left: 8px">返回</i-button>
+                <i-button type="ghost" @click="handleReset('formValidate')" style="margin-left: 8px">重置</i-button>
+            </Form-item>
+        </i-form>
+    </Card>
+</div>
+<!-- 选择部门 -->
+<div id="deptLayer" style="display: none;padding:10px;">
+    <ul id="deptTree" class="ztree"></ul>
+</div>
+<script src="${rc.contextPath}/js/sys/holiday.js?_${date.systemTime}"></script>
+</body>
+</html>

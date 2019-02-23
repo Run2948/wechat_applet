@@ -1,0 +1,285 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.platform.dao.ApiOrderMapper">
+
+    <!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.platform.entity.OrderVo" id="orderMap">
+        <result property="id" column="id"/>
+        <result property="order_sn" column="order_sn"/>
+        <result property="user_id" column="user_id"/>
+        <result property="order_status" column="order_status"/>
+        <result property="shipping_status" column="shipping_status"/>
+        <result property="pay_status" column="pay_status"/>
+        <result property="consignee" column="consignee"/>
+        <result property="country" column="country"/>
+        <result property="province" column="province"/>
+        <result property="city" column="city"/>
+        <result property="district" column="district"/>
+        <result property="address" column="address"/>
+        <result property="mobile" column="mobile"/>
+        <result property="postscript" column="postscript"/>
+        <result property="shipping_id" column="shipping_id"/>
+        <result property="shipping_name" column="shipping_name"/>
+        <result property="shipping_code" column="shipping_code"/>
+        <result property="shipping_no" column="shipping_no"/>
+        <result property="pay_id" column="pay_id"/>
+        <result property="pay_name" column="pay_name"/>
+        <result property="shipping_fee" column="shipping_fee"/>
+        <result property="actual_price" column="actual_price"/>
+        <result property="integral" column="integral"/>
+        <result property="integral_money" column="integral_money"/>
+        <result property="order_price" column="order_price"/>
+        <result property="goods_price" column="goods_price"/>
+        <result property="add_time" column="add_time"/>
+        <result property="confirm_time" column="confirm_time"/>
+        <result property="pay_time" column="pay_time"/>
+        <result property="freight_price" column="freight_price"/>
+        <result property="coupon_id" column="coupon_id"/>
+        <result property="parent_id" column="parent_id"/>
+        <result property="coupon_price" column="coupon_price"/>
+        <result property="callback_status" column="callback_status"/>
+        <result property="full_cut_price" column="full_cut_price"/>
+        <result property="goods_name" column="goods_name"/>
+        <result property="list_pic_url" column="list_pic_url"/>
+        <result property="goods_id" column="goods_id"/>
+        <result property="all_price" column="all_price"/>
+        <result property="all_order_id" column="all_order_id"/>
+        <result property="promoter_id" column="promoter_id"/>
+        <result property="brokerage" column="brokerage"/>
+    </resultMap>
+
+    <select id="queryObject" resultMap="orderMap">
+		select a.*,b.code as  shipping_code
+		from nideshop_order a
+		left join nideshop_shipping b on a.shipping_id = b.id
+		where a.id = #{value}
+	</select>
+
+    <select id="queryList" resultMap="orderMap">
+        SELECT o.*, g.goods_name, g.list_pic_url, g.goods_id FROM nideshop_order o
+        LEFT JOIN nideshop_order_goods g ON o.id = g.order_id
+        <where>
+           	<if test="user_id != null">
+                and o.user_id = #{user_id}
+            </if>
+            
+	        <if test="order_status != null and order_status >= 0 and order_status != 4 and order_status != 201 and order_status != 101">
+	            AND o.order_status = #{order_status}
+	        </if>
+	        
+	        <if test="order_status != null and order_status == 101">
+	            AND (o.order_status = 101 or o.order_status = 401 or o.order_status = 402)
+	        </if>
+	        
+	        <if test="order_status != null and order_status == 201">
+	            AND (o.order_status = 201 or o.order_status = 300)
+	        </if>
+	        
+	        <if test="order_status != null and order_status == 4">
+	            AND (o.order_status = 401 or o.order_status = 402)
+	        </if>
+	        <if test="all_order_id != null and all_order_id != ''">
+                and o.all_order_id = #{all_order_id}
+            </if>
+            <if test="promoter_id != null and promoter_id != 0">
+                and o.promoter_id = #{promoter_id}
+            </if>
+        </where>
+        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by ${sidx} ${order}
+            </when>
+            <otherwise>
+                order by id desc
+            </otherwise>
+        </choose>
+        <if test="offset != null and limit != null">
+            limit #{offset}, #{limit}
+        </if>
+    </select>
+
+    <select id="queryTotal" resultType="int">
+        SELECT count(o.id) FROM nideshop_order o
+        LEFT JOIN nideshop_order_goods g ON o.id = g.order_id
+        <where>
+            <if test="user_id != null">
+                and o.user_id = #{user_id}
+            </if>
+
+            <if test="order_status != null and order_status >= 0 and order_status != 4 and order_status != 201 and order_status != 101">
+                AND o.order_status = #{order_status}
+            </if>
+
+            <if test="order_status != null and order_status == 101">
+                AND (o.order_status = 101 or o.order_status = 401 or o.order_status = 402)
+            </if>
+
+            <if test="order_status != null and order_status == 201">
+                AND (o.order_status = 201 or o.order_status = 300)
+            </if>
+
+            <if test="order_status != null and order_status == 4">
+                AND (o.order_status = 401 or o.order_status = 402)
+            </if>
+            <if test="all_order_id != null and all_order_id != ''">
+                and o.all_order_id = #{all_order_id}
+            </if>
+            <if test="promoter_id != null and promoter_id != 0">
+                and o.promoter_id = #{promoter_id}
+            </if>
+        </where>
+	</select>
+	
+
+
+    <insert id="save" parameterType="com.platform.entity.OrderVo" useGeneratedKeys="true" keyProperty="id">
+		insert into nideshop_order
+		(
+			`order_sn`,
+			`user_id`,
+			`order_status`,
+			`shipping_status`,
+			`pay_status`,
+			`consignee`,
+			`country`,
+			`province`,
+			`city`,
+			`district`,
+			`address`,
+			`mobile`,
+			`postscript`,
+			`shipping_id`,
+			`shipping_name`,
+			`pay_id`,
+			`pay_name`,
+			`shipping_fee`,
+			`actual_price`,
+			`integral`,
+			`integral_money`,
+			`order_price`,
+			`goods_price`,
+			`add_time`,
+			`confirm_time`,
+			`pay_time`,
+			`freight_price`,
+			`coupon_id`,
+			`parent_id`,
+			`coupon_price`,
+			`callback_status`,
+			`full_cut_price`,
+			`order_type`,
+			`all_price`,
+			`all_order_id`,
+			`promoter_id`,
+			`brokerage`
+
+		)
+		values
+		(
+			#{order_sn},
+			#{user_id},
+			#{order_status},
+			#{shipping_status},
+			#{pay_status},
+			#{consignee},
+			#{country},
+			#{province},
+			#{city},
+			#{district},
+			#{address},
+			#{mobile},
+			#{postscript},
+			#{shipping_id},
+			#{shipping_name},
+			#{pay_id},
+			#{pay_name},
+			#{shipping_fee},
+			#{actual_price},
+			#{integral},
+			#{integral_money},
+			#{order_price},
+			#{goods_price},
+			#{add_time},
+			#{confirm_time},
+			#{pay_time},
+			#{freight_price},
+			#{coupon_id},
+			#{parent_id},
+			#{coupon_price},
+			#{callback_status},
+			#{full_cut_price},
+			#{order_type},
+			#{all_price},
+			#{all_order_id},
+			#{promoter_id},
+			#{brokerage}
+			
+		)
+	</insert>
+
+    <update id="update" parameterType="com.platform.entity.OrderVo">
+        update nideshop_order
+        <set>
+            <if test="order_sn != null">`order_sn` = #{order_sn},</if>
+            <if test="user_id != null">`user_id` = #{user_id},</if>
+            <if test="order_status != null">`order_status` = #{order_status},</if>
+            <if test="shipping_status != null">`shipping_status` = #{shipping_status},</if>
+            <if test="pay_status != null">`pay_status` = #{pay_status},</if>
+            <if test="consignee != null">`consignee` = #{consignee},</if>
+            <if test="country != null">`country` = #{country},</if>
+            <if test="province != null">`province` = #{province},</if>
+            <if test="city != null">`city` = #{city},</if>
+            <if test="district != null">`district` = #{district},</if>
+            <if test="address != null">`address` = #{address},</if>
+            <if test="mobile != null">`mobile` = #{mobile},</if>
+            <if test="postscript != null">`postscript` = #{postscript},</if>
+            <if test="shipping_id != null">`shipping_id` = #{shipping_id},</if>
+            <if test="shipping_name != null">`shipping_name` = #{shipping_name},</if>
+            <if test="pay_id != null">`pay_id` = #{pay_id},</if>
+            <if test="pay_name != null">`pay_name` = #{pay_name},</if>
+            <if test="shipping_fee != null">`shipping_fee` = #{shipping_fee},</if>
+            <if test="actual_price != null">`actual_price` = #{actual_price},</if>
+            <if test="integral != null">`integral` = #{integral},</if>
+            <if test="integral_money != null">`integral_money` = #{integral_money},</if>
+            <if test="order_price != null">`order_price` = #{order_price},</if>
+            <if test="goods_price != null">`goods_price` = #{goods_price},</if>
+            <if test="add_time != null">`add_time` = #{add_time},</if>
+            <if test="confirm_time != null">`confirm_time` = #{confirm_time},</if>
+            <if test="pay_time != null">`pay_time` = #{pay_time},</if>
+            <if test="freight_price != null">`freight_price` = #{freight_price},</if>
+            <if test="coupon_id != null">`coupon_id` = #{coupon_id},</if>
+            <if test="parent_id != null">`parent_id` = #{parent_id},</if>
+            <if test="coupon_price != null">`coupon_price` = #{coupon_price},</if>
+            <if test="callback_status != null">`callback_status` = #{callback_status},</if>
+            <if test="full_cut_price != null">`full_cut_price` = #{full_cut_price}</if>
+            <if test="promoter_id != null">`promoter_id` = #{promoter_id}</if>
+            <if test="brokerage != null">`brokerage` = #{brokerage}</if>
+        </set>
+        where id = #{id}
+    </update>
+    
+    <update id="updateStatus" parameterType="com.platform.entity.OrderVo">
+        update nideshop_order
+        <set>
+            <if test="pay_status != null">`pay_status` = #{pay_status},</if>
+            <if test="order_status != null">`order_status` = #{order_status},</if>
+            <if test="shipping_status != null">`shipping_status` = #{shipping_status},</if>
+            <if test="pay_time != null">`pay_time` = #{pay_time},</if>
+            <if test="pay_id != null">`pay_id` = #{pay_id},</if>
+        </set>
+        where all_order_id = #{all_order_id}
+    </update>
+
+    <delete id="delete">
+		delete from nideshop_order where id = #{value}
+	</delete>
+
+    <delete id="deleteBatch">
+        delete from nideshop_order where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>

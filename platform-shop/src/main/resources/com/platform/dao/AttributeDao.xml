@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.platform.dao.AttributeDao">
+
+    <resultMap type="com.platform.entity.AttributeEntity" id="attributeMap">
+        <result property="id" column="id"/>
+        <result property="attributeCategoryId" column="attribute_category_id"/>
+        <result property="name" column="name"/>
+        <result property="inputType" column="input_type"/>
+        <result property="value" column="value"/>
+        <result property="sortOrder" column="sort_order"/>
+    </resultMap>
+
+    <select id="queryObject" resultType="com.platform.entity.AttributeEntity">
+		select
+			id,
+			attribute_category_id,
+			name,
+			input_type,
+			value,
+			sort_order
+		from nideshop_attribute
+		where id = #{id}
+	</select>
+
+    <select id="queryList" resultType="com.platform.entity.AttributeEntity">
+        select
+        a.id,
+        a.attribute_category_id,
+        a.name,
+        a.input_type,
+        a.value,
+        a.sort_order,
+        ac.name category_name
+        from nideshop_attribute a LEFT JOIN nideshop_attribute_category ac
+        ON a.attribute_category_id = ac.id
+        WHERE 1=1
+        <if test="name != null and name.trim() != ''">
+            AND a.name LIKE concat('%', #{name},'%')
+        </if>
+        <if test="categoryName != null and categoryName.trim() != ''">
+            AND ac.name LIKE concat('%', #{categoryName},'%')
+        </if>
+        <if test="attributeCategoryId != null and attributeCategoryId.trim() != ''">
+            AND a.attribute_category_id = #{attributeCategoryId}
+        </if>
+        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by ${sidx} ${order}
+            </when>
+            <otherwise>
+                order by a.attribute_category_id desc
+            </otherwise>
+        </choose>
+        <if test="offset != null and limit != null">
+            limit #{offset}, #{limit}
+        </if>
+    </select>
+
+    <select id="queryTotal" resultType="int">
+		select count(*) from nideshop_attribute
+		WHERE 1=1
+	</select>
+
+    <insert id="save" parameterType="com.platform.entity.AttributeEntity" useGeneratedKeys="true" keyProperty="id">
+		insert into nideshop_attribute(
+			`attribute_category_id`,
+			`name`,
+			`input_type`,
+			`value`,
+			`sort_order`)
+		values(
+			#{attributeCategoryId},
+			#{name},
+			#{inputType},
+			#{value},
+			#{sortOrder})
+	</insert>
+
+    <update id="update" parameterType="com.platform.entity.AttributeEntity">
+        update nideshop_attribute
+        <set>
+            <if test="attributeCategoryId != null">`attribute_category_id` = #{attributeCategoryId},</if>
+            <if test="name != null">`name` = #{name},</if>
+            <if test="inputType != null">`input_type` = #{inputType},</if>
+            <if test="value != null">`value` = #{value},</if>
+            <if test="sortOrder != null">`sort_order` = #{sortOrder}</if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <delete id="delete">
+		delete from nideshop_attribute where id = #{value}
+	</delete>
+
+    <delete id="deleteBatch">
+        delete from nideshop_attribute where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>

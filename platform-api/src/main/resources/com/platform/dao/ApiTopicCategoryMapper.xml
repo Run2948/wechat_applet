@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.platform.dao.ApiTopicCategoryMapper">
+
+    <!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.platform.entity.TopicCategoryVo" id="topicCategoryMap">
+        <result property="id" column="id"/>
+        <result property="title" column="title"/>
+        <result property="pic_url" column="pic_url"/>
+    </resultMap>
+
+    <select id="queryObject" resultMap="topicCategoryMap">
+		select * from nideshop_topic_category where id = #{value}
+	</select>
+
+    <select id="queryList" resultMap="topicCategoryMap">
+        select * from nideshop_topic_category
+        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by ${sidx} ${order}
+            </when>
+            <otherwise>
+                order by id desc
+            </otherwise>
+        </choose>
+        <if test="offset != null and limit != null">
+            limit #{offset}, #{limit}
+        </if>
+    </select>
+
+    <select id="queryTotal" resultType="int">
+		select count(*) from nideshop_topic_category 
+	</select>
+
+    <insert id="save" parameterType="com.platform.entity.TopicCategoryVo" useGeneratedKeys="true" keyProperty="id">
+		insert into nideshop_topic_category
+		(
+			`title`, 
+			`pic_url`
+		)
+		values
+		(
+			#{title}, 
+			#{pic_url}
+		)
+	</insert>
+
+    <update id="update" parameterType="com.platform.entity.TopicCategoryVo">
+        update nideshop_topic_category
+        <set>
+            <if test="title != null">`title` = #{title},</if>
+            <if test="pic_url != null">`pic_url` = #{pic_url}</if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <delete id="delete">
+		delete from nideshop_topic_category where id = #{value}
+	</delete>
+
+    <delete id="deleteBatch">
+        delete from nideshop_topic_category where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>

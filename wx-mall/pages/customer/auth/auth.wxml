@@ -1,0 +1,19 @@
+<!--pages/customer/auth/auth.wxml--> 
+<view class="add-address">
+    <view class="add-form">
+        <view class="form-item">
+            <input class="input" bindinput="bindinputName" placeholder="用户名称" value="{{address.username}}"/>
+        </view>
+        <view class="form-item">
+            <input class="input" bindinput="bindinputMobile" value="{{address.mobile}}" maxlength="15" type="number" placeholder="用户电话"/>
+        </view>
+        <view class="form-item">
+            <input type="idcard" class="input" bindinput="bindinputCard" value="{{address.idCard}}" maxlength="18" type="number" placeholder="身份证"/>
+        </view>  
+    </view> 
+    <view class="btns">
+        <button class="cannel" bindtap="cancelAddress">重置</button>
+        <button class="save" bindtap="saveCustomer">保存</button>
+    </view> 
+</view> 
+

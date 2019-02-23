@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>定时任务</title>
+    #parse("sys/header.html")
+</head>
+<body>
+<div id="rrapp" v-cloak>
+    <div v-show="showList">
+        <Row :gutter="16">
+            <div class="search-group">
+                <i-col span="4">
+                    <i-input v-model="q.beanName" @on-enter="query" placeholder="bean名称"/>
+                </i-col>
+                <i-button @click="query">查询</i-button>
+            </div>
+            <div class="buttons-group">
+                #if($shiro.hasPermission("sys:schedule:save"))
+                <i-button type="info" @click="add"><i class="fa fa-plus"></i>&nbsp;新增</i-button>
+                #end
+                #if($shiro.hasPermission("sys:schedule:update"))
+                <i-button type="warning" @click="update"><i class="fa fa-pencil-square-o"></i>&nbsp;修改</i-button>
+                #end
+                #if($shiro.hasPermission("sys:schedule:delete"))
+                <i-button type="error" @click="del"><i class="fa fa-trash-o"></i>&nbsp;删除</i-button>
+                #end
+                #if($shiro.hasPermission("sys:schedule:pause"))
+                <i-button type="dashed" @click="pause"><i class="fa fa-pause"></i>&nbsp;暂停</i-button>
+                #end
+                #if($shiro.hasPermission("sys:schedule:resume"))
+                <i-button type="primary" @click="resume"><i class="fa fa-play"></i>&nbsp;恢复</i-button>
+                #end
+                #if($shiro.hasPermission("sys:schedule:run"))
+                <i-button type="warning" @click="runOnce"><i class="fa fa-arrow-circle-right"></i>&nbsp;立即执行</i-button>
+                #end
+                #if($shiro.hasPermission("sys:schedule:log"))
+                <a class="btn btn-primary" style="float:right;" href="schedule_log.html">日志列表</a>
+                #end
+            </div>
+        </Row>
+        <table id="jqGrid"></table>
+        <div id="jqGridPager"></div>
+    </div>
+    <Row :gutter="16" v-show="!showList">
+        <i-col span="12">
+            <Card>
+                <p slot="title">{{title}}</p>
+                <i-form ref="formValidate" :model="schedule" :rules="ruleValidate" :label-width="80">
+                    <Form-item label="bean名称" prop="beanName">
+                        <i-input v-model="schedule.beanName" placeholder="spring bean名称，如：testTask"/>
+                    </Form-item>
+                    <Form-item label="方法名称" prop="methodName">
+                        <i-input v-model="schedule.methodName" placeholder="方法名称"/>
+                    </Form-item>
+                    <Form-item label="参数" prop="params">
+                        <i-input v-model="schedule.params" placeholder="参数"/>
+                    </Form-item>
+                    <Form-item label="cron表达式" prop="cronExpression">
+                        <i-input v-model="schedule.cronExpression" placeholder="如：0 0 12 * * ?"/>
+                    </Form-item>
+                    <Form-item label="备注" prop="remark">
+                        <i-input type="textarea" v-model="schedule.remark" placeholder="备注"/>
+                    </Form-item>
+                    <Form-item>
+                        <i-button type="primary" @click="handleSubmit('formValidate')">提交</i-button>
+                        <i-button type="warning" @click="reload" style="margin-left: 8px">返回</i-button>
+                        <i-button type="ghost" @click="handleReset('formValidate')" style="margin-left: 8px">重置
+                        </i-button>
+                    </Form-item>
+                </i-form>
+            </Card>
+        </i-col>
+        <i-col span="12">
+            <Card>
+                <p slot="title" style="text-align: center">常用Cron表达式</p>
+                <div class="panel-body">
+                    <div class="col-sm-4 control-label">0 15 10 * * ? *</div>
+                    <div class="col-sm-8 control-label">每天10点15分触发</div>
+                    <div class="col-sm-4 control-label">0 15 10 * * ? 2017</div>
+                    <div class="col-sm-8 control-label">2017年每天10点15分触发</div>
+                    <div class="col-sm-4 control-label">0 * 14 * * ?</div>
+                    <div class="col-sm-8 control-label">每天下午的 2点到2点59分每分触发</div>
+                    <div class="col-sm-4 control-label">0 0/5 14 * * ?</div>
+                    <div class="col-sm-8 control-label">每天下午的 2点到2点59分(整点开始，每隔5分触发)</div>
+                    <div class="col-sm-4 control-label">0 0/5 14,18 * * ?</div>
+                    <div class="col-sm-8 control-label">每天下午的 2点到2点59分、18点到18点59分(整点开始，每隔5分触发)</div>
+                    <div class="col-sm-4 control-label">0 0-5 14 * * ?</div>
+                    <div class="col-sm-8 control-label">每天下午的 2点到2点05分每分触发</div>
+                    <div class="col-sm-4 control-label">0 15 10 ? * 6L</div>
+                    <div class="col-sm-8 control-label">每月最后一周的星期五的10点15分触发</div>
+                    <div class="col-sm-4 control-label">0 15 10 ? * 6#3</div>
+                    <div class="col-sm-8 control-label">每月的第三周的星期五开始触发</div>
+                </div>
+            </Card>
+        </i-col>
+    </Row>
+</div>
+
+<script src="${rc.contextPath}/js/sys/schedule.js?_${date.systemTime}"></script>
+</body>
+</html>

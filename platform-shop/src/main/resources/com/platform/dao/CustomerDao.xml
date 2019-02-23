@@ -1,0 +1,280 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.platform.dao.CustomerDao">
+	<resultMap type="com.platform.entity.CustomerEntity" id="CustomerMap">
+		<result property="id" column="id"/>
+		<result property="uname" column="uname"/>
+		<result property="gender" column="gender"/>
+		<result property="birthday" column="birthday"/>
+		<result property="mobile" column="mobile"/>
+		<result property="addressUserId" column="addressUserId"/>
+		<result property="upkeepState" column="upkeepState"/>
+		<result property="customerState" column="customerState"/>
+		<result property="remarks" column="remarks"/>
+		<result property="ctime" column="ctime"/>
+		<result property="uid" column="uid"/>
+		<result property="realName" column="real_name"/>
+		<result property="mobile2" column="mobile2"/>	
+		<result property="job" column="job"/>
+		<result property="end_date" column="end_date"/>
+		<association property="addressEntity" javaType="com.platform.entity.AddressEntity">
+			<result property="id" column="aid"/>
+			<result property="userId" column="user_id"/>
+			<result property="userName" column="user_name"/>
+			<result property="telNumber" column="tel_number"/>
+			<result property="postalCode" column="postal_Code"/>
+			<result property="nationalCode" column="national_Code"/>
+			<result property="provinceName" column="province_Name"/>
+			<result property="cityName" column="city_Name"/>
+			<result property="countyName" column="county_Name"/>
+			<result property="detailInfo" column="detail_Info"/>
+			<result property="is_default" column="is_default"/>
+		</association>
+
+	</resultMap>
+
+	<select id="queryObject" resultType="com.platform.entity.CustomerEntity" parameterType="com.platform.entity.CustomerEntity">
+		select
+		id,
+		u_name as uname,
+		gender,
+		birthday,
+		mobile,
+		address_user_id as addressUserId,
+		upkeep_state as upkeepState,
+		customer_state as customerState,
+		remarks,
+		c_time as ctime,
+		u_id as uid,
+		job
+		from nideshop_customer
+		<where>
+			<if test="id != null">
+				and id = #{id}
+			</if>
+			<if test="uname != null">
+				and u_name = #{uname}
+			</if>
+			<if test="mobile != null">
+				and mobile = #{mobile}
+			</if>
+			<if test="upkeepState != null">
+				and upkeep_state = #{upkeepState}
+			</if>
+			<if test="customerState != null">
+				and customer_state = #{customerState}
+			</if>
+			<if test="uid != null">
+				and u_id = #{uid}
+			</if>
+		</where>
+
+
+	</select>
+	<select id="queryList" resultMap="CustomerMap">
+		SELECT
+		nc.id,
+		nc.u_name AS uname,
+		nc.gender,
+		nc.birthday,
+		nc.mobile,
+		nc.address_user_id AS addressUserId,
+		nc.upkeep_state as upkeepState,
+		nc.customer_state as customerState,
+		nc.remarks,
+		nc.c_time AS ctime,
+		nc.u_id AS uid,
+		nc.job,
+		na.id as aid,
+		na.user_id,
+		na.user_name,
+		na.tel_number,
+		na.postal_Code,
+		na.national_Code,
+		na.province_Name,
+		na.city_Name,
+		na.county_Name,
+		na.detail_Info,
+		na.is_default
+		FROM
+		nideshop_customer nc,
+		nideshop_address  na
+		<where>
+			nc.address_user_id = na.id
+			<if test="uid != null and uid.trim() != ''">
+				and nc.u_id=#{uid}
+			</if>
+			<if test="uname != null and uname.trim() != ''">
+				and ( nc.u_name  like concat('%',#{uname},'%') or nc.mobile like concat('%',#{uname},'%'))
+			</if>
+			<if test="customerState != null">
+				and  nc.customer_state = #{customerState}
+			</if>
+			
+		</where>
+
+		<choose>
+			<when test="sidx != null and sidx.trim() != ''">
+				order by ${sidx} ${order}
+			</when>
+			<otherwise>
+				order by id desc
+			</otherwise>
+		</choose>
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+
+	<select id="queryTotal" resultType="int">
+		select count(nc.id)
+		FROM
+		nideshop_customer nc,
+		nideshop_address  na
+		<where>
+			nc.address_user_id = na.id
+			and nc.u_id=#{uid}
+			<if test="uname != null and uname.trim() != ''">
+				and ( nc.u_name  like concat('%',#{uname},'%') or nc.mobile like concat('%',#{uname},'%'))
+			</if>
+		</where>
+	</select>
+	
+	
+	
+	<select id="query2List" resultMap="CustomerMap">
+		SELECT
+		nc.id,
+		nc.u_name AS uname,
+		nc.gender,
+		nc.birthday,
+		nc.mobile,
+		nc.address_user_id AS addressUserId,
+		nc.upkeep_state as upkeepState,
+		nc.customer_state as customerState,
+		nc.remarks,
+		nc.c_time AS ctime,
+		nc.u_id AS uid,
+		nc.job,nc.end_date,
+		na.id as aid,
+		na.user_id,
+		na.user_name,
+		na.tel_number,
+		na.postal_Code,
+		na.national_Code,
+		na.province_Name,
+		na.city_Name,
+		na.county_Name,
+		na.detail_Info,
+		na.is_default,
+		us.real_name ,
+		us.mobile mobile2
+		FROM
+		nideshop_customer nc,
+		nideshop_address  na,nideshop_user us
+		<where>
+			nc.address_user_id = na.id AND us.id = nc.u_id
+			<if test="uname != null and uname.trim() != ''">
+				and ( nc.u_name  like concat('%',#{uname},'%') or nc.mobile like concat('%',#{uname},'%'))
+			</if>
+			<if test="wcname != null and wcname.trim() != ''">
+				and ( us.real_name  like concat('%',#{wcname},'%') or us.mobile like concat('%',#{wcname},'%'))
+			</if>
+			<if test="customerState != null">
+				and  nc.customer_state = #{customerState}
+			</if>
+			<if test="ctime != null">
+				and  end_date > NOW()
+			</if>
+			
+		</where>
+
+		<choose>
+			<when test="sidx != null and sidx.trim() != ''">
+				order by ${sidx} ${order}
+			</when>
+			<otherwise>
+				order by id desc
+			</otherwise>
+		</choose>
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+
+	<select id="query2Total" resultType="int">
+		select count(nc.id)
+		FROM
+		nideshop_customer nc,
+		nideshop_address  na,nideshop_user us
+		<where>
+			nc.address_user_id = na.id AND us.id = nc.u_id
+			<if test="uname != null and uname.trim() != ''">
+				and ( nc.u_name  like concat('%',#{uname},'%') or nc.mobile like concat('%',#{uname},'%'))
+			</if>
+			<if test="wcname != null and wcname.trim() != ''">
+				and ( us.real_name  like concat('%',#{wcname},'%') or us.mobile like concat('%',#{wcname},'%'))
+			</if>
+			<if test="customerState != null">
+				and  nc.customer_state = #{customerState}
+			</if>
+			<if test="ctime != null">
+				and  end_date > NOW()
+			</if>
+		</where>
+	</select>
+
+	<insert id="save" parameterType="com.platform.entity.CustomerEntity" useGeneratedKeys="true" keyProperty="id">
+		insert into nideshop_customer(
+		`u_name`,
+		`gender`,
+		`birthday`,
+		`mobile`,
+		`address_user_id`,
+		`upkeep_state`,
+		`customer_state`,
+		`remarks`,
+		`u_id`,
+		`job`)
+		values(
+		#{uname},
+		#{gender},
+		#{birthday},
+		#{mobile},
+		#{addressUserId},
+		#{upkeepState},
+		#{customerState},
+		#{remarks},
+		#{uid},
+		#{job})
+	</insert>
+
+	<update id="update" parameterType="com.platform.entity.CustomerEntity">
+		update nideshop_customer
+		<set>
+			<if test="uname != null">`u_name` = #{uname},</if>
+			<if test="gender != null">`gender` = #{gender},</if>
+			<if test="birthday != null">`birthday` = #{birthday},</if>
+			<if test="mobile != null">`mobile` = #{mobile},</if>
+			<if test="addressUserId != null">`address_user_id` = #{addressUserId},</if>
+			<if test="upkeepState != null">`upkeep_state` = #{upkeepState},</if>
+			<if test="customerState != null">`customer_state` = #{customerState},</if>
+			<if test="remarks != null">`remarks` = #{remarks},</if>
+			<if test="uid!= null">`u_id` = #{uid},</if>
+			<if test="job!= null">`job` = #{job},</if>
+		</set>
+		where id = #{id}
+	</update>
+
+	<delete id="delete">
+		delete from nideshop_customer where id = #{value}
+	</delete>
+
+	<delete id="deleteBatch">
+		delete from nideshop_customer where id in
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+    </delete>
+</mapper>

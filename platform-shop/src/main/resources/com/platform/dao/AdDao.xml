@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.platform.dao.AdDao">
+
+    <resultMap type="com.platform.entity.AdEntity" id="adMap">
+        <result property="id" column="id"/>
+        <result property="adPositionId" column="ad_position_id"/>
+        <result property="mediaType" column="media_type"/>
+        <result property="name" column="name"/>
+        <result property="link" column="link"/>
+        <result property="imageUrl" column="image_url"/>
+        <result property="content" column="content"/>
+        <result property="endTime" column="end_time"/>
+        <result property="enabled" column="enabled"/>
+    </resultMap>
+
+    <select id="queryObject" resultType="com.platform.entity.AdEntity">
+		select
+			id,
+			ad_position_id,
+			media_type,
+			name,
+			link,
+			image_url,
+			content,
+			end_time,
+			enabled
+		from nideshop_ad
+		where id = #{id}
+	</select>
+
+    <select id="queryList" resultType="com.platform.entity.AdEntity">
+        select
+        nideshop_ad.id,
+        nideshop_ad.ad_position_id,
+        nideshop_ad.media_type,
+        nideshop_ad.name,
+        nideshop_ad.link,
+        nideshop_ad.image_url,
+        nideshop_ad.content,
+        nideshop_ad.end_time,
+        nideshop_ad.enabled,
+        nideshop_ad_position.name ad_Position_Name
+        from nideshop_ad LEFT JOIN nideshop_ad_position on nideshop_ad.ad_position_id = nideshop_ad_position.id
+        where 1=1
+        <if test="name != null and name.trim() != ''">
+            AND nideshop_ad.name LIKE concat('%',#{name},'%')
+        </if>
+        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by ${sidx} ${order}
+            </when>
+            <otherwise>
+                order by nideshop_ad.id desc
+            </otherwise>
+        </choose>
+        <if test="offset != null and limit != null">
+            limit #{offset}, #{limit}
+        </if>
+    </select>
+
+    <select id="queryTotal" resultType="int">
+		select count(*) from nideshop_ad
+		WHERE 1=1
+        <if test="name != null and name.trim() != ''">
+            AND name LIKE concat('%',#{name},'%')
+        </if>
+	</select>
+
+    <insert id="save" parameterType="com.platform.entity.AdEntity" useGeneratedKeys="true" keyProperty="id">
+		insert into nideshop_ad(
+			`ad_position_id`,
+			`media_type`,
+			`name`,
+			`link`,
+			`image_url`,
+			`content`,
+			`end_time`,
+			`enabled`)
+		values(
+			#{adPositionId},
+			#{mediaType},
+			#{name},
+			#{link},
+			#{imageUrl},
+			#{content},
+			#{endTime},
+			#{enabled})
+	</insert>
+
+    <update id="update" parameterType="com.platform.entity.AdEntity">
+        update nideshop_ad
+        <set>
+            <if test="adPositionId != null">`ad_position_id` = #{adPositionId},</if>
+            <if test="mediaType != null">`media_type` = #{mediaType},</if>
+            <if test="name != null">`name` = #{name},</if>
+            <if test="link != null">`link` = #{link},</if>
+            <if test="imageUrl != null">`image_url` = #{imageUrl},</if>
+            <if test="content != null">`content` = #{content},</if>
+            <if test="endTime != null">`end_time` = #{endTime},</if>
+            <if test="enabled != null">`enabled` = #{enabled}</if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <delete id="delete">
+		delete from nideshop_ad where id = #{value}
+	</delete>
+
+    <delete id="deleteBatch">
+        delete from nideshop_ad where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>

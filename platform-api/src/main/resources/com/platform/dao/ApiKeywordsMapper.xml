@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.platform.dao.ApiKeywordsMapper">
+
+    <!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.platform.entity.KeywordsVo" id="keywordsMap">
+        <result property="keyword" column="keyword"/>
+        <result property="is_hot" column="is_hot"/>
+        <result property="is_default" column="is_default"/>
+        <result property="is_show" column="is_show"/>
+        <result property="sort_order" column="sort_order"/>
+        <result property="scheme_url" column="scheme_url"/>
+        <result property="id" column="id"/>
+        <result property="type" column="type"/>
+    </resultMap>
+
+    <select id="queryObject" resultMap="keywordsMap">
+		select * from nideshop_keywords where keyword = #{value}
+	</select>
+
+    <select id="queryList" resultMap="keywordsMap">
+        select
+        <if test="fields != null and fields != ''">
+            ${fields}
+        </if>
+        <if test="fields == null or fields == ''">
+            *
+        </if>
+        from nideshop_keywords
+        <where>
+            <if test="keyword != null">
+                and keyword like concat('%',#{keyword},'%')
+            </if>
+        </where>
+        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by ${sidx} ${order}
+            </when>
+            <otherwise>
+                order by keyword desc
+            </otherwise>
+        </choose>
+        <if test="offset != null and limit != null">
+            limit #{offset}, #{limit}
+        </if>
+    </select>
+
+    <select id="queryTotal" resultType="int">
+		select count(*) from nideshop_keywords 
+	</select>
+
+    <insert id="save" parameterType="com.platform.entity.KeywordsVo">
+		insert into nideshop_keywords
+		(
+			`keyword`, 
+			`is_hot`, 
+			`is_default`, 
+			`is_show`, 
+			`sort_order`, 
+			`scheme_url`,
+			`id`, 
+			`type`
+		)
+		values
+		(
+			#{keyword}, 
+			#{is_hot},
+			#{is_default},
+			#{is_show},
+			#{sort_order},
+			#{scheme_url},
+			#{id}, 
+			#{type}
+		)
+	</insert>
+
+    <update id="update" parameterType="com.platform.entity.KeywordsVo">
+        update nideshop_keywords
+        <set>
+            <if test="is_hot != null">`is_hot` = #{is_hot},</if>
+            <if test="is_default != null">`is_default` = #{is_default},</if>
+            <if test="is_show != null">`is_show` = #{is_show},</if>
+            <if test="sort_order != null">`sort_order` = #{sort_order},</if>
+            <if test="scheme_url != null">`scheme_url` = #{scheme_url},</if>
+            <if test="id != null">`id` = #{id},</if>
+            <if test="type != null">`type` = #{type}</if>
+        </set>
+        where keyword = #{keyword}
+    </update>
+
+    <delete id="delete">
+		delete from nideshop_keywords where keyword = #{value}
+	</delete>
+
+    <delete id="deleteBatch">
+        delete from nideshop_keywords where keyword in
+        <foreach item="keyword" collection="array" open="(" separator="," close=")">
+            #{keyword}
+        </foreach>
+    </delete>
+    <select id="hotKeywordList" resultType="map">
+		select distinct keyword,is_hot from nideshop_keywords where 1 = 1 limit 0,10
+	</select>
+</mapper>

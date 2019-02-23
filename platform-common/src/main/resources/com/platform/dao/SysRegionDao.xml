@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.platform.dao.SysRegionDao">
+
+    <!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.platform.entity.SysRegionEntity" id="regionMap">
+        <result property="id" column="id"/>
+        <result property="parentId" column="parent_id"/>
+        <result property="name" column="name"/>
+        <result property="type" column="type"/>
+        <result property="agencyId" column="agency_id"/>
+    </resultMap>
+
+    <select id="queryObject" resultMap="regionMap">
+		select * from sys_region where id = #{value}
+	</select>
+
+    <select id="queryList" resultMap="regionMap">
+        select
+        a.id,
+        a.parent_Id,
+        a.name,
+        a.type,
+        a.agency_Id,
+        b.name parent_Name
+        from sys_region a LEFT JOIN sys_region b on a.parent_id=b.id
+        <where>
+            <if test="name != null and name.trim() != ''">
+                AND a.name LIKE concat('%',#{name},'%')
+            </if>
+            <if test="parentName != null and parentName.trim() != ''">
+                AND b.name LIKE concat('%',#{parentName},'%')
+            </if>
+            <if test="type != null and type != ''">
+                AND a.type = #{type}
+            </if>
+        </where>
+        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by ${sidx} ${order}
+            </when>
+            <otherwise>
+                order by a.parent_Id
+            </otherwise>
+        </choose>
+        <if test="offset != null and limit != null">
+            limit #{offset}, #{limit}
+        </if>
+    </select>
+
+    <select id="queryTotal" resultType="int">
+        select count(*)
+        from sys_region a LEFT JOIN sys_region b on a.parent_id=b.id
+        <where>
+            <if test="name != null and name.trim() != ''">
+                AND a.name LIKE concat('%',#{name},'%')
+            </if>
+            <if test="parentName != null and parentName.trim() != ''">
+                AND b.name LIKE concat('%',#{parentName},'%')
+            </if>
+            <if test="type != null and type != ''">
+                AND a.type = #{type}
+            </if>
+        </where>
+    </select>
+
+    <insert id="save" parameterType="com.platform.entity.SysRegionEntity" useGeneratedKeys="true" keyProperty="id">
+		insert into sys_region
+		(
+			`parent_id`, 
+			`name`, 
+			`type`, 
+			`agency_id`
+		)
+		values
+		(
+			#{parentId},
+			#{name}, 
+			#{type}, 
+			#{agencyId}
+		)
+	</insert>
+
+    <update id="update" parameterType="com.platform.entity.SysRegionEntity">
+        update sys_region
+        <set>
+            <if test="parentId != null">`parent_id` = #{parentId},</if>
+            <if test="name != null">`name` = #{name},</if>
+            <if test="type != null">`type` = #{type},</if>
+            <if test="agencyId != null">`agency_id` = #{agencyId}</if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <delete id="delete">
+		delete from sys_region where id = #{value}
+	</delete>
+
+    <delete id="deleteBatch">
+        delete from sys_region where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>

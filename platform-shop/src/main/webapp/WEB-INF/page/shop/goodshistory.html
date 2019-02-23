@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+    #parse("sys/header.html")
+</head>
+<body>
+<div id="rrapp" v-cloak>
+    <div v-show="showList">
+        <Row :gutter="16">
+            <div class="search-group">
+                <i-col span="4">
+                    <i-input v-model="q.name" @on-enter="query" placeholder="名称"/>
+                </i-col>
+                <i-button @click="query">查询</i-button>
+            </div>
+            <div class="buttons-group">
+                #if($shiro.hasPermission("goods:back"))
+                <i-button type="warning" @click="back"><i class="fa fa-pencil-square-o"></i>&nbsp;恢复</i-button>
+                #end
+            </div>
+        </Row>
+        <table id="jqGrid"></table>
+        <div id="jqGridPager"></div>
+    </div>
+
+</div>
+
+<script src="${rc.contextPath}/js/shop/goodshistory.js?_${date.systemTime}"></script>
+</body>
+</html>

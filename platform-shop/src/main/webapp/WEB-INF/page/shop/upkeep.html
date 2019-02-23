@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+    #parse("sys/header.html")
+</head>
+<body>
+<div id="rrapp" v-cloak>
+    <div v-show="showList">
+        <Row :gutter="16">
+            <div class="search-group">
+              <!--  <i-col span="4">
+                    <i-input v-model="q.uname" @on-enter="query" placeholder="姓名或手机号码"/>
+                </i-col>-->
+               <!-- <i-col span="4">
+                    <i-input v-model="q.telNumber" @on-enter="query" placeholder="联系电话"/>
+                </i-col>-->
+               <!-- <i-button @click="query">查询</i-button>-->
+            </div>
+            <div class="buttons-group">
+             <!--   <i-button type="primary" @click="upkeepList"><i class="fa fa-map"></i>&nbsp;维护历史</i-button>
+                <i-button type="error" @click="del"><i class="fa fa-trash-o"></i>&nbsp;删除</i-button>-->
+            </div>
+        </Row>
+        <table id="jqGrid"></table>
+        <div id="jqGridPager"></div>
+    </div>
+</div>
+
+<script src="${rc.contextPath}/js/shop/upkeep.js?_${date.systemTime}"></script>
+</body>
+</html>

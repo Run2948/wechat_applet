@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>代码生成器</title>
+    #parse("sys/header.html")
+</head>
+<body>
+<div id="rrapp">
+    <div class="grid-btn">
+        <div class="search-group">
+            <i-col span="4">
+                <i-input v-model="q.tableName" @on-enter="query" placeholder="表名"/>
+            </i-col>
+            <i-button @click="query">查询</i-button>
+            <i-button @click="reloadSearch">重置</i-button>
+        </div>
+        <div class="buttons-group">
+            <i-button type="primary" @click="generator"><i class="fa fa-file-code-o"></i>&nbsp;生成代码</i-button>
+        </div>
+    </div>
+    <table id="jqGrid"></table>
+    <div id="jqGridPager"></div>
+</div>
+
+<script src="${rc.contextPath}/js/sys/generator.js?_${date.systemTime}"></script>
+</body>
+</html>

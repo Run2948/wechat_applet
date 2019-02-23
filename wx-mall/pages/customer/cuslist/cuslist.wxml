@@ -1,0 +1,60 @@
+<!--pages/customer/cuslist/cuslist.wxml-->
+<view class="container"> 
+<view class="search-header">
+    <view class="input-box">
+      <image class="icon" src="http://nos.netease.com/mailpub/hxm/yanxuan-wap/p/20150730/style/img/icon-normal/search2-2fb94833aa.png"></image>
+      <input name="input" class="keywrod" value="{{q.uname}}" confirm-type="search" bindinput="inputChange" bindconfirm="onKeywordConfirm" confirm-type="search" placeholder="手机号或客户名" />
+      <image class="del" wx:if="{{q.uname}}" bindtap="clearKeyword" src="http://nos.netease.com/mailpub/hxm/yanxuan-wap/p/20150730/style/img/icon-normal/clearIpt-f71b83e3c2.png"></image>
+    </view>
+    <view class='btnBox'>
+      <button class='commoncol {{q.upkeepState==2?"selcolor":"wselcolor"}}' bindtap='selWhId1'>已维护</button>
+        <button class='commoncol {{q.upkeepState==1?"selcolor":"wselcolor"}}' bindtap='selWhId'>未维护</button>
+    </view>
+    <view class='selValue'>
+      <text class='commoncol wselcolor' >客户数量：<text class='num'>{{customerCount}}</text></text>
+      <text class='commoncol wselcolor' >已维护数量：<text class='num'>{{customerYcount}}</text></text>
+      <text class='commoncol wselcolor' >未维护数量：<text class='num'>{{customerWcount}}</text></text>
+    </view> 
+  </view>
+  <view class="cus-list">
+    <view class="cusBox" wx:for="{{orderList}}" wx:key="{{item.id}}" style="background: url(http://pic2.51shop.ink/111111.png); background-size:cover;"> 
+      <view class='common'>
+        <view class='cusli'>
+           <view class="li">客户名：{{item.uname?item.uname:''}}</view>
+           <view class="li">电话：{{item.mobile?item.mobile:''}}</view>  
+        </view>
+        <view class='cusli'>
+           <view class="li">生日：{{item.birthday?item.birthday:''}}</view> 
+           <view class="li">性别：{{item.gender==1?'男':'女'}}</view>        
+        </view> 
+      </view> 
+      <view class='cusdb'>
+        <view class='cusli_n'>
+            <view class="li">地址：{{item.addressVo.full_region?item.addressVo.full_region:''}}{{item.addressVo.detailInfo?item.addressVo.detailInfo:''}}</view>
+            <navigator style='display: inline-block;' url="/pages/customer/add/add?id={{item.id}}&v=1">
+               <view class="li" style="color:#bdb045">编辑</view>
+            </navigator>        
+        </view> 
+      </view>
+      <image class="icon_ywh" src="../../../static/images/cus_ywh.png" wx:if="{{item.upkeepState==2}}"></image>
+    </view>
+  </view>
+  <view wx:if="{{orderList.length>5}}" class="loadmore">
+      <block wx:if="{{nomore}}">
+        <text>{{nomoreText}}</text>
+      </block>
+      <block wx:else>
+        <text class="iconfont icon-loading loading" space="nbsp"></text>
+        <text> {{loadmoreText}}</text>
+      </block>
+    </view>
+    <view class='addsty'>
+       <navigator url="/pages/customer/add/add?v=1">新增客户</navigator>
+    </view>
+  <view class="empty-view" wx:if="{{ orderList.length <= 0 }}">
+      <image class="icon" src="../../../static/images/allorder.png"></image>
+      <text class="text">无客户信息</text>
+    </view>
+</view>
+
+

@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>51软件工作室综合管理平台</title>
+    <!-- Tell the browser to be responsive to screen width -->
+    <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+    <link rel="shortcut icon" href="statics/img/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="statics/css/bootstrap.min.css">
+    <link rel="stylesheet" href="statics/css/font-awesome.min.css">
+    <link rel="stylesheet" href="statics/css/style.css">
+    <link rel="stylesheet" href="statics/css/login.css">
+    <link rel="stylesheet" href="statics/css/main.css">
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <link rel="stylesheet" href="statics/css/iview.css">
+    <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+    <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    <script>
+        var _hmt = _hmt || [];
+        (function() {
+            var hm = document.createElement("script");
+            hm.src = "https://hm.baidu.com/hm.js?4656e49e8efa9f2ad6868ea26fb8984c";
+            var s = document.getElementsByTagName("script")[0];
+            s.parentNode.insertBefore(hm, s);
+        })();
+    </script>
+</head>
+<!-- ADD THE CLASS layout-boxed TO GET A BOXED LAYOUT -->
+<body class="fixed-sidebar full-height-layout gray-bg" style="overflow:hidden">
+<div id="mainApp" v-cloak>
+    <!--左侧导航开始-->
+    <nav class="navbar-default navbar-static-side" role="navigation">
+        <div class="nav-close"><i class="fa fa-times-circle"></i>
+        </div>
+        <div class="sidebar-collapse">
+            <ul class="nav" id="side-menu">
+                <li class="nav-header">
+                    <div class="dropdown profile-element"
+                         style="text-align: center;font-size: 18px;font-weight: 600;color: white;">
+                        综合管理平台
+                    </div>
+                    <div class="logo-element">大平台
+                    </div>
+                </li>
+                <menu-item :item="item" v-for="item in menuList"></menu-item>
+            </ul>
+        </div>
+    </nav>
+    <!--左侧导航结束-->
+    <!--右侧部分开始-->
+    <div id="page-wrapper" class="gray-bg dashbard-1">
+        <div class="border-bottom">
+            <nav class="navbar navbar-static-top" role="navigation" style="margin-bottom: 0">
+                <div class="navbar-header"><a class="navbar-minimalize minimalize-styl-2 btn btn-primary " href="#"><i
+                        class="fa fa-bars"></i> </a>
+                    <form role="search" class="navbar-form-custom" method="post" action="#">
+                        <div class="form-group">
+                            <input type="text" placeholder="请输入您需要查找的内容 …" class="form-control" name="top-search"
+                                   id="top-search">
+                        </div>
+                    </form>
+                </div>
+                <ul class="nav navbar-top-links navbar-right">
+
+                    <li class="dropdown">
+                        <a href="javascript:;" @click="toggleFullScreen"><i class="fa fa-arrows-alt"></i> &nbsp;全屏</a>
+                    </li>
+                    <!--<li><a href="javascript:;" @click="updatePassword"><i class="fa fa-lock"></i> &nbsp;修改密码</a></li>-->
+                    <li class="dropdown hidden-xs">
+                        <a class="right-sidebar-toggle" aria-expanded="false">
+                            <i class="fa fa-tasks"></i> 主题
+                        </a>
+                    </li>
+                    <li><a @click="logout"><i class="fa fa fa-sign-out"></i>退出</a></li>
+                </ul>
+            </nav>
+        </div>
+        <div class="content-tabs">
+            <button class="roll-nav roll-left J_tabLeft"><i class="fa fa-backward"></i>
+            </button>
+            <nav class="page-tabs J_menuTabs">
+                <div class="page-tabs-content">
+                    <a href="javascript:;" class="active J_menuTab" data-id="main">首页</a>
+                </div>
+            </nav>
+            <button class="roll-nav roll-right J_tabRight"><i class="fa fa-forward"></i>
+            </button>
+            <div class="btn-group roll-nav roll-right">
+                <button class="dropdown J_tabClose" data-toggle="dropdown">关闭操作<span class="caret"></span>
+
+                </button>
+                <ul role="menu" class="dropdown-menu dropdown-menu-right">
+                    <li class="J_tabShowActive"><a>定位当前选项卡</a></li>
+                    <li class="divider"></li>
+                    <li class="J_tabCloseAll"><a>关闭全部选项卡</a></li>
+                    <li class="J_tabCloseOther"><a>关闭其他选项卡</a>
+                    </li>
+                </ul>
+            </div>
+            <a class="roll-nav roll-right J_tabRefresh"><i class="fa fa-refresh"></i> &nbsp;刷新</a>
+        </div>
+        <div class="J_mainContent" id="content-main">
+            <iframe class="J_iframe" name="iframe0" width="100%" height="100%" src="sys/main.html" frameborder="0"
+                    data-id="main" seamless></iframe>
+        </div>
+        <div class="footer">
+            <div class="pull-right">&copy; 2018~2020 <a href="http://shop.xfshequ.cn/" target="_blank">上海51软件工作室</a>
+            </div>
+        </div>
+    </div>
+    <!--右侧部分结束-->
+    <!--右侧边栏开始-->
+    <div id="right-sidebar">
+        <div class="sidebar-container">
+
+            <ul class="nav nav-tabs navs-3">
+
+                <li class="active">
+                    <a data-toggle="tab" href="#tab-1">
+                        <i class="fa fa-gear"></i> 主题
+                    </a>
+                </li>
+                <li class="">
+                    <a data-toggle="tab" href="#tab-2">通知</a>
+                </li>
+            </ul>
+
+            <div class="tab-content">
+                <div id="tab-1" class="tab-pane active">
+                    <div class="sidebar-title">
+                        <h3><i class="fa fa-comments-o"></i> 主题设置</h3>
+                        <small><i class="fa fa-tim"></i> 你可以从这里选择和预览主题的布局和样式，这些设置会被保存在本地，下次打开的时候会直接应用这些设置。</small>
+                    </div>
+                    <div class="skin-setttings">
+                        <div class="title">主题设置</div>
+                        <div class="setings-item">
+                            <span>收起左侧菜单</span>
+                            <div class="switch">
+                                <div class="onoffswitch">
+                                    <input type="checkbox" name="collapsemenu" class="onoffswitch-checkbox"
+                                           id="collapsemenu">
+                                    <label class="onoffswitch-label" for="collapsemenu">
+                                        <span class="onoffswitch-inner"></span>
+                                        <span class="onoffswitch-switch"></span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="setings-item">
+                            <span>固定顶部</span>
+
+                            <div class="switch">
+                                <div class="onoffswitch">
+                                    <input type="checkbox" name="fixednavbar" class="onoffswitch-checkbox"
+                                           id="fixednavbar">
+                                    <label class="onoffswitch-label" for="fixednavbar">
+                                        <span class="onoffswitch-inner"></span>
+                                        <span class="onoffswitch-switch"></span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="setings-item">
+                            <span>固定宽度</span>
+
+                            <div class="switch">
+                                <div class="onoffswitch">
+                                    <input type="checkbox" name="boxedlayout" class="onoffswitch-checkbox"
+                                           id="boxedlayout">
+                                    <label class="onoffswitch-label" for="boxedlayout">
+                                        <span class="onoffswitch-inner"></span>
+                                        <span class="onoffswitch-switch"></span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="title">皮肤选择</div>
+                        <div class="setings-item default-skin nb">
+                                <span class="skin-name ">
+                         <a href="#" class="s-skin-0">
+                             默认皮肤
+                         </a>
+                    </span>
+                        </div>
+                        <div class="setings-item blue-skin nb">
+                                <span class="skin-name ">
+                        <a href="#" class="s-skin-1">
+                            蓝色主题
+                        </a>
+                    </span>
+                        </div>
+                        <div class="setings-item yellow-skin nb">
+                                <span class="skin-name ">
+                        <a href="#" class="s-skin-3">
+                            黄色/紫色主题
+                        </a>
+                    </span>
+                        </div>
+                    </div>
+                </div>
+                <div id="tab-2" class="tab-pane">
+
+                    <div class="sidebar-title">
+                        <h3><i class="fa fa-comments-o"></i> 最新通知</h3>
+                        <small><i class="fa fa-tim"></i> 您当前有1条未读信息</small>
+                    </div>
+
+                    <div>
+                        <div class="sidebar-message">
+                            <a href="#">
+                                <div class="pull-left text-center">
+
+                                    <div class="m-t-xs">
+                                        <i class="fa fa-star text-warning"></i>
+                                        <i class="fa fa-star text-warning"></i>
+                                    </div>
+                                </div>
+                                <div class="media-body">
+
+                                    这是一条测试消息
+                                    <br>
+                                    <small class="text-muted">今天 4:21</small>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <!--右侧边栏结束-->
+    <!-- 修改密码 -->
+    <div id="passwordLayer" style="display: none;">
+        <form class="form-horizontal" style="width: 350px;">
+            <div class="form-group">
+                <div class="form-group">
+                    <div class="col-sm-2 control-label">账号</div>
+                    <span class="label label-success" style="vertical-align: bottom;">{{user.username}}</span>
+                </div>
+                <div class="form-group">
+                    <div class="col-sm-2 control-label">原密码</div>
+                    <div class="col-sm-10">
+                        <i-input type="password" v-model="password" placeholder="原密码"/>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-sm-2 control-label">新密码</div>
+                    <div class="col-sm-10">
+                        <i-input v-model="newPassword" placeholder="新密码"/>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+</body>
+
+<body class="hold-transition skin-blue sidebar-mini">
+
+<script src="statics/libs/jquery.min.js"></script>
+<script src="statics/libs/vue.min.js"></script>
+<script src="statics/libs/iview.min.js"></script>
+<script src="statics/libs/bootstrap.min.js"></script>
+<script src="statics/plugins/layer/layer.js"></script>
+<script src="statics/libs/contabs.js"></script>
+<script src="statics/libs/content.js"></script>
+<script src="statics/libs/hplus.js"></script>
+<script src="statics/plugins/metisMenu/jquery.metisMenu.js"></script>
+<script src="statics/plugins/slimscroll/jquery.slimscroll.min.js"></script>
+<script src="js/common.js"></script>
+<script>
+    //生成菜单
+    var menuItem = Vue.extend({
+        name: 'menu-item',
+        props: {item: {}},
+        template: [
+            '<li>',
+            '<a v-if="item.type === 0" href="#">',
+            '<i v-if="item.icon != null" :class="item.icon"></i>',
+            '<span class="nav-label">{{item.name}}</span>',
+            '<span class="fa arrow"></span>',
+            '</a>',
+            '<ul v-if="item.type === 0" class="nav nav-second-level">',
+            '<menu-item :item="item" v-for="item in item.list"></menu-item>',
+            '</ul>',
+            '<a v-if="item.type === 1" class="J_menuItem" :href="item.url"><i :class="item.icon"></i>{{item.name}}</a>',
+            '</li>'
+        ].join('')
+    });
+    //注册菜单组件
+    Vue.component('menuItem', menuItem);
+
+    var vm = new Vue({
+        el: '#mainApp',
+        data: {
+            password: '',
+            newPassword: '',
+            menuList: {},
+            user: {}
+        },
+        methods: {
+            getMenuList: function (event) {
+                $.getJSON("sys/menu/user?_" + $.now(), function (r) {
+                    vm.menuList = r.menuList;
+                });
+            },
+            getUser: function () {
+                $.getJSON("sys/user/info?_" + $.now(), function (r) {
+                    vm.user = r.user;
+                });
+            },
+            updatePassword: function () {
+                openWindow({
+                    title: "修改密码",
+                    area: ['350px', '280px'],
+                    content: jQuery("#passwordLayer"),
+                    btn: ['修改', '取消'],
+                    btn1: function (index) {
+                        var data = "password=" + vm.password + "&newPassword=" + vm.newPassword;
+                        $.ajax({
+                            type: "POST",
+                            url: "sys/user/password",
+                            data: data,
+                            dataType: "json",
+                            success: function (result) {
+                                if (result.code == 0) {
+                                    layer.close(index);
+                                    layer.alert('修改成功', function (index) {
+                                        location.reload();
+                                    });
+                                } else {
+                                    layer.alert(result.msg);
+                                }
+                            }
+                        });
+                    }
+                });
+            },
+            toggleFullScreen: function () {
+                if (!document.fullscreenElement && // alternative standard method
+                    !document.mozFullScreenElement && !document.webkitFullscreenElement) {// current working methods
+                    if (document.documentElement.requestFullscreen) {
+                        document.documentElement.requestFullscreen();
+                    } else if (document.documentElement.mozRequestFullScreen) {
+                        document.documentElement.mozRequestFullScreen();
+                    } else if (document.documentElement.webkitRequestFullscreen) {
+                        document.documentElement.webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT);
+                    }
+                } else {
+                    if (document.cancelFullScreen) {
+                        document.cancelFullScreen();
+                    } else if (document.mozCancelFullScreen) {
+                        document.mozCancelFullScreen();
+                    } else if (document.webkitCancelFullScreen) {
+                        document.webkitCancelFullScreen();
+                    }
+                }
+            },
+            logout: function () {
+                confirm('注：您确定要安全退出本次登录吗？', function () {
+                    dialogLoading(true);
+                    setTimeout(function () {
+                        toUrl('logout?_' + $.now());
+                    }, 500);
+                });
+            },
+            love: function () {
+                setTimeout(function () {
+                    openWindow({
+                        type: 2,
+                        title: '腾讯云为数百万企业和开发者提供安全、稳定的云服务器、云数据库、CDN等云服务',
+                        closeBtn: 2,
+                        content: ['https://cloud.tencent.com/redirect.php?redirect=1005&cps_key=30280f92fc381dfc9e1d9e0e23d25a18']
+                    });
+                }, 3000)
+            }
+        },
+        created: function () {
+            this.getUser();
+            this.getMenuList();
+            // this.love();
+        },
+        updated: function () {
+            // MetsiMenu
+            $('#side-menu').metisMenu();
+
+            //通过遍历给菜单项加上data-index属性
+            $(".J_menuItem").each(function (index) {
+                if (!$(this).attr('data-index')) {
+                    $(this).attr('data-index', index);
+                }
+            });
+
+            $('.J_menuItem').on('click', menuItem);
+
+            function menuItem() {
+                // 获取标识数据
+                var dataUrl = $(this).attr('href'),
+                    dataIndex = $(this).data('index'),
+                    menuName = $.trim($(this).text()),
+                    flag = true;
+                if (dataUrl == undefined || $.trim(dataUrl).length == 0) return false;
+
+                // 选项卡菜单已存在
+                $('.J_menuTab').each(function () {
+                    if ($(this).data('id') == dataUrl) {
+                        if (!$(this).hasClass('active')) {
+                            $(this).addClass('active').siblings('.J_menuTab').removeClass('active');
+                            scrollToTab(this);
+                            // 显示tab对应的内容区
+                            $('.J_mainContent .J_iframe').each(function () {
+                                if ($(this).data('id') == dataUrl) {
+                                    $(this).show().siblings('.J_iframe').hide();
+                                    return false;
+                                }
+                            });
+                        }
+                        flag = false;
+                        return false;
+                    }
+                });
+
+                // 选项卡菜单不存在
+                if (flag) {
+                    var str = '<a href="javascript:;" class="active J_menuTab" data-id="' + dataUrl + '">' + menuName + ' <i class="fa fa-times-circle"></i></a>';
+                    $('.J_menuTab').removeClass('active');
+
+                    // 添加选项卡对应的iframe
+                    var str1 = '<iframe class="J_iframe" name="iframe' + dataIndex + '" width="100%" height="100%" src="' + dataUrl + '" frameborder="0" data-id="' + dataUrl + '" seamless></iframe>';
+                    $('.J_mainContent').find('iframe.J_iframe').hide().parents('.J_mainContent').append(str1);
+
+                    // 显示loading提示
+                    var loading = layer.load();
+
+                    $('.J_mainContent iframe:visible').load(function () {
+                        //iframe加载完成后隐藏loading提示
+                        layer.close(loading);
+                    });
+                    // 添加选项卡
+                    $('.J_menuTabs .page-tabs-content').append(str);
+                    scrollToTab($('.J_menuTab.active'));
+                }
+                return false;
+            }
+
+            //滚动到指定选项卡
+            function scrollToTab(element) {
+                var marginLeftVal = calSumWidth($(element).prevAll()),
+                    marginRightVal = calSumWidth($(element).nextAll());
+                // 可视区域非tab宽度
+                var tabOuterWidth = calSumWidth($(".content-tabs").children().not(".J_menuTabs"));
+                //可视区域tab宽度
+                var visibleWidth = $(".content-tabs").outerWidth(true) - tabOuterWidth;
+                //实际滚动宽度
+                var scrollVal = 0;
+                if ($(".page-tabs-content").outerWidth() < visibleWidth) {
+                    scrollVal = 0;
+                } else if (marginRightVal <= (visibleWidth - $(element).outerWidth(true) - $(element).next().outerWidth(true))) {
+                    if ((visibleWidth - $(element).next().outerWidth(true)) > marginRightVal) {
+                        scrollVal = marginLeftVal;
+                        var tabElement = element;
+                        while ((scrollVal - $(tabElement).outerWidth()) > ($(".page-tabs-content").outerWidth() - visibleWidth)) {
+                            scrollVal -= $(tabElement).prev().outerWidth();
+                            tabElement = $(tabElement).prev();
+                        }
+                    }
+                } else if (marginLeftVal > (visibleWidth - $(element).outerWidth(true) - $(element).prev().outerWidth(true))) {
+                    scrollVal = marginLeftVal - $(element).prev().outerWidth(true);
+                }
+                $('.page-tabs-content').animate({
+                    marginLeft: 0 - scrollVal + 'px'
+                }, "fast");
+            }
+
+            //计算元素集合的总宽度
+            function calSumWidth(elements) {
+                var width = 0;
+                $(elements).each(function () {
+                    width += $(this).outerWidth(true);
+                });
+                return width;
+            }
+        }
+    });
+</script>
+</body>
+</html>

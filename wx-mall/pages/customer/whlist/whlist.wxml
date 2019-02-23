@@ -1,0 +1,58 @@
+<!--pages/customer/whlist/whlist.wxml-->
+<view class="container"> 
+<view class="search-header">
+    <view class="input-box">
+      <image class="icon" src="http://nos.netease.com/mailpub/hxm/yanxuan-wap/p/20150730/style/img/icon-normal/search2-2fb94833aa.png"></image>
+      <input name="input" class="keywrod" value="{{q.uname}}" confirm-type="search" bindinput="inputChange" bindconfirm="onKeywordConfirm" confirm-type="search" placeholder="手机号或客户名" />
+      <image class="del" wx:if="{{q.uname}}" bindtap="clearKeyword" src="http://nos.netease.com/mailpub/hxm/yanxuan-wap/p/20150730/style/img/icon-normal/clearIpt-f71b83e3c2.png"></image>
+    </view>
+     <view class='btnBox'>
+      <button class='commoncol {{q.customerState==1?"selcolor":"wselcolor"}}' bindtap='selKhId'>客户</button>
+        <button class='commoncol {{q.customerState==2?"selcolor":"wselcolor"}}' bindtap='selKhId1'>准客户</button>
+    </view>
+    <!-- <view class='selValue'>
+      <button class='commoncol {{q.customerState==1?"selcolor":"wselcolor"}}' bindtap='selKhId'>客户</button>
+      <button class='commoncol {{q.customerState==2?"selcolor":"wselcolor"}}' bindtap='selKhId1'>准客户</button> 
+    </view>  -->
+  </view>
+  <view class="cus-list">
+    <view class="cusBox" wx:for="{{whList}}" wx:key="{{item.id}}">
+      <navigator url="/pages/customer/list/list?id={{item.id}}">
+      <view class='common' style="background: url(http://pic2.51shop.ink/pic1.jpg); background-size:cover;">
+        <view class='cusli'>
+           <view class="li">客户名：{{item.uname?item.uname:''}}</view>
+           <view class="li">性别：{{item.gender==1?'男':'女'}}</view>  
+           <view class="li" style='{{item.upkeepVoList.length>0?"height:50rpx;line-height:50rpx;":"line-height:35px;"}}'></view>     
+        </view>
+        <view class='cusli'>
+           <view class="li">生日：{{item.birthday?item.birthday:''}}</view>
+           <view class="li">电话：{{item.mobile?item.mobile:''}}</view> 
+           <view class="li" style='{{item.upkeepVoList.length>0?"height:50rpx;line-height:50rpx;":"line-height:35px;"}}'>
+             <view data-khId="{{item.id}}" data-state="{{item.customerState}}" catchtap='tzPage'>
+               <text class='mleft'>新增</text>
+             </view>
+           </view>        
+        </view> 
+      </view>  
+        <view class="cusinfo common" wx:for="{{item.upkeepVoList}}"  wx:for-item="iitem" wx:key="{{iitem.id}}">
+          <view class="li">{{iitem.utime?iitem.utime:''}}</view> 
+          <view class="li">{{iitem.ctype?iitem.ctype:''}}</view>
+        </view>
+      </navigator>
+    </view> 
+  </view>
+  <view wx:if="{{whList.length>8}}" class="loadmore">
+      <block wx:if="{{nomore}}">
+        <text>{{nomoreText}}</text>
+      </block>
+      <block wx:else>
+        <text class="iconfont icon-loading loading" space="nbsp"></text>
+        <text> {{loadmoreText}}</text>
+      </block>
+    </view>
+  <view class="empty-view" wx:if="{{ whList.length <= 0 }}">
+      <image class="icon" src="../../../static/images/allorder.png"></image>
+      <text class="text">无客户维护信息</text>
+  </view>
+</view>
+

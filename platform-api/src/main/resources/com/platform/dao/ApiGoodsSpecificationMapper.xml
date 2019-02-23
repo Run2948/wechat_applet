@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.platform.dao.ApiGoodsSpecificationMapper">
+
+    <!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.platform.entity.GoodsSpecificationVo" id="goodsSpecificationMap">
+        <result property="id" column="id"/>
+        <result property="goods_id" column="goods_id"/>
+        <result property="specification_id" column="specification_id"/>
+        <result property="value" column="value"/>
+        <result property="pic_url" column="pic_url"/>
+        <result property="name" column="name"/>
+    </resultMap>
+
+    <select id="queryObject" resultMap="goodsSpecificationMap">
+		select * from nideshop_goods_specification where id = #{value}
+	</select>
+
+    <select id="queryList" resultMap="goodsSpecificationMap">
+        select
+        <if test="fields != null and fields != ''">
+            ${fields}
+        </if>
+        <if test="fields == null or fields == ''">
+            gs.*
+        </if>
+        from nideshop_goods_specification gs
+        <if test="specification == true">
+            inner join nideshop_specification s on gs.specification_id= s.id
+        </if>
+        <where>
+            <if test="goods_id != null">
+                and gs.goods_id = #{goods_id}
+            </if>
+            <if test="ids != null">
+                 and  gs.id in
+                <foreach item="id" collection="ids" open="(" separator="," close=")">
+                    #{id}
+                </foreach>
+            </if>
+        </where>
+        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by ${sidx} ${order}
+            </when>
+            <otherwise>
+                order by gs.id desc
+            </otherwise>
+        </choose>
+        <if test="offset != null and limit != null">
+            limit #{offset}, #{limit}
+        </if>
+    </select>
+
+    <select id="queryTotal" resultType="int">
+		select count(*) from nideshop_goods_specification 
+	</select>
+
+    <insert id="save" parameterType="com.platform.entity.GoodsSpecificationVo" useGeneratedKeys="true" keyProperty="id">
+		insert into nideshop_goods_specification
+		(
+			`goods_id`, 
+			`specification_id`, 
+			`value`, 
+			`pic_url`
+		)
+		values
+		(
+			#{goods_id}, 
+			#{specification_id},
+			#{value}, 
+			#{pic_url}
+		)
+	</insert>
+
+    <update id="update" parameterType="com.platform.entity.GoodsSpecificationVo">
+        update nideshop_goods_specification
+        <set>
+            <if test="goods_id != null">`goods_id` = #{goods_id},</if>
+            <if test="specification_id != null">`specification_id` = #{specification_id},</if>
+            <if test="value != null">`value` = #{value},</if>
+            <if test="pic_url != null">`pic_url` = #{pic_url}</if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <delete id="delete">
+		delete from nideshop_goods_specification where id = #{value}
+	</delete>
+
+    <delete id="deleteBatch">
+        delete from nideshop_goods_specification where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>

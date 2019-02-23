@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.platform.dao.ApiCouponMapper">
+
+    <!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.platform.entity.CouponVo" id="couponMap">
+        <result property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="type_money" column="type_money"/>
+        <result property="send_type" column="send_type"/>
+        <result property="min_amount" column="min_amount"/>
+        <result property="max_amount" column="max_amount"/>
+        <result property="send_start_date" column="send_start_date"/>
+        <result property="send_end_date" column="send_end_date"/>
+        <result property="use_start_date" column="use_start_date"/>
+        <result property="use_end_date" column="use_end_date"/>
+        <result property="min_goods_amount" column="min_goods_amount"/>
+        <result property="coupon_txt" column="coupon_txt"/>
+        <result property="user_id" column="user_id"/>
+        <result property="coupon_number" column="coupon_number"/>
+        <result property="min_transmit_num" column="min_transmit_num"/>
+        <result property="user_coupon_id" column="user_coupon_id"/>
+        <result property="coupon_status" column="coupon_status"/>
+    </resultMap>
+
+    <select id="queryObject" resultMap="couponMap">
+		select * from nideshop_coupon where id = #{value}
+	</select>
+
+    <select id="queryList" resultMap="couponMap">
+        select * from nideshop_coupon a
+        where 1 = 1
+        <if test="send_types != null">
+            and send_type in
+            <foreach item="item" collection="send_types" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+        <if test="enabled != null and enabled == true">
+            and a.use_end_date >= now()
+            and now() >= a.use_start_date
+        </if>
+        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by ${sidx} ${order}
+            </when>
+            <otherwise>
+                order by a.id desc
+            </otherwise>
+        </choose>
+    </select>
+
+    <insert id="save" parameterType="com.platform.entity.CouponVo" useGeneratedKeys="true" keyProperty="id">
+		insert into nideshop_coupon
+		(
+			`name`, 
+			`type_money`, 
+			`send_type`, 
+			`min_amount`, 
+			`max_amount`, 
+			`send_start_date`, 
+			`send_end_date`, 
+			`use_start_date`, 
+			`use_end_date`, 
+			`min_goods_amount`
+		)
+		values
+		(
+			#{name}, 
+			#{type_money},
+			#{send_type},
+			#{min_amount},
+			#{max_amount},
+			#{send_start_date},
+			#{send_end_date},
+			#{use_start_date},
+			#{use_end_date},
+			#{min_goods_amount}
+		)
+	</insert>
+
+    <update id="update" parameterType="com.platform.entity.CouponVo">
+        update nideshop_coupon
+        <set>
+            <if test="name != null">`name` = #{name},</if>
+            <if test="type_money != null">`type_money` = #{type_money},</if>
+            <if test="send_type != null">`send_type` = #{send_type},</if>
+            <if test="min_amount != null">`min_amount` = #{min_amount},</if>
+            <if test="max_amount != null">`max_amount` = #{max_amount},</if>
+            <if test="send_start_date != null">`send_start_date` = #{send_start_date},</if>
+            <if test="send_end_date != null">`send_end_date` = #{send_end_date},</if>
+            <if test="use_start_date != null">`use_start_date` = #{use_start_date},</if>
+            <if test="use_end_date != null">`use_end_date` = #{use_end_date},</if>
+            <if test="min_goods_amount != null">`min_goods_amount` = #{min_goods_amount}</if>
+            <if test="coupon_status != null">`coupon_status` = #{coupon_status}</if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <update id="updateUserCoupon" parameterType="com.platform.entity.CouponVo">
+        update nideshop_user_coupon
+        <set>
+            <if test="coupon_status != null">`coupon_status` = #{coupon_status}</if>
+        </set>
+        where id = #{user_coupon_id}
+    </update>
+
+    <delete id="delete">
+		delete from nideshop_coupon where id = #{value}
+	</delete>
+
+    <delete id="deleteBatch">
+        delete from nideshop_coupon where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <select id="queryUserCoupons" resultMap="couponMap">
+        select a.*,b.coupon_number,b.user_id,b.coupon_status,b.id user_coupon_id
+        from nideshop_coupon a
+        left join nideshop_user_coupon b on a.id = b.coupon_id
+        where 1 = 1
+        <if test="user_id != null">
+            and b.`user_id` = #{user_id}
+        </if>
+        <if test="send_type != null">
+            and a.send_type = #{send_type}
+        </if>
+        <if test="coupon_status != null">
+            and b.coupon_status = #{coupon_status}
+        </if>
+        <if test="coupon_number != null">
+            and b.coupon_number = #{coupon_number}
+        </if>
+        <if test="source_key != null and source_key != ''">
+            and b.source_key = #{source_key}
+        </if>
+        <if test="unUsed != null and unUsed == true">
+            and b.used_time is null and (b.order_id  is null or b.order_id =0)
+        </if>
+        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by ${sidx} ${order}
+            </when>
+            <otherwise>
+                order by b.coupon_status asc
+            </otherwise>
+        </choose>
+    </select>
+
+    <select id="queryMaxUserEnableCoupon" resultMap="couponMap">
+        select a.`id`,
+        a.`name`,
+        a.`type_money` as type_money,
+        a.`send_type`,
+        a.`min_amount`,
+        a.`max_amount`,
+        a.`send_start_date`,
+        a.`send_end_date`,
+        a.`use_start_date`,
+        a.`use_end_date`,
+        a.`min_goods_amount`,
+        a.min_transmit_num
+        from nideshop_coupon a
+        left join nideshop_coupon b on a.send_type = b.send_type and b.type_money > a.type_money
+        where 1 = 1
+        and a.use_end_date >= now()
+        and now() >= a.use_start_date
+        and b.id is null
+        <if test="send_type != null">
+            and a.send_type = #{send_type}
+        </if>
+        limit 0, 1
+    </select>
+
+    <select id="queryUserCouponList" resultMap="couponMap">
+        select a.*,b.coupon_number,b.user_id
+        from nideshop_coupon a
+        left join nideshop_user_coupon b on a.id = b.coupon_id
+        where 1 = 1
+        and a.use_end_date >= now()
+        and now() >= a.use_start_date
+        and a.send_type in (1,4)
+        and b.user_id = #{user_id} and b.order_id is null
+    </select>
+
+    <select id="getUserCoupon" resultMap="couponMap">
+        select a.*,b.coupon_number,b.user_id,b.coupon_status,b.id user_coupon_id
+        from nideshop_coupon a
+        left join nideshop_user_coupon b on a.id = b.coupon_id
+        where 1 = 1
+        and b.id = #{id}
+    </select>
+
+</mapper>

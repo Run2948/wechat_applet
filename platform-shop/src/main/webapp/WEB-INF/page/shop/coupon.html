@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+    #parse("sys/header.html")
+</head>
+<body>
+<div id="rrapp" v-cloak>
+    <div v-show="showList">
+        <Row :gutter="16">
+            <div class="search-group">
+                <i-col span="4">
+                    <i-input v-model="q.name" @on-enter="query" placeholder="优惠券名称"/>
+                </i-col>
+                <i-button @click="query">查询</i-button>
+            </div>
+            <div class="buttons-group">
+                #if($shiro.hasPermission("coupon:save"))
+                <i-button type="info" @click="add"><i class="fa fa-plus"></i>&nbsp;新增</i-button>
+                #end
+                #if($shiro.hasPermission("coupon:update"))
+                <i-button type="warning" @click="update"><i class="fa fa-pencil-square-o"></i>&nbsp;修改</i-button>
+                #end
+                #if($shiro.hasPermission("coupon:delete"))
+                <i-button type="error" @click="del"><i class="fa fa-trash-o"></i>&nbsp;删除</i-button>
+                #end
+            </div>
+            <!--#if($shiro.hasPermission("coupon:publish"))-->
+            <!--<i-button type="primary" @click="publish">-->
+            <!--<Icon type="android-send"></Icon>-->
+            <!--</i>&nbsp;发放-->
+            <!--</i-button>-->
+            <!--#end-->
+        </Row>
+        <table id="jqGrid"></table>
+        <div id="jqGridPager"></div>
+    </div>
+
+    <Card v-show="showCard">
+        <p slot="title">{{title}}</p>
+        <i-form ref="formValidate" :model="coupon" :rules="ruleValidate" :label-width="100">
+            <Form-item label="优惠券名称" prop="name">
+                <i-input v-model="coupon.name" placeholder="优惠券名称"/>
+            </Form-item>
+            <Form-item label="金额" prop="typeMoney">
+                <Input-number :min="0" v-model="coupon.typeMoney" placeholder="金额" style="width: 188px;"/>
+            </Form-item>
+            <Form-item label="发放方式" prop="sendType">
+                <Radio-group v-model="coupon.sendType">
+                    <Radio label="0">
+                        <span>按订单发放</span>
+                    </Radio>
+                    <Radio label="1">
+                        <span>按用户发放</span>
+                    </Radio>
+                    <Radio label="2">
+                        <span>商品转发送券</span>
+                    </Radio>
+                    <!--<Radio label="3">-->
+                    <!--<span>按商品发放</span>-->
+                    <!--</Radio>-->
+                    <Radio label="4">
+                        <span>新用户注册</span>
+                    </Radio>
+                    <!--<Radio label="5">-->
+                    <!--<span>线下发放</span>-->
+                    <!--</Radio>-->
+                    <Radio label="7">
+                        <span>包邮优惠</span>
+                    </Radio>
+                </Radio-group>
+            </Form-item>
+            <Form-item label="最小金额" prop="minAmount">
+                <Input-number :min="0" v-model="coupon.minAmount" placeholder="最小金额" style="width: 188px;"/>
+            </Form-item>
+            <Form-item label="最大金额" prop="maxAmount">
+                <Input-number :min="0" v-model="coupon.maxAmount" placeholder="最大金额" style="width: 188px;"/>
+            </Form-item>
+            <Form-item label="发放开始时间" prop="sendStartDate">
+                <Date-picker v-model="coupon.sendStartDate" placeholder="发放开始时间"></Date-picker>
+            </Form-item>
+            <Form-item label="发放结束时间" prop="sendEndDate">
+                <Date-picker v-model="coupon.sendEndDate" placeholder="发放结束时间"></Date-picker>
+            </Form-item>
+            <Form-item label="使用开始时间" prop="useStartDate">
+                <Date-picker v-model="coupon.useStartDate" placeholder="使用开始时间"></Date-picker>
+            </Form-item>
+            <Form-item label="使用结束时间" prop="useEndDate">
+                <Date-picker v-model="coupon.useEndDate" placeholder="使用结束时间"></Date-picker>
+            </Form-item>
+            <Form-item label="最小商品金额" prop="minGoodsAmount">
+                <Input-number :min="0" v-model="coupon.minGoodsAmount" placeholder="最小商品金额" style="width: 188px;"/>
+            </Form-item>
+            <Form-item>
+                <i-button type="primary" @click="handleSubmit('formValidate')">提交</i-button>
+                <i-button type="warning" @click="reload" style="margin-left: 8px"/>
+                返回</i-button>
+                <i-button type="ghost" @click="handleReset('formValidate')" style="margin-left: 8px">重置</i-button>
+            </Form-item>
+        </i-form>
+    </Card>
+    <Card id="sendDiv" v-show="showGoods">
+        <i-form :label-width="100">
+            <Form-item v-if="selectData.sendType == 3" label="下发商品">
+                <i-select v-model="goods" filterable multiple>
+                    <i-option v-for="goods in goodss" :value="goods.id" :key="goods.id">{{goods.name}}</i-option>
+                </i-select>
+            </Form-item>
+            <Form-item v-if="selectData.sendType == 1" label="下发会员">
+                <i-select v-model="user" filterable multiple>
+                    <i-option v-for="user in users" :value="user.id" :key="user.id">{{user.username}}</i-option>
+                </i-select>
+            </Form-item>
+            <Form-item v-if="selectData.sendType == 1" label="短信通知">
+                <Checkbox v-model="sendSms">发送短信</Checkbox>
+            </Form-item>
+            <Form-item>
+                <i-button type="primary" @click="publishSubmit">提交</i-button>
+                <i-button type="warning" @click="reload"/>
+                返回</i-button>
+            </Form-item>
+        </i-form>
+    </Card>
+</div>
+
+<script src="${rc.contextPath}/js/shop/coupon.js?_${date.systemTime}"></script>
+</body>
+</html>

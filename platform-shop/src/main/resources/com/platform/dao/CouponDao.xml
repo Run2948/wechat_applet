@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.platform.dao.CouponDao">
+
+    <resultMap type="com.platform.entity.CouponEntity" id="couponMap">
+        <result property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="typeMoney" column="type_money"/>
+        <result property="sendType" column="send_type"/>
+        <result property="minAmount" column="min_amount"/>
+        <result property="maxAmount" column="max_amount"/>
+        <result property="sendStartDate" column="send_start_date"/>
+        <result property="sendEndDate" column="send_end_date"/>
+        <result property="useStartDate" column="use_start_date"/>
+        <result property="useEndDate" column="use_end_date"/>
+        <result property="minGoodsAmount" column="min_goods_amount"/>
+    </resultMap>
+
+    <select id="queryObject" resultType="com.platform.entity.CouponEntity">
+		select
+			`id`,
+			`name`,
+			`type_money`,
+			`send_type`,
+			`min_amount`,
+			`max_amount`,
+			`send_start_date`,
+			`send_end_date`,
+			`use_start_date`,
+			`use_end_date`,
+			`min_goods_amount`
+		from nideshop_coupon
+		where id = #{id}
+	</select>
+
+    <select id="queryList" resultType="com.platform.entity.CouponEntity">
+        select
+        `id`,
+        `name`,
+        `type_money`,
+        `send_type`,
+        `min_amount`,
+        `max_amount`,
+        `send_start_date`,
+        `send_end_date`,
+        `use_start_date`,
+        `use_end_date`,
+        `min_goods_amount`
+        from nideshop_coupon
+        WHERE 1=1
+        <if test="name != null and name.trim() != ''">
+            AND name LIKE concat('%',#{name},'%')
+        </if>
+        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by ${sidx} ${order}
+            </when>
+            <otherwise>
+                order by id desc
+            </otherwise>
+        </choose>
+    </select>
+
+    <insert id="save" parameterType="com.platform.entity.CouponEntity" useGeneratedKeys="true" keyProperty="id">
+		insert into nideshop_coupon(
+			`name`,
+			`type_money`,
+			`send_type`,
+			`min_amount`,
+			`max_amount`,
+			`send_start_date`,
+			`send_end_date`,
+			`use_start_date`,
+			`use_end_date`,
+			`min_goods_amount`)
+		values(
+			#{name},
+			#{typeMoney},
+			#{sendType},
+			#{minAmount},
+			#{maxAmount},
+			#{sendStartDate},
+			#{sendEndDate},
+			#{useStartDate},
+			#{useEndDate},
+			#{minGoodsAmount})
+	</insert>
+
+    <update id="update" parameterType="com.platform.entity.CouponEntity">
+        update nideshop_coupon
+        <set>
+            <if test="name != null">`name` = #{name},</if>
+            <if test="typeMoney != null">`type_money` = #{typeMoney},</if>
+            <if test="sendType != null">`send_type` = #{sendType},</if>
+            <if test="minAmount != null">`min_amount` = #{minAmount},</if>
+            <if test="maxAmount != null">`max_amount` = #{maxAmount},</if>
+            <if test="sendStartDate != null">`send_start_date` = #{sendStartDate},</if>
+            <if test="sendEndDate != null">`send_end_date` = #{sendEndDate},</if>
+            <if test="useStartDate != null">`use_start_date` = #{useStartDate},</if>
+            <if test="useEndDate != null">`use_end_date` = #{useEndDate},</if>
+            <if test="minGoodsAmount != null">`min_goods_amount` = #{minGoodsAmount}</if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <delete id="delete">
+		delete from nideshop_coupon where id = #{value}
+	</delete>
+
+    <delete id="deleteBatch">
+        delete from nideshop_coupon where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>

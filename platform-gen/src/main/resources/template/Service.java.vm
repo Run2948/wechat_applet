@@ -1,0 +1,72 @@
+package ${package}.service;
+
+import ${package}.entity.${className}Entity;
+
+import java.util.List;
+import java.util.Map;
+
+/**
+ * ${comments}Service接口
+ *
+ * @author ${author}
+ * @email ${email}
+ * @date ${datetime}
+ */
+public interface ${className}Service {
+
+    /**
+     * 根据主键查询实体
+     *
+     * @param id 主键
+     * @return 实体
+     */
+    ${className}Entity queryObject(${pk.attrType} ${pk.attrname});
+
+    /**
+     * 分页查询
+     *
+     * @param map 参数
+     * @return list
+     */
+    List<${className}Entity> queryList(Map<String, Object> map);
+
+    /**
+     * 分页统计总数
+     *
+     * @param map 参数
+     * @return 总数
+     */
+    int queryTotal(Map<String, Object> map);
+
+    /**
+     * 保存实体
+     *
+     * @param ${classname} 实体
+     * @return 保存条数
+     */
+    int save(${className}Entity ${classname});
+
+    /**
+     * 根据主键更新实体
+     *
+     * @param ${classname} 实体
+     * @return 更新条数
+     */
+    int update(${className}Entity ${classname});
+
+    /**
+     * 根据主键删除
+     *
+     * @param ${pk.attrname}
+     * @return 删除条数
+     */
+    int delete(${pk.attrType} ${pk.attrname});
+
+    /**
+     * 根据主键批量删除
+     *
+     * @param ${pk.attrname}s
+     * @return 删除条数
+     */
+    int deleteBatch(${pk.attrType}[] ${pk.attrname}s);
+}

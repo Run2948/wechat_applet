@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+    #parse("sys/header.html")
+</head>
+<body>
+<div id="rrapp" v-cloak>
+    <div v-show="showList">
+        <Row :gutter="16">
+            <div class="search-group">
+                <i-col span="4">
+                    <i-input v-model="q.name" @on-enter="query" placeholder="名称"/>
+                </i-col>
+                <i-button @click="query">查询</i-button>
+            </div>
+            <div class="buttons-group">
+                #if($shiro.hasPermission("ad:save"))
+                <i-button type="info" @click="add"><i class="fa fa-plus"></i>&nbsp;新增</i-button>
+                #end
+                #if($shiro.hasPermission("ad:update"))
+                <i-button type="warning" @click="update"><i class="fa fa-pencil-square-o"></i>&nbsp;修改</i-button>
+                #end
+                #if($shiro.hasPermission("ad:delete"))
+                <i-button type="error" @click="del"><i class="fa fa-trash-o"></i>&nbsp;删除</i-button>
+                #end
+            </div>
+        </Row>
+        <table id="jqGrid"></table>
+        <div id="jqGridPager"></div>
+    </div>
+
+    <Card v-show="!showList">
+        <p slot="title">{{title}}</p>
+        <i-form ref="formValidate" :model="ad" :rules="ruleValidate" :label-width="80">
+            <Form-item label="广告位置" prop="adPositionId">
+                <i-select v-model="ad.adPositionId" filterable>
+                    <i-option v-for="adPosition in adPositions" :value="adPosition.id" :key="adPosition.id">{{adPosition.name}}</i-option>
+                </i-select>
+            </Form-item>
+            <Form-item label="形式" prop="mediaType">
+                <Radio-group v-model="ad.mediaType">
+                    <Radio label="0">
+                        <span>0</span>
+                    </Radio>
+                    <Radio label="1">
+                        <span>1</span>
+                    </Radio>
+                    <Radio label="2">
+                        <span>2</span>
+                    </Radio>
+                    <Radio label="3">
+                        <span>3</span>
+                    </Radio>
+                </Radio-group>
+            </Form-item>
+            <Form-item label="广告名称" prop="name">
+                <i-input v-model="ad.name" placeholder="广告名称"/>
+            </Form-item>
+            <Form-item label="链接" prop="link">
+                <i-input v-model="ad.link" placeholder="链接"/>
+            </Form-item>
+            <Row>
+                <i-col span="16">
+                    <Form-item label="图片" prop="imageUrl">
+                        <i-input v-model="ad.imageUrl" placeholder="图片" readonly/>
+                    </Form-item>
+                </i-col>
+                <i-col span="3">
+                    <Form-item :label-width="1">
+                        <Upload style="width: 300px;" action="../sys/oss/upload" :format="['jpg','jpeg','png']"
+                                max-size="2048"
+                                :on-success="handleSuccess" :on-format-error="handleFormatError"
+                                :show-upload-list="false"
+                                :on-exceeded-size="handleMaxSize">
+                            <i-button icon="ios-cloud-upload-outline">上传图片</i-button>
+                        </Upload>
+                    </Form-item>
+                </i-col>
+                <i-col span="3">
+                    <Form-item :label-width="1">
+                        <i-button icon="eye" @click="eyeImage">预览图片</i-button>
+                    </Form-item>
+                </i-col>
+            </Row>
+            <Form-item label="内容" prop="content">
+                <i-input type="textarea" v-model="ad.content" placeholder="内容"/>
+            </Form-item>
+            <Form-item label="结束时间" prop="endTime">
+                <Date-picker v-model="ad.endTime" placeholder="结束时间"></Date-picker>
+            </Form-item>
+            <Form-item label="状态" prop="enabled">
+                <Radio-group v-model="ad.enabled">
+                    <Radio label="0">
+                        <span>禁用</span>
+                    </Radio>
+                    <Radio label="1">
+                        <span>启用</span>
+                    </Radio>
+                </Radio-group>
+            </Form-item>
+            <Form-item>
+                <i-button type="primary" @click="handleSubmit('formValidate')">提交</i-button>
+                <i-button type="warning" @click="reload" style="margin-left: 8px"/>
+                返回</i-button>
+                <i-button type="ghost" @click="handleReset('formValidate')" style="margin-left: 8px">重置</i-button>
+            </Form-item>
+        </i-form>
+    </Card>
+</div>
+
+<script src="${rc.contextPath}/js/shop/ad.js?_${date.systemTime}"></script>
+</body>
+</html>

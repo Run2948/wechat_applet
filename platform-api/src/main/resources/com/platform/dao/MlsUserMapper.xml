@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="com.platform.dao.MlsUserMapper">
+
+	<!-- 用于select查询公用抽取的列 -->
+	<sql id="columns">
+		MLS_USER_ID as mlsUserId,USER_NAME as userName,NICKNAME as nickname,DEVICE_ID as deviceId,USER_TEL as userTel,PROFILE_PHOTO as profilePhoto,ALL_SALES as allSales,TODAY_SALES as todaySales,ALL_PROFIT as allProfit,GET_PROFIT as getProfit,FATHER_USER_ID as fatherUserId,SON_USER_SUM as sonUserSum,C_TIME as ctime
+	</sql>
+
+	<insert id="insert" useGeneratedKeys="true" keyProperty="mlsUserId" >
+        INSERT INTO MLS_USER (
+        	LOGIN_PASSWORD ,
+        	DEVICE_ID ,
+        	USER_TEL ,
+        	C_TIME 
+        ) VALUES (
+        	#{loginPassword} ,
+        	#{deviceId} ,
+        	#{userTel} ,        	
+        	now() 
+        )
+	</insert>
+    
+	<update id="update" >
+        UPDATE MLS_USER SET	        
+	        DEVICE_ID = #{deviceId} 
+        WHERE 
+	        USER_TEL = #{userTel} 	             
+	</update>
+
+    <delete id="deleteById">
+        DELETE FROM MLS_USER WHERE
+		MLS_USER_ID = #{mlsUserId} 
+    </delete>
+    
+    <delete id="removeByEntity">
+        DELETE FROM MLS_USER <include refid="where"/>  
+    </delete>
+    
+    <select id="getById" resultType="com.platform.entity.MlsUserVo">
+		SELECT <include refid="columns" />
+		    FROM MLS_USER 
+	        WHERE 
+		MLS_USER_ID = #{mlsUserId} 
+	</select>
+	
+	<sql id="where">
+		<where>	      				
+		       <if test="@Ognl@isNotEmpty(mlsUserId)">
+					AND MLS_USER_ID = #{mlsUserId}
+			   </if>
+<!-- 		       <if test="@Ognl@isNotEmpty(userName)"> -->
+<!-- 					AND USER_NAME = #{userName} -->
+<!-- 			   </if> -->
+		       <if test="@Ognl@isNotEmpty(deviceId)">
+					AND DEVICE_ID = #{deviceId}
+			   </if>
+		       <if test="@Ognl@isNotEmpty(userTel)">
+					AND USER_TEL = #{userTel}
+			   </if>
+		</where>
+	</sql>
+		
+    <select id="findByEntity_count" resultType="long">
+        SELECT count(*) FROM MLS_USER 
+		<include refid="where"/>    
+    </select>
+    
+    <select id="findByEntity" resultType="com.platform.entity.MlsUserVo">
+    	SELECT <include refid="columns" />
+	    FROM MLS_USER 
+		<include refid="where"/>
+		
+		<if test="@Ognl@isNotEmpty(sortColumns)">
+			ORDER BY ${sortColumns}
+		</if>
+    </select>
+	<!--     业务sql      -->
+	<select id="findByDeviceId" resultType="com.platform.entity.MlsUserVo">
+    	SELECT <include refid="columns" />,LOGIN_PASSWORD as loginPassword
+	    FROM MLS_USER  where  DEVICE_ID = #{deviceId} LIMIT 1
+    </select>
+    <select id="findByUserTel" resultType="com.platform.entity.MlsUserVo">
+    	SELECT <include refid="columns" />,LOGIN_PASSWORD as loginPassword
+	    FROM MLS_USER where  USER_TEL = #{userTel} LIMIT 1
+    </select>
+</mapper>
+

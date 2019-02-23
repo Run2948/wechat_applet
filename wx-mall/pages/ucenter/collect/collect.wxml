@@ -1,0 +1,17 @@
+<view class="container">
+  <view class='ts-mes'><text class='ca'>长按可取消收藏!</text></view>
+  <view class="collect-list">
+    <view class="item" bindtap="openGoods"  bindtouchstart="touchStart" bindtouchend="touchEnd" wx:for="{{collectList}}" wx:key="{{item.id}}" data-index="{{index}}">
+      <image class="img" src="{{item.list_pic_url}}"></image>
+      <view class="info">
+        <view class="name">{{item.name}}</view>
+        <view class="subtitle">{{item.goods_brief}}</view>
+        <view class="price">￥{{item.retail_price}}</view>
+      </view>
+    </view>
+  </view>
+  <view class="empty-view" wx:if="{{ collectList.length <= 0 }}">
+      <image class="icon" src="../../../static/images/allorder.png"></image>
+      <text class="text">无收藏信息</text>
+    </view>
+</view>

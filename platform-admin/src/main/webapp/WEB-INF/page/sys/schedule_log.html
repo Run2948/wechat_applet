@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>定时任务日志</title>
+    #parse("sys/header.html")
+</head>
+<body>
+<div id="rrapp">
+    <Row :gutter="16">
+        <div class="search-group">
+            <i-col span="4">
+                <i-input v-model="q.jobId" @on-enter="query" placeholder="任务ID"/>
+            </i-col>
+            <i-button @click="query">查询</i-button>
+        </div>
+        <div class="buttons-group">
+            <i-button type="warning" @click="back">返回</i-button>
+        </div>
+    </Row>
+    <table id="jqGrid"></table>
+    <div id="jqGridPager"></div>
+</div>
+
+<script src="${rc.contextPath}/js/sys/schedule_log.js?_${date.systemTime}"></script>
+</body>
+</html>

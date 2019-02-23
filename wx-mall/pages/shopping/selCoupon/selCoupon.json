@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "选择优惠券",
+  "usingComponents": {
+    "show-empty-data": "../../../component/show-empty-data/show-empty-data"
+  }
+}

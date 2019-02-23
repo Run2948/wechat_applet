@@ -1,0 +1,116 @@
+$(function () {
+    $("#jqGrid").Grid({
+        url: '../${pathName}/list',
+        colModel: [
+#foreach($column in $columns)
+#if($column.columnName == $pk.columnName)
+			{label: '${column.attrname}', name: '${column.attrname}', index: '${column.columnName}', key: true, hidden: true},
+#else
+			{label: '${column.comments}', name: '${column.attrname}', index: '${column.columnName}', width: 80}#if($velocityCount != $columns.size()),
+#end#end#end
+]
+    });
+});
+
+let vm = new Vue({
+	el: '#rrapp',
+	data: {
+        showList: true,
+        title: null,
+		${classname}: {},
+		ruleValidate: {
+			name: [
+				{required: true, message: '名称不能为空', trigger: 'blur'}
+			]
+		},
+		q: {
+		    name: ''
+		}
+	},
+	methods: {
+		query: function () {
+			vm.reload();
+		},
+		add: function () {
+			vm.showList = false;
+			vm.title = "新增";
+			vm.${classname} = {};
+		},
+		update: function (event) {
+            let $pk.attrname = getSelectedRow("#jqGrid");
+			if ($pk.attrname == null) {
+				return;
+			}
+			vm.showList = false;
+            vm.title = "修改";
+
+            vm.getInfo(${pk.attrname})
+		},
+		saveOrUpdate: function (event) {
+            let url = vm.${classname}.${pk.attrname} == null ? "../${pathName}/save" : "../${pathName}/update";
+            Ajax.request({
+			    url: url,
+                params: JSON.stringify(vm.${classname}),
+                type: "POST",
+			    contentType: "application/json",
+                successCallback: function (r) {
+                    alert('操作成功', function (index) {
+                        vm.reload();
+                    });
+                }
+			});
+		},
+		del: function (event) {
+            let ${pk.attrname}s = getSelectedRows("#jqGrid");
+			if (${pk.attrname}s == null){
+				return;
+			}
+
+			confirm('确定要删除选中的记录？', function () {
+                Ajax.request({
+				    url: "../${pathName}/delete",
+                    params: JSON.stringify(${pk.attrname}s),
+                    type: "POST",
+				    contentType: "application/json",
+                    successCallback: function () {
+                        alert('操作成功', function (index) {
+                            vm.reload();
+                        });
+					}
+				});
+			});
+		},
+		getInfo: function(${pk.attrname}){
+            Ajax.request({
+                url: "../${pathName}/info/"+${pk.attrname},
+                async: true,
+                successCallback: function (r) {
+                    vm.${classname} = r.${classname};
+                }
+            });
+		},
+		reload: function (event) {
+			vm.showList = true;
+            let page = $("#jqGrid").jqGrid('getGridParam', 'page');
+			$("#jqGrid").jqGrid('setGridParam', {
+                postData: {'name': vm.q.name},
+                page: page
+            }).trigger("reloadGrid");
+            vm.handleReset('formValidate');
+		},
+        reloadSearch: function() {
+            vm.q = {
+                name: ''
+            }
+            vm.reload();
+        },
+        handleSubmit: function (name) {
+            handleSubmitValidate(this, name, function () {
+                vm.saveOrUpdate()
+            });
+        },
+        handleReset: function (name) {
+            handleResetForm(this, name);
+        }
+	}
+});

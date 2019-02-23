@@ -1,0 +1,34 @@
+<view class="container">
+  <!-- <view class="coupon-form">
+    <view class="input-box">
+      <input class="coupon-sn" placeholder="请输入优惠码" />
+      <image class="clear-icon" src="https://platform-wxmall.oss-cn-beijing.aliyuncs.com/upload/20180727/150647657fcdd0.png"></image>
+    </view>
+    <view class="add-btn disabled">兑换</view>
+  </view> -->
+        <view class='not-use' bindtap='noUseCoupon'>不使用优惠券</view>
+  <view class="help">使用说明</view>
+  <show-empty-data wx:if="{{couponList.length<=0}}" showType="NO_COUPON"></show-empty-data>
+  <view wx:else class="coupon-list">
+    <block wx:for="{{couponList}}" wx:for-index="index" wx:for-item="item" wx:key="{{item.id}}">
+      <view data-item="{{item}}" bindtap='tapCoupon' class="item" style="background: {{item.enabled==1?'linear-gradient(to right,#cfa568,#e3bf79)':'linear-gradient(to right,#999,#DDDDDD)'}}">
+         <!-- <view class="tag">新人专享</view>  -->
+        <view class="content">
+          <view class="left">
+            <view class="name">{{item.name}}</view>
+            <view class="time">有效期至{{item.use_end_date}}</view>
+          </view>
+          <view class="right">
+            <image wx:if="{{item.enabled==1}}" class='mid-img' src='../../../static/images/coupon_ksy.png'></image>
+    <image wx:if="{{item.enabled==0}}" class='mid-img' src='../../../static/images/coupon_bky.png'></image>
+          </view>
+        </view>
+        <view class="condition">
+          <text class="txt">满￥{{item.min_goods_amount}} 减￥{{item.type_money}}</text>
+        </view>
+      </view>
+    </block>
+
+    </view>
+
+</view>

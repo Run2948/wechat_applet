@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.platform.dao.SysRoleDao">
+
+	<select id="queryObject" resultType="com.platform.entity.SysRoleEntity">
+		select * from sys_role where role_id = #{value}
+	</select>
+	
+	<select id="queryList" resultType="com.platform.entity.SysRoleEntity">
+		select r.*, (select d.name from sys_dept d where d.dept_id = r.dept_id) deptName from sys_role r
+		<where>
+			<if test="roleName != null and roleName.trim() != ''">
+				and `role_name` like concat('%',#{roleName},'%')
+			</if>
+			<if test="createUserId != null">
+				and create_user_id = #{createUserId}
+			</if>
+		</where>
+		<choose>
+			<when test="sidx != null and sidx.trim() != ''">
+				order by r.${sidx} ${order}
+			</when>
+			<otherwise>
+				order by r.role_id asc
+			</otherwise>
+		</choose>
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	
+	<select id="queryTotal" resultType="int">
+		select count(*) from sys_role 
+		<where>
+			<if test="roleName != null and roleName.trim() != ''">
+				and `role_name` like concat('%',#{roleName},'%') 
+			</if>
+			<if test="createUserId != null">
+				and create_user_id = #{createUserId} 
+			</if>
+		</where>
+	</select>
+	
+	<insert id="save" parameterType="com.platform.entity.SysRoleEntity" useGeneratedKeys="true" keyProperty="roleId">
+		insert into sys_role
+		(
+			`role_id`, 
+			`role_name`,
+			`dept_id`,
+			`remark`,
+			`create_user_id`,
+			`create_time`
+		)
+		values
+		(
+			#{roleId}, 
+			#{roleName},
+			#{deptId},
+			#{remark},
+			#{createUserId},
+			#{createTime}
+		)
+	</insert>
+	 
+	<update id="update" parameterType="com.platform.entity.SysRoleEntity">
+		update sys_role 
+		<set> 
+			<if test="roleName != null">`role_name` = #{roleName}, </if>
+			<if test="remark != null">`remark` = #{remark},</if>
+			<if test="deptId != null">`dept_id` = #{deptId}, </if>
+		</set>
+		where role_id = #{roleId}
+	</update>
+	
+	<delete id="deleteBatch">
+		delete from sys_role where role_id in 
+		<foreach item="roleId" collection="array" open="(" separator="," close=")">
+			#{roleId}
+		</foreach>
+		;
+		delete from sys_role_menu where role_id in 
+		<foreach item="roleId" collection="array" open="(" separator="," close=")">
+			#{roleId}
+		</foreach>
+		;
+		delete from sys_role_dept where role_id in
+		<foreach item="roleId" collection="array" open="(" separator="," close=")">
+			#{roleId}
+		</foreach>
+		;
+		delete from sys_user_role where role_id in 
+		<foreach item="roleId" collection="array" open="(" separator="," close=")">
+			#{roleId}
+		</foreach>
+	</delete>
+	
+	<!-- 查询用户创建的角色ID列表 -->
+	<select id="queryRoleIdList" resultType="long">
+		select role_id from sys_role where create_user_id = #{createUserId} 
+	</select>
+
+	<!--根据角色id查询可用的组织机构-->
+	<select id="queryPageByDto" resultType="com.platform.entity.UserWindowDto" >
+		select
+		role_id id,role_name name ,dept_id
+		from sys_role
+		where 1=1
+		<if test="name != null and name != '' ">
+			AND role_name LIKE concat('%',#{name},'%')
+		</if>
+	</select>
+</mapper>
