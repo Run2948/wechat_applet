@@ -74,7 +74,7 @@ QQ交流群号：877611106 <br/>
 # 小程序演示地址
 ![](https://images.gitee.com/uploads/images/2019/0223/145541_9fe99a75_1293644.jpeg "演示地址")
 # 后端演示地址
-http://shop.51shop.ink 用户名:admin  密码:admin
+https://shop.51shop.ink 用户名:admin  密码:admin
 
 # 小程序演示效果
 ![](https://images.gitee.com/uploads/images/2019/0223/145541_e727889d_1293644.jpeg "前段演示")
