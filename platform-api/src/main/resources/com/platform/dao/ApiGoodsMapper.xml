@@ -55,36 +55,36 @@
             ${fields}
         </if>
         <if test="fields == null or fields == ''">
-            nideshop_goods.*,nideshop_brand.name as brand_name
+            *
         </if>
-        from nideshop_goods ,nideshop_brand
-        where 1 = 1 and  nideshop_goods.brand_id=nideshop_brand.id
+        from nideshop_goods
+        where 1 = 1
         <if test="is_new != null and is_new != ''">
-            and nideshop_goods.is_new = #{is_new}
+            and is_new = #{is_new}
         </if>
         <if test="is_hot != null and is_hot != ''">
-            and nideshop_goods.is_hot = #{is_hot}
+            and is_hot = #{is_hot}
         </if>
-        <if test="brand_id != null and brand_id != 0">
-            and nideshop_goods.brand_id = #{brand_id}
+        <if test="brand_id != null and brand_id != ''">
+            and brand_id = #{brand_id}
         </if>
         <if test="name != null and name != ''">
-            and nideshop_goods.'name' like concat('%',#{keyword},'%')
+            and 'name' like concat('%',#{keyword},'%')
         </if>
         <if test="category_id != null and category_id != ''">
-            and nideshop_goods.category_id = #{category_id}
+            and category_id = #{category_id}
         </if>
         <if test="keyword != null">
-            and nideshop_goods.keywords like concat('%',#{keyword},'%')
+            and keywords like concat('%',#{keyword},'%')
         </if>
         <if test="is_delete != null">
-            and nideshop_goods.is_delete = #{is_delete}
+            and is_delete = #{is_delete}
         </if>
         <if test="is_on_sale != null and is_on_sale != ''">
-            and nideshop_goods.is_on_sale = #{is_on_sale}
+            and is_on_sale = #{is_on_sale}
         </if>
         <if test="categoryIds != null">
-            and nideshop_goods.category_id in
+            and category_id in
             <foreach item="item" collection="categoryIds" open="(" separator="," close=")">
                 #{item}
             </foreach>
@@ -100,7 +100,7 @@
                 order by ${sidx} ${order}
             </when>
             <otherwise>
-                order by nideshop_goods.id desc
+                order by id desc
             </otherwise>
         </choose>
         <if test="offset != null and limit != null">
@@ -232,4 +232,57 @@
             and is_on_sale = #{is_on_sale}
         </if>
 	</select>
+    <select id="queryFxList" resultMap="goodsMap">
+        select
+            nideshop_goods.*,nideshop_brand.name as brand_name
+        from nideshop_goods ,nideshop_brand
+        where 1 = 1 and  nideshop_goods.brand_id=nideshop_brand.id
+        <if test="is_new != null and is_new != ''">
+            and nideshop_goods.is_new = #{is_new}
+        </if>
+        <if test="is_hot != null and is_hot != ''">
+            and nideshop_goods.is_hot = #{is_hot}
+        </if>
+        <if test="brand_id != null and brand_id != 0">
+            and nideshop_goods.brand_id = #{brand_id}
+        </if>
+        <if test="name != null and name != ''">
+            and nideshop_goods.'name' like concat('%',#{keyword},'%')
+        </if>
+        <if test="category_id != null and category_id != ''">
+            and nideshop_goods.category_id = #{category_id}
+        </if>
+        <if test="keyword != null">
+            and nideshop_goods.keywords like concat('%',#{keyword},'%')
+        </if>
+        <if test="is_delete != null">
+            and nideshop_goods.is_delete = #{is_delete}
+        </if>
+        <if test="is_on_sale != null and is_on_sale != ''">
+            and nideshop_goods.is_on_sale = #{is_on_sale}
+        </if>
+        <if test="categoryIds != null">
+            and nideshop_goods.category_id in
+            <foreach item="item" collection="categoryIds" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+        <if test="goods_ids != null">
+            and id in
+            <foreach item="item" collection="goods_ids" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by ${sidx} ${order}
+            </when>
+            <otherwise>
+                order by nideshop_goods.id desc
+            </otherwise>
+        </choose>
+        <if test="offset != null and limit != null">
+            limit #{offset}, #{limit}
+        </if>
+    </select>
 </mapper>

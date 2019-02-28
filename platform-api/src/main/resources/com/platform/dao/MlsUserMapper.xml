@@ -86,5 +86,16 @@
     	SELECT <include refid="columns" />,LOGIN_PASSWORD as loginPassword
 	    FROM MLS_USER where  USER_TEL = #{userTel} LIMIT 1
     </select>
+    
+    
+    <update id="updateMoney" >
+        UPDATE MLS_USER SET	        
+			ALL_SALES = ALL_SALES + #{todaySales} ,
+			TODAY_SALES = TODAY_SALES + #{todaySales} ,
+			ALL_PROFIT = ALL_PROFIT + #{getProfit} ,
+			GET_PROFIT = GET_PROFIT + #{getProfit}
+		WHERE 
+			MLS_USER_ID = #{mlsUserId} 
+	</update>
 </mapper>
 

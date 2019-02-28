@@ -1,12 +1,12 @@
-// var NewApiRootUrl = 'https://shop.51shop.ink/api/'
+var NewApiRootUrl = 'https://shop.51shop.ink/api/'
 
 //var NewApiRootUrl = 'http://106.14.36.189:443/api/'; 
 // var NewApiRootUrl = 'http://192.168.2.121:8081/api/'
-var NewApiRootUrl = 'http://192.168.6.3:8080/platform-framework/api/'
+// var NewApiRootUrl = 'http://192.168.6.25:8080/platform-framework/api/'
 module.exports = {
   IndexUrlNewGoods: NewApiRootUrl + 'index/newGoods', //
   IndexUrlHotGoods: NewApiRootUrl + 'index/hotGoods', //首页数据接口
-  IndexUrlTopic: NewApiRootUrl + 'index/topic', //首页数据接口
+  IndexUrlTopic: NewApiRootUrl + 'index/topic', //首页数据接
   IndexUrlBrand: NewApiRootUrl + 'index/brand', //首页数据接口IndexUrlChannel
   IndexUrlCategory: NewApiRootUrl + 'index/category', //首页数据接口IndexUrlChannel
   IndexUrlBanner: NewApiRootUrl + 'index/banner', //首页数据接口IndexUrlChannel

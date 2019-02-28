@@ -17,4 +17,6 @@ public interface ApiGoodsMapper extends BaseDao<GoodsVo> {
     List<GoodsVo> queryCatalogProductList(Map<String, Object> params);
     
     List<GoodsVo> queryKillList();
+
+    List<GoodsVo> queryFxList(Map<String, Object> map);
 }

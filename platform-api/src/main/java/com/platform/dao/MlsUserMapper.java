@@ -8,4 +8,5 @@ import com.platform.util.EntityDao;
 public interface MlsUserMapper extends EntityDao<MlsUserVo,Long>{
 	public MlsUserVo findByDeviceId(String  deviceId) ;
 	public MlsUserVo findByUserTel(String  userTel) ;
+	public MlsUserVo updateMoney(MlsUserVo  mlsUserVo) ;
 }

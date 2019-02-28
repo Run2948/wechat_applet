@@ -235,13 +235,13 @@ Page({
         return false;
       }
     });
-  },
-  onLoad: function(options) {
+  }, 
+  onLoad: function(options) { 
     // 页面初始化 options为页面跳转所带来的参数
-    this.setData({
-      id: parseInt(options.id),
-    });
     var that = this;
+    that.setData({
+      id: parseInt(options.id ? options.id : app.globalData.goodId),
+    });
     this.getGoodsInfo();
     util.request(api.CartGoodsCount).then(function(res) {
       if (res.errno === 0) {

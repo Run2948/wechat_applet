@@ -228,10 +228,11 @@ public class ApiOrderService {
             //开启事务，插入订单信息和订单商品
             //添加订单分销信息
             if(StringUtils.isNotEmpty(promoterId)){
-                orderInfo.setParent_id(Integer.valueOf(promoterId));
+                orderInfo.setPromoter_id(Integer.valueOf(promoterId));
+                //计算佣金
+                orderInfo.setBrokerage(orderInfo.getActual_price().multiply(new BigDecimal(brokerage_percent)));
             }
-            //计算佣金
-            orderInfo.setBrokerage(orderInfo.getActual_price().multiply(new BigDecimal(brokerage_percent)));
+       
             apiOrderMapper.save(orderInfo);
 
     		OrderGoodsVo orderGoodsVo = new OrderGoodsVo();

@@ -98,6 +98,19 @@ function request(url, data = {}, method = "GET") {
   });
 }
 
+function getQueryString(url, name) {
+  console.log("url = " + url)
+  console.log("name = " + name)
+  var reg = new RegExp('(^|&|/?)' + name + '=([^&|/?]*)(&|/?|$)', 'i')
+  var r = url.substr(1).match(reg)
+  if (r != null) {
+    console.log("r = " + r)
+    console.log("r[2] = " + r[2])
+    return r[2]
+  }
+  return null;
+}
+
 /**
  * 检查微信会话是否过期
  */
@@ -173,7 +186,8 @@ module.exports = {
   showSuccessToast,
   checkSession,
   login,
-  validatePhone
+  validatePhone,
+  getQueryString
 }
 
 

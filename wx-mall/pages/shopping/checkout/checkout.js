@@ -21,9 +21,6 @@ Page({
     couponDesc: '',
     couponCode: '',
     buyType: '',
-    is_service:0,
-    customerList:[],
-    isY:false
   },
   onLoad: function (options) {
 
@@ -42,18 +39,6 @@ Page({
         is_service: is_service
       })
     } 
-    this.getCustomerList();
-  },
-
-  getCustomerList: function () {
-    let that = this;
-    util.request(api.AllCustomerList, {}, 'POST').then(function (res) {
-      if (res.errno === 0) {
-        that.setData({
-          customerList: res.data,
-        });
-      }
-    });
   },
 
   switch1Change(e) {
@@ -182,7 +167,7 @@ Page({
     wx.showLoading({
       title: '提交中',
     })
-    util.request(api.OrderSubmit, { addressId: this.data.addressId, couponId: this.data.couponId, type: this.data.buyType }, 'POST').then(res => {
+    util.request(api.OrderSubmit, { addressId: this.data.addressId, promoterId: app.globalData.orderId,couponId: this.data.couponId, type: this.data.buyType }, 'POST').then(res => {
       wx.hideLoading()
       if (res.errno === 0) {
         const orderId = res.data.orderInfo.id;

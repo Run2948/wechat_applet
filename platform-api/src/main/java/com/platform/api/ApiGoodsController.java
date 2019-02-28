@@ -6,11 +6,7 @@ import com.platform.annotation.IgnoreAuth;
 import com.platform.annotation.LoginUser;
 import com.platform.entity.*;
 import com.platform.service.*;
-import com.platform.util.ApiBaseAction;
-import com.platform.util.ApiPageUtils;
-import com.platform.util.ImageUtils;
-import com.platform.util.QRCodeUtil;
-import com.platform.util.QRCodeUtils;
+import com.platform.util.*;
 import com.platform.utils.Base64;
 import com.platform.utils.CharUtil;
 import com.platform.utils.DateUtils;
@@ -26,14 +22,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.awt.Color;
-import java.awt.Font;
+import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.BufferedInputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
 import java.util.*;
+import java.util.List;
 
 /**
  * 作者: @author Harmon <br>
@@ -91,8 +84,6 @@ public class ApiGoodsController extends ApiBaseAction {
         Map param = new HashMap();
         param.put("is_delete", 0);
         param.put("is_on_sale", 1);
-        param.put("brand_id", brand_id);
-
         List<GoodsVo> goodsList = goodsService.queryList(param);
         //
         return toResponsSuccess(goodsList);

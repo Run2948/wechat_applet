@@ -8,6 +8,7 @@ import com.platform.entity.OrderVo;
 import com.platform.entity.UserVo;
 import com.platform.service.ApiOrderGoodsService;
 import com.platform.service.ApiOrderService;
+import com.platform.service.MlsUserSer;
 import com.platform.util.ApiBaseAction;
 import com.platform.util.wechat.WechatRefundApiResult;
 import com.platform.util.wechat.WechatUtil;
@@ -40,7 +41,8 @@ public class ApiPayController extends ApiBaseAction {
     private ApiOrderService orderService;
     @Autowired
     private ApiOrderGoodsService orderGoodsService;
-
+    @Autowired
+    private MlsUserSer mlsUserSer;
     /**
      */
     @ApiOperation(value = "跳转")
@@ -214,7 +216,7 @@ public class ApiPayController extends ApiBaseAction {
             orderInfo.setShipping_status(0);
             orderInfo.setPay_time(new Date());
             orderService.updateStatus(orderInfo);
-
+            mlsUserSer.upUserProfit(order);
             return toResponsMsgSuccess("支付成功");
         } else if ("USERPAYING".equals(trade_state)) {
             // 重新查询 正在支付中

@@ -6,15 +6,12 @@
 
 	<!-- 用于select查询公用抽取的列 -->
 	<sql id="columns">
-		REPORT_ID as reportId,MLS_USER_ID as mlsUserId,TYPES as
-		types,TYPES_STR as typesStr,PRICE as price,REMARKS as remarks,C_TIME
+		REPORT_ID as reportId,MLS_USER_ID as mlsUserId,TYPES ,TYPES_STR as typesStr,PRICE ,REMARKS,C_TIME
 		as ctime
 	</sql>
 
-	<insert id="insert" useGeneratedKeys="true"
-		keyProperty="reportId">
-		INSERT INTO USER_RECORD (TYPES ,TYPES_STR ,
-		PRICE ,REMARKS) VALUES (#{types} ,#{typesStr} ,#{price} ,#{remarks} )
+	<insert id="insert" useGeneratedKeys="true"	keyProperty="reportId">
+		INSERT INTO USER_RECORD (MLS_USER_ID,TYPES ,TYPES_STR ,	PRICE ,REMARKS) VALUES (#{mlsUserId} , #{types} ,#{typesStr} ,#{price} ,#{remarks} )
 	</insert>
 
 	<update id="update"><!-- UPDATE USER_RECORD SET TYPES = #{types} , TYPES_STR 
