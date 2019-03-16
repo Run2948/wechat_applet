@@ -1,6 +1,6 @@
 # Open-shop是一套完全开源的微信小程序商场系统
 当前版本:2.0.1 <br/>
-官方网站：http://www.51app.ink/<br/>
+官方网站：https://shop.51shop.ink/demo/<br/>
 QQ交流群号：877611106 <br/>
 微信一对一服务群(收费)：请加微信（lalage1983）
 
@@ -72,9 +72,9 @@ QQ交流群号：877611106 <br/>
 * 进入之后修改config文件夹里的api.js文件，把NewApiRootUrl改为你后台接口地址即刻运行。
 
 # 小程序演示地址
-![](https://images.gitee.com/uploads/images/2019/0223/145541_9fe99a75_1293644.jpeg "演示地址")
+![小程序演示地址](https://images.gitee.com/uploads/images/2019/0316/170751_dac85a7a_81788.jpeg "嗨街二号小程序.jpg")
 # 后端演示地址
-https://shop.51shop.ink 用户名:admin  密码:admin
+https://shop.51shop.ink/demo/ 用户名:admin  密码:admin
 
 # 小程序演示效果
 ![](https://images.gitee.com/uploads/images/2019/0223/145541_e727889d_1293644.jpeg "前段演示")
