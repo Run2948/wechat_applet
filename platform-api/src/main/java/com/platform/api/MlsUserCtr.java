@@ -34,5 +34,6 @@ public class MlsUserCtr extends ApiBaseAction{
 		mlsuser=mlsUserSer.getEntityMapper().getById(mlsuser.getMlsUserId());
 		return toResponsSuccess(mlsuser);
 	}
+	
 }
 
