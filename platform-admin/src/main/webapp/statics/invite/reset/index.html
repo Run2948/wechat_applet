@@ -1,0 +1,114 @@
+
+<!DOCTYPE html>
+<html>
+
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1">
+<meta name="screen-orientation" content="portrait">
+<!--uc强制竖屏-->
+<meta name="x5-orientation" content="portrait">
+<!--qq强制竖屏-->
+<title>注册赚佣金</title>
+<link href="./js/style.css" rel="stylesheet" />
+<style type="text/css">
+.login-title {
+  margin: 20px 0 35px;
+  text-align: center;
+  font-size: 15px;
+}
+
+.login {
+  width: 100%;
+  font-size: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center; 
+}
+
+.login .first-line {
+  height: 40px;
+  border-radius: 5px;
+  width: 90%;
+  margin-bottom: 20px;
+}
+
+.login .first-line input {
+  width: 100%;
+  height: 40px;
+  border: none;
+  border-bottom: 1px solid #cccccc;
+}
+
+.login .second-line {
+  height: 40px;
+  display: flex;
+  width: 90%;
+  margin-bottom: 25px;
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.login .second-line input {
+  height: 40px;
+  width: 60%; 
+  border: none;
+  border-bottom: 1px solid #cccccc; 
+  border-radius: 5px;
+}
+
+.login .second-line .yzminfo {
+  text-align: center;
+  height: 40px;
+  line-height: 40px;
+  width: 35%;
+  font-size: 14px;
+  background-color:#E96900;
+  color:#ffffff;
+  border-radius: 5px;
+}
+
+.third-line {
+  height: 40px;
+  display: flex;
+  width: 90%;
+}
+
+.third-line button {
+  height: 40px;
+  font-size: 14px;
+  background-color: #E96900;
+  width: 100%;
+  border-radius: 5px;
+  color:#ffffff;
+}
+
+</style>
+</head>
+<body>
+  <div> 
+        <div class="login-title">注册赚佣金</div>
+        <div class="login">
+          <div class="first-line">
+            <input type="digit" class="mobile" placeholder="输入手机号" onkeyup="index.codeLeave(event.target)"/></div>
+          <div class="second-line">
+            <input type="digit" class="code" maxLength="6" placeholder="六位位验证码" onkeyup="index.codeLeave(event.target)"/> 
+            <input type="button" onclick="index.dtime(event.target, 1);" value="获取验证码" class="yzminfo"
+                />
+          </div>
+          <div class="third-line">
+            <button onclick="index.resetSubmit()">提交</button>
+          </div> 
+        </div> 
+  </div>
+    <!-- 弹出框 -->
+    <div class="alertInit"></div>
+<script type="text/javascript" src="./js/jquery.min.js"></script> 
+<script type="text/javascript" src="./js/ajax.js"></script>
+<script type="text/javascript" src="./js/alertdiv.js"></script>
+<script type="text/javascript" src="./js/index.js"></script>
+</body>
+
+</html>
