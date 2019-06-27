@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+    #parse("sys/header.html")
+</head>
+<body>
+<div id="rrapp" v-cloak>
+    <div v-show="showList">
+        <Row :gutter="16">
+            <div class="search-group">
+                <i-col span="4">
+                    <i-input v-model="q.mlsUserId" @on-enter="query" placeholder="分销用户id"/>
+                </i-col>
+                <i-button @click="query">查询</i-button>
+            </div>
+            <!--#if($shiro.hasPermission("usercoupon:save"))-->
+            <!--<i-button type="info" @click="add"><i class="fa fa-plus"></i>&nbsp;新增</i-button>-->
+            <!--#end-->
+            <!--#if($shiro.hasPermission("usercoupon:update"))-->
+            <!--<i-button type="warning" @click="update"><i class="fa fa-pencil-square-o"></i>&nbsp;修改</i-button>-->
+            <!--#end-->
+            <div class="buttons-group">
+            </div>
+        </Row>
+        <table id="jqGrid"></table>
+        <div id="jqGridPager"></div>
+    </div>
+
+</div>
+
+<script src="${rc.contextPath}/js/shop/userRecord.js?_${date.systemTime}"></script>
+</body>
+</html>

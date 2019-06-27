@@ -1,0 +1,369 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.platform.dao.GroupBuyingMapper">
+
+    <resultMap type="com.platform.entity.GroupBuyingVo" id="BaseResultMap">
+        <result property="id" column="id"/>
+        <result property="goodsId" column="goods_id"/>
+        <result property="goodsName" column="goods_name"/>
+        <result property="groupNum" column="group_num"/>
+        <result property="successNum" column="success_num"/>
+        <result property="types" column="types"/>
+        <result property="merchantId" column="merchant_id"/>
+        <result property="endTime" column="end_time"/>
+        
+    </resultMap>
+
+    <sql id="Example_Where_Clause" >
+        <where >
+            <foreach collection="oredCriteria" item="criteria" separator="or" >
+                <if test="criteria.valid" >
+                    <trim prefix="(" suffix=")" prefixOverrides="and" >
+                        <foreach collection="criteria.criteria" item="criterion" >
+                            <choose >
+                                <when test="criterion.noValue" >
+                                    and ${criterion.condition}
+                                </when>
+                                <when test="criterion.singleValue" >
+                                    and ${criterion.condition} #{criterion.value}
+                                </when>
+                                <when test="criterion.betweenValue" >
+                                    and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                                </when>
+                                <when test="criterion.listValue" >
+                                    and ${criterion.condition}
+                                    <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                                        #{listItem}
+                                    </foreach>
+                                </when>
+                            </choose>
+                        </foreach>
+                    </trim>
+                </if>
+            </foreach>
+        </where>
+    </sql>
+    <sql id="Update_By_Example_Where_Clause" >
+        <where >
+            <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+                <if test="criteria.valid" >
+                    <trim prefix="(" suffix=")" prefixOverrides="and" >
+                        <foreach collection="criteria.criteria" item="criterion" >
+                            <choose >
+                                <when test="criterion.noValue" >
+                                    and ${criterion.condition}
+                                </when>
+                                <when test="criterion.singleValue" >
+                                    and ${criterion.condition} #{criterion.value}
+                                </when>
+                                <when test="criterion.betweenValue" >
+                                    and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                                </when>
+                                <when test="criterion.listValue" >
+                                    and ${criterion.condition}
+                                    <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                                        #{listItem}
+                                    </foreach>
+                                </when>
+                            </choose>
+                        </foreach>
+                    </trim>
+                </if>
+            </foreach>
+        </where>
+    </sql>
+    <sql id="Base_Column_List" >
+	    `id`,
+	    `goods_id`,
+	    `goods_name`,
+	    `group_num`,
+	    `success_num`,
+	    `types`,end_time
+  	</sql>
+
+
+    <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.platform.entity.GroupBuyingVo" >
+        select
+        <if test="distinct" >
+            distinct
+        </if>
+        <include refid="Base_Column_List" />
+        from group_buying
+        <if test="_parameter != null" >
+            <include refid="Example_Where_Clause" />
+        </if>
+        <if test="orderByClause != null" >
+            order by ${orderByClause}
+        </if>
+        <if test="pageStart!=null and pageStart gt -1" >
+            limit ${pageStart},${pageSize}
+        </if>
+    </select>
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+        select
+        <include refid="Base_Column_List" />
+        from group_buying
+        where id = #{id,jdbcType=BIGINT}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+        delete from group_buying
+        where id = #{id,jdbcType=BIGINT}
+    </delete>
+    <delete id="deleteByExample" parameterType="com.platform.entity.GroupBuyingVo" >
+        delete from group_buying
+        <if test="_parameter != null" >
+            <include refid="Example_Where_Clause" />
+        </if>
+    </delete>
+    <delete id="deleteBatch">
+        delete from group_buying where id in
+<foreach item="id" collection="array" open="(" separator="," close=")">
+          #{id}
+</foreach>
+    </delete>
+    <insert id="insert" parameterType="com.platform.entity.GroupBuyingVo">
+		insert into group_buying(
+          `id`,
+          `goods_id`,
+          `goods_name`,
+          `group_num`,
+          `success_num`,
+          `merchant_id` ,
+          `end_time`
+           )
+		values(
+          #{id},
+          #{goodsId},
+          #{goodsName},
+          #{groupNum},
+          #{successNum},
+          #{merchantId}  ,
+          #{endTime}        )
+	</insert>
+
+
+    <insert id="insertSelective" parameterType="com.platform.entity.GroupBuyingVo">
+        insert into group_buying
+        <trim prefix="(" suffix=")" suffixOverrides="," >
+          <if test="id != null">
+            `id`,
+          </if>
+          <if test="goodsId != null">
+            `goods_id`,
+          </if>
+          <if test="goodsName != null">
+            `goods_name`,
+          </if>
+          <if test="groupNum != null">
+            `group_num`,
+          </if>
+          <if test="successNum != null">
+            `success_num`,
+          </if>
+          <if test="types != null">
+            `types`
+          </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides="," >
+            <if test="id != null">
+              #{id},
+            </if>
+            <if test="goodsId != null">
+              #{goodsId},
+            </if>
+            <if test="goodsName != null">
+              #{goodsName},
+            </if>
+            <if test="groupNum != null">
+              #{groupNum},
+            </if>
+            <if test="successNum != null">
+              #{successNum},
+            </if>
+            <if test="types != null">
+              #{types}
+            </if>
+        </trim>
+    </insert>
+    
+    
+    <insert id="save" parameterType="com.platform.entity.GroupBuyingVo">
+		insert into group_buying
+		(
+			`id`,
+			`goods_id`,
+            `goods_name`,
+            `group_num`,
+            `success_num`,
+            `merchant_id`,
+          	`end_time`
+		)
+		values
+		(
+			#{id},
+			#{goodsId},
+            #{goodsName},
+            #{groupNum},
+            #{successNum},
+            #{merchantId},
+            #{endTime}  
+		)
+	</insert>
+    
+
+    <select id="countByExample" parameterType="com.platform.entity.GroupBuyingVo" resultType="java.lang.Integer" >
+        select count(*) from group_buying
+        <if test="_parameter != null" >
+            <include refid="Example_Where_Clause" />
+        </if>
+    </select>
+    
+    <update id="update" parameterType="com.platform.entity.OrderVo">
+        update group_buying
+        set `group_num` = #{groupNum}
+        <if test="types != null">
+           , `types` = #{types}
+        </if>
+        where `id` = #{id}
+    </update>
+    
+    
+    <update id="updateByExampleSelective" parameterType="map" >
+        update group_buying
+        <set>
+          <if test="goodsId != null">
+              `goods_id` = #{goodsId},
+          </if>
+          <if test="goodsName != null">
+              `goods_name` = #{goodsName},
+          </if>
+          <if test="groupNum != null">
+              `group_num` = #{groupNum},
+          </if>
+          <if test="successNum != null">
+              `success_num` = #{successNum},
+          </if>
+          <if test="types != null">
+              `types` = #{types}
+          </if>
+        </set>
+        <if test="_parameter != null" >
+            <include refid="Update_By_Example_Where_Clause" />
+        </if>
+    </update>
+    <update id="updateByExample" parameterType="map" >
+        update group_buying
+        <set>
+          `goods_id` = #{goodsId},
+          `goods_name` = #{goodsName},
+          `group_num` = #{groupNum},
+          `success_num` = #{successNum},
+          `types` = #{types}
+        </set>
+        <if test="_parameter != null" >
+            <include refid="Update_By_Example_Where_Clause" />
+        </if>
+    </update>
+
+    <update id="updateByPrimaryKeySelective" parameterType="com.platform.entity.GroupBuyingVo">
+        update group_buying
+        <set>
+          <if test="goodsId != null">
+            `goods_id` = #{goodsId},
+          </if>
+          <if test="goodsName != null">
+            `goods_name` = #{goodsName},
+          </if>
+          <if test="groupNum != null">
+            `group_num` = #{groupNum},
+          </if>
+          <if test="successNum != null">
+            `success_num` = #{successNum},
+          </if>
+          <if test="types != null">
+            `types` = #{types}
+          </if>
+        </set>
+        where id = #{id}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.platform.entity.GroupBuyingVo" >
+        update group_buying
+        <set>
+            `goods_id` = #{goodsId},
+            `goods_name` = #{goodsName},
+            `group_num` = #{groupNum},
+            `success_num` = #{successNum},
+            `types` = #{types}
+        </set>
+        where id = #{id,jdbcType=BIGINT}
+  </update>
+
+
+    <select id="queryList" resultType="com.platform.entity.GroupBuyingVo">
+        select
+          `id`,
+          `goods_id`,
+          `goods_name`,
+          `group_num`,
+          `success_num`,
+          `types`,
+          `end_time`
+        from group_buying
+        WHERE 1=1
+        <if test="goodsId != null ">
+            AND goods_id=#{goodsId}
+        </if>
+        <if test="types != null ">
+            AND types=#{types}
+        </if>
+
+        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by ${sidx} ${order}
+            </when>
+            <otherwise>
+                order by id desc
+            </otherwise>
+        </choose>
+        <if test="offset != null and limit != null">
+            limit #{offset}, #{limit}
+        </if>
+    </select>
+
+    <select id="queryTotal" resultType="int">
+        select count(*) from group_buying
+        WHERE 1=1
+        <if test="name != null and name.trim() != ''">
+            AND name LIKE concat('%',#{name},'%')
+        </if>
+    </select>
+
+    <select id="queryObject" resultMap="BaseResultMap">
+		select *
+		from group_buying
+		where id = #{id}
+	</select>
+
+    <select id="queryLoseList" resultType="com.platform.entity.GroupBuyingVo">
+        select
+        `id`,
+        `goods_id`,
+        `goods_name`,
+        `group_num`,
+        `success_num`,
+        `types`,
+        `end_time`
+        from group_buying
+        WHERE 1=1
+        and end_time &lt; NOW()
+        <if test="goodsId != null ">
+            AND goods_id=#{goodsId}
+        </if>
+        <if test="types != null ">
+            AND types=#{types}
+        </if>
+
+    </select>
+
+</mapper>
