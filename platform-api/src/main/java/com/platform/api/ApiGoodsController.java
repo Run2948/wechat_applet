@@ -2,15 +2,15 @@ package com.platform.api;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.platform.annotation.APPLoginUser;
 import com.platform.annotation.IgnoreAuth;
 import com.platform.annotation.LoginUser;
 import com.platform.entity.*;
+import com.platform.oss.OSSFactory;
 import com.platform.service.*;
 import com.platform.util.*;
 import com.platform.utils.Base64;
-import com.platform.utils.CharUtil;
-import com.platform.utils.DateUtils;
-import com.platform.utils.Query;
+import com.platform.utils.*;
 import com.qiniu.util.StringUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -21,10 +21,15 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
 import java.awt.*;
+import java.awt.font.TextAttribute;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.math.BigDecimal;
+import java.text.AttributedString;
 import java.util.*;
 import java.util.List;
 
@@ -73,6 +78,15 @@ public class ApiGoodsController extends ApiBaseAction {
     private ApiUserCouponService apiUserCouponService;
     @Autowired
     private ApiCartService cartService;
+    @Autowired
+    private MlsUserSer mlsUserSer;
+    
+    //上传文件集合   
+    private List<File> file;   
+    //上传文件名集合   
+    private List<String> fileFileName;   
+    //上传文件内容类型集合   
+    private List<String> fileContentType;   
 
     /**
      */
@@ -95,10 +109,50 @@ public class ApiGoodsController extends ApiBaseAction {
     @ApiOperation(value = "秒杀产品")
     @IgnoreAuth
     @GetMapping(value = "kill")
-    public Object kill() {
-        List<GoodsVo> goodsList = goodsService.queryKillList();
-        return toResponsSuccess(goodsList);
+    public Object kill(@RequestParam(value = "page", defaultValue = "1") Integer page, @RequestParam(value = "size", defaultValue = "10") Integer size,
+    String sort, String order) {
+
+        //查询列表数据
+        Map params = new HashMap();
+        params.put("page", page);
+        params.put("limit", size);
+        params.put("is_secKill", "2");// 秒杀
+        params.put("sidx", "start_time");
+        params.put("order", "asc");
+
+        Query query = new Query(params);
+        List<GoodsVo> killlist = goodsService.queryKillPage(query);
+        int total = goodsService.queryKillTotal(query);
+
+        ApiPageUtils goodsData = new ApiPageUtils(killlist, total, query.getLimit(), query.getPage());
+        goodsData.setGoodsList(goodsData.getData());
+        return toResponsSuccess(goodsData);
     }
+    /**
+     * 团购产品列表
+     */
+    @ApiOperation(value = "团购产品")
+    @IgnoreAuth
+    @GetMapping(value = "group")
+    public Object group(@RequestParam(value = "page", defaultValue = "1") Integer page, @RequestParam(value = "size", defaultValue = "10") Integer size,
+                         String sort, String order) {
+        //查询列表数据
+        Map params = new HashMap();
+        params.put("page", page);
+        params.put("limit", size);
+        params.put("is_secKill", "3");// 团购
+        params.put("sidx", "id");
+        params.put("order", "asc");
+
+        Query query = new Query(params);
+        List<GoodsVo> grouplist = goodsService.queryGroupList(query);
+        int total = goodsService.queryGroupTotal(query);
+
+        ApiPageUtils goodsData = new ApiPageUtils(grouplist, total, query.getLimit(), query.getPage());
+        goodsData.setGoodsList(goodsData.getData());
+        return toResponsSuccess(goodsData);
+    }
+
 
     /**
      * 获取商品规格信息，用于购物车编辑时选择规格
@@ -130,10 +184,16 @@ public class ApiGoodsController extends ApiBaseAction {
             @ApiImplicitParam(name = "referrer", value = "商品referrer", paramType = "path", required = false)})
     @GetMapping(value = "detail")
     public Object detail(Integer id, Long referrer) {
+//    	System.out.println("1111111111111111111111111111111");
         Map<String, Object> resultObj = new HashMap();
         //
         Long userId = getUserId();
+        //MlsUserEntity2 loginUser = mlsUserSer.getEntityMapper().findByUserId(userId);
         GoodsVo info = goodsService.queryObject(id);
+        //info.setDiscount(info.getRetail_price().multiply(new BigDecimal("10")).divide(info.getMarket_price(), 1, BigDecimal.ROUND_HALF_UP).toString());
+        Long mid = info.getMerchantId();
+        Map<String, Object> sysuser = this.mlsUserSer.getEntityMapper().getSysUserByMid(mid);
+        info.setUser_brokerage_price(info.getRetail_price().multiply(new BigDecimal(sysuser.get("FX").toString())).multiply(new BigDecimal(info.getBrokerage_percent()).divide(new BigDecimal("10000"))).setScale(2, BigDecimal.ROUND_HALF_UP).toString());
         Map param = new HashMap();
         param.put("goods_id", id);
         //
@@ -141,7 +201,7 @@ public class ApiGoodsController extends ApiBaseAction {
         specificationParam.put("fields", "gs.*, s.name");
         specificationParam.put("goods_id", id);
         specificationParam.put("specification", true);
-        specificationParam.put("sidx", "s.sort_order");
+//        specificationParam.put("sidx", "s.sort_order");
         specificationParam.put("order", "asc");
         List<GoodsSpecificationVo> goodsSpecificationEntityList = goodsSpecificationService.queryList(specificationParam);
 
@@ -162,6 +222,7 @@ public class ApiGoodsController extends ApiBaseAction {
                 Map temp = new HashMap();
                 temp.put("specification_id", specItem.getSpecification_id());
                 temp.put("name", specItem.getName());
+                temp.put("pic_url",specItem.getPic_url());
                 tempList = new ArrayList();
                 tempList.add(specItem);
                 temp.put("valueList", tempList);
@@ -275,6 +336,177 @@ public class ApiGoodsController extends ApiBaseAction {
                         userCouponVo.setCoupon_id(couponVo.getId());
                         userCouponVo.setCoupon_number(CharUtil.getRandomString(12));
                         userCouponVo.setUser_id(getUserId());
+                        apiUserCouponService.save(userCouponVo);
+                    }
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return toResponsSuccess(resultObj);
+    }
+    
+    
+    /**
+     * 商品详情页数据
+     */
+    @ApiOperation(value = " app商品详情页数据")
+    @ApiImplicitParams({@ApiImplicitParam(name = "id", value = "商品id", paramType = "path", required = true),
+            @ApiImplicitParam(name = "referrer", value = "商品referrer", paramType = "path", required = false)})
+    @GetMapping(value = "detail2")
+    public Object detail2(@APPLoginUser MlsUserEntity2 loginUser, Integer id, Long referrer) {
+    	
+//    	System.out.println("2222222222222222222222222222222222");
+    	
+        Map<String, Object> resultObj = new HashMap();
+        //
+        Long userId = loginUser.getMlsUserId();
+        GoodsVo info = goodsService.queryObject(id);
+        info.setDiscount(info.getRetail_price().multiply(new BigDecimal("10")).divide(info.getMarket_price(), 1, BigDecimal.ROUND_HALF_UP).toString());
+        info.setUser_brokerage_price(info.getRetail_price().multiply(new BigDecimal(loginUser.getFx()).divide(new BigDecimal("100"))).setScale(2, BigDecimal.ROUND_HALF_UP).toString());
+        Map param = new HashMap();
+        param.put("goods_id", id);
+        //
+        Map specificationParam = new HashMap();
+        specificationParam.put("fields", "gs.*, s.name");
+        specificationParam.put("goods_id", id);
+        specificationParam.put("specification", true);
+        specificationParam.put("sidx", "s.sort_order");
+        specificationParam.put("order", "asc");
+        List<GoodsSpecificationVo> goodsSpecificationEntityList = goodsSpecificationService.queryList(specificationParam);
+
+        List<Map> specificationList = new ArrayList();
+        //按规格名称分组
+        for (int i = 0; i < goodsSpecificationEntityList.size(); i++) {
+            GoodsSpecificationVo specItem = goodsSpecificationEntityList.get(i);
+            //
+            List<GoodsSpecificationVo> tempList = null;
+            for (int j = 0; j < specificationList.size(); j++) {
+                if (specificationList.get(j).get("specification_id").equals(specItem.getSpecification_id())) {
+                    tempList = (List<GoodsSpecificationVo>) specificationList.get(j).get("valueList");
+                    break;
+                }
+            }
+            //
+            if (null == tempList) {
+                Map temp = new HashMap();
+                temp.put("specification_id", specItem.getSpecification_id());
+                temp.put("name", specItem.getName());
+                temp.put("pic_url",specItem.getPic_url());
+                tempList = new ArrayList();
+                tempList.add(specItem);
+                temp.put("valueList", tempList);
+                specificationList.add(temp);
+            } else {
+                for (int j = 0; j < specificationList.size(); j++) {
+                    if (specificationList.get(j).get("specification_id").equals(specItem.getSpecification_id())) {
+                        tempList = (List<GoodsSpecificationVo>) specificationList.get(j).get("valueList");
+                        tempList.add(specItem);
+                        break;
+                    }
+                }
+            }
+        }
+        //
+        List<ProductVo> productEntityList = productService.queryList(param);
+        //
+        List<GoodsGalleryVo> gallery = goodsGalleryService.queryList(param);
+        Map ngaParam = new HashMap();
+        ngaParam.put("fields", "nga.value, na.name");
+        ngaParam.put("sidx", "nga.id");
+        ngaParam.put("order", "asc");
+        ngaParam.put("goods_id", id);
+        List<AttributeVo> attribute = attributeService.queryList(ngaParam);
+        //
+        Map issueParam = new HashMap();
+//        issueParam.put("goods_id", id);
+        List<GoodsIssueVo> issue = goodsIssueService.queryList(issueParam);
+        //
+        BrandVo brand = brandService.queryObject(info.getBrand_id());
+        //
+        param.put("value_id", id);
+        param.put("type_id", 0);
+        Integer commentCount = commentService.queryTotal(param);
+        List<CommentVo> hotComment = commentService.queryList(param);
+        Map commentInfo = new HashMap();
+        if (null != hotComment && hotComment.size() > 0) {
+            UserVo commentUser = userService.queryObject(hotComment.get(0).getUser_id());
+            commentInfo.put("content", Base64.decode(hotComment.get(0).getContent()));
+            commentInfo.put("add_time", DateUtils.timeToStr(hotComment.get(0).getAdd_time(), DateUtils.DATE_PATTERN));
+            commentInfo.put("nickname", commentUser.getNickname());
+            commentInfo.put("avatar", commentUser.getAvatar());
+            Map paramPicture = new HashMap();
+            paramPicture.put("comment_id", hotComment.get(0).getId());
+            List<CommentPictureVo> commentPictureEntities = commentPictureService.queryList(paramPicture);
+            commentInfo.put("pic_list", commentPictureEntities);
+        }
+        Map comment = new HashMap();
+        comment.put("count", commentCount);
+        comment.put("data", commentInfo);
+        //当前用户是否收藏
+        Map collectParam = new HashMap();
+        collectParam.put("user_id", loginUser.getMlsUserId());
+        collectParam.put("value_id", id);
+        collectParam.put("type_id", 0);
+        Integer userHasCollect = collectService.queryTotal(collectParam);
+        if (userHasCollect > 0) {
+            userHasCollect = 1;
+        }
+        //记录用户的足迹
+        FootprintVo footprintEntity = new FootprintVo();
+        footprintEntity.setAdd_time(System.currentTimeMillis() / 1000);
+        footprintEntity.setGoods_brief(info.getGoods_brief());
+        footprintEntity.setList_pic_url(info.getList_pic_url());
+        footprintEntity.setGoods_id(info.getId());
+        footprintEntity.setName(info.getName());
+        footprintEntity.setRetail_price(info.getRetail_price());
+        footprintEntity.setUser_id(userId);
+        if (null != referrer) {
+            footprintEntity.setReferrer(referrer);
+        } else {
+            footprintEntity.setReferrer(0L);
+        }
+        footprintService.save(footprintEntity);
+        //
+        resultObj.put("info", info);
+        resultObj.put("gallery", gallery);
+        resultObj.put("attribute", attribute);
+        resultObj.put("userHasCollect", userHasCollect);
+        resultObj.put("issue", issue);
+        resultObj.put("comment", comment);
+        resultObj.put("brand", brand);
+        resultObj.put("specificationList", specificationList);
+        resultObj.put("productList", productEntityList);
+        // 记录推荐人是否可以领取红包，用户登录时校验
+        try {
+            // 是否已经有可用的转发红包
+            Map params = new HashMap();
+            params.put("user_id", userId);
+            params.put("send_type", 2);
+            params.put("unUsed", true);
+            List<CouponVo> enabledCouponVos = apiCouponService.queryUserCoupons(params);
+            if ((null == enabledCouponVos || enabledCouponVos.size() == 0)
+                    && null != referrer && null != userId) {
+                // 获取优惠信息提示
+                Map couponParam = new HashMap();
+                couponParam.put("enabled", true);
+                Integer[] send_types = new Integer[]{2};
+                couponParam.put("send_types", send_types);
+                List<CouponVo> couponVos = apiCouponService.queryList(couponParam);
+                if (null != couponVos && couponVos.size() > 0) {
+                    CouponVo couponVo = couponVos.get(0);
+                    Map footprintParam = new HashMap();
+                    footprintParam.put("goods_id", id);
+                    footprintParam.put("referrer", referrer);
+                    Integer footprintNum = footprintService.queryTotal(footprintParam);
+                    if (null != footprintNum && null != couponVo.getMin_transmit_num()
+                            && footprintNum > couponVo.getMin_transmit_num()) {
+                        UserCouponVo userCouponVo = new UserCouponVo();
+                        userCouponVo.setAdd_time(new Date());
+                        userCouponVo.setCoupon_id(couponVo.getId());
+                        userCouponVo.setCoupon_number(CharUtil.getRandomString(12));
+                        userCouponVo.setUser_id(loginUser.getMlsUserId());
                         apiUserCouponService.save(userCouponVo);
                     }
                 }
@@ -641,12 +873,11 @@ public class ApiGoodsController extends ApiBaseAction {
      * 商品二维码图片请求
      */
     @ApiOperation(value = "商品二维码图片请求")
-    @IgnoreAuth
     @GetMapping("getGoodCode")
-    public Object getGoodCode(Integer goodId) {
-        String urlPath = System.getProperty("catalina.home") + "/webapps/ROOT/";//系统路径
-		String pagePath = "statics/goodQrCode/"+this.getUserId()+"/";//文件目录
-		String qrCode = this.getUserId() + goodId + ".png";//文件名称
+    public Object getGoodCode(@APPLoginUser MlsUserEntity2 loginUser, Integer goodId,HttpServletRequest request) {
+        String urlPath = request.getServletContext().getRealPath(File.separator);//系统路径
+		String pagePath = "statics"+File.separator+"goodQrCode"+File.separator+loginUser.getMlsUserId()+File.separator;//文件目录
+		String qrCode = loginUser.getMlsUserId() + goodId + ".png";//文件名称
 		String qrcodeUrl = urlPath + pagePath + qrCode;//全部路径
 		String returnUrl = pagePath + qrCode;//返回路径
     	//查看文件夹是否存在
@@ -678,7 +909,7 @@ public class ApiGoodsController extends ApiBaseAction {
         
         try {
         	 //非调用小程序生产二维码
-        	String content = "www.baidu.com";
+        	String content = "http://muserqrcode.51shop.ink?id="+goodId+"&userId="+loginUser.getMlsUserId();
         	BufferedImage qrcode = QRCodeUtil.createImage(content, null, false);
         	
 //        	FileInputStream baseIn = new FileInputStream(baseFilePath);  
@@ -693,11 +924,159 @@ public class ApiGoodsController extends ApiBaseAction {
 			ImageUtils.coverImage(newUrl, qrcode, 48, 1025, 200, 200, qrcodeUrl);
 			ImageUtils.coverText(newUrl, brand.getName(), 220, 100, qrcodeUrl,new Font("Courier",Font.BOLD,40),Color.black);
 			ImageUtils.coverText(newUrl, goods.getName(), 53, 240, qrcodeUrl,new Font("Courier",Font.BOLD,40),Color.gray);
-			ImageUtils.coverText(newUrl, "请在微信长按识别二维码选购商品", 280, 1180, qrcodeUrl,new Font("Courier",Font.BOLD,18),Color.lightGray);
+			ImageUtils.coverText(newUrl, "请在微信长按识别二维码选购商品", 280, 1180, qrcodeUrl,new Font("Courier",Font.BOLD,22),Color.lightGray);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+        return toResponsSuccess(returnUrl);
+        
+    }
+    
+    
+    /**
+     * 商品二维码图片请求
+     */
+    @ApiOperation(value = "商品二维码图片请求")
+    @GetMapping("getGoodCode2")
+    public Object getGoodCode2(@APPLoginUser MlsUserEntity2 loginUser, Integer goodId) {
+        String urlPath = request.getServletContext().getRealPath(File.separator);//系统路径
+   		String pagePath = "statics"+File.separator+"goodQrCode"+File.separator+loginUser.getMlsUserId()+File.separator;//文件目录
+		String qrCode = loginUser.getMlsUserId() + goodId + "money.png";//文件名称
+		String qrcodeUrl = urlPath + pagePath + qrCode;//全部路径
+		String returnUrl = pagePath + qrCode;//返回路径
+    	//查看文件夹是否存在
+		QRCodeUtils.dirExists(new File(urlPath + pagePath));
+		//判断文件是否存在，存在就返回路径 
+		if(QRCodeUtils.fileExists(new File(qrcodeUrl))){
+			toResponsSuccess(returnUrl);
+		}
+		
+		//底图
+		String baseFilePath = urlPath + "statics/base/base2.png";
+		
+		
+
+        //获取商品主图和2张配图
+        GoodsVo goods = goodsService.queryObject(goodId);
+        String p1 = goods.getPrimary_pic_url();//主图
+        String p2 = goods.getList_pic_url();//配图1
+        String p3 = goods.getList_pic_url();//配图2
+        
+        //获取logo
+      	BrandVo brand = brandService.queryObject(goods.getBrand_id());
+      	String p4 = brand.getLogo();
+        /**
+        获取二维码图(调用小程序API)
+        String accessToken = tokenService.getAccessToken() ;
+        BufferedInputStream bis = QRCodeUtils.getGoodQrCode(accessToken,this.getUserId(), goodId);
+        **/
+        
+        try {
+        	 //非调用小程序生产二维码
+        	String content = "http://muserqrcode.51shop.ink?id="+goodId+"&userId="+loginUser.getMlsUserId();
+        	BufferedImage qrcode = QRCodeUtil.createImage(content, null, false);
+        	
+//        	FileInputStream baseIn = new FileInputStream(baseFilePath);  
+//        	InputStream p1In = ImageUtils.getImage(p1);
+//        	InputStream p2In = ImageUtils.getImage(p1);
+//        	InputStream p3In = ImageUtils.getImage(p1);
+        	
+			String newUrl = ImageUtils.coverImage(baseFilePath, p1, 50, 423, 645, 645, qrcodeUrl);
+			ImageUtils.coverImage(newUrl, p2, 700, 423, 315, 315, qrcodeUrl);
+			ImageUtils.coverImage(newUrl, p3, 700, 755, 315, 315, qrcodeUrl);
+			ImageUtils.coverImage(newUrl, p4, 50, 50, 130, 130, qrcodeUrl);
+			ImageUtils.coverImage(newUrl, qrcode, 48, 1100, 200, 200, qrcodeUrl);
+			ImageUtils.coverText(newUrl, brand.getName(), 220, 100, qrcodeUrl,new Font("宋体",Font.BOLD,40),Color.black);
+			ImageUtils.coverText(newUrl, goods.getName(), 53, 240, qrcodeUrl,new Font("宋体",Font.BOLD,40),Color.gray);
+			ImageUtils.coverText(newUrl, "￥", 50, 348, qrcodeUrl,new Font("宋体",Font.BOLD,30),Color.RED);
+			ImageUtils.coverText(newUrl, goods.getRetail_price().toString() , 90, 348, qrcodeUrl,new Font("宋体",Font.BOLD,50),Color.RED);
+			
+			AttributedString as = new AttributedString(goods.getMarket_price().toString());  
+			as.addAttribute(TextAttribute.FONT, new Font("宋体",Font.BOLD,30));  
+			as.addAttribute(TextAttribute.FOREGROUND, Color.lightGray);   
+		    as.addAttribute(TextAttribute.STRIKETHROUGH, TextAttribute.STRIKETHROUGH_ON);  
+			ImageUtils.coverText(newUrl, 320, 348, qrcodeUrl,as);
+			ImageUtils.coverText(newUrl, "请在微信长按识别二维码选购商品", 280, 1275, qrcodeUrl,new Font("宋体",Font.BOLD,26),Color.lightGray);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
         return toResponsSuccess(returnUrl);
     }
+    
+    
+    /**
+     * 上传商品图片
+     */
+    @ApiOperation(value = "上传商品图片")
+    @RequestMapping("uploadImage")
+    public String uploadImage(@RequestParam("file") MultipartFile file, String imageType) {
+    	System.out.println("==========");
+    	
+    	if (file.isEmpty()) {
+            throw new RRException("上传文件不能为空");
+        }
+        //上传文件
+        String url = null;
+		try {
+			url = OSSFactory.build().upload(file);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+        System.out.println(url);
+    	
+    	return url;
+    }
+    
+    /**
+     * app新增商品
+     */
+    @ApiOperation(value = "app新增商品")
+    @RequestMapping("appAdd")
+    public Object appAdd(@RequestParam String goodsname, @RequestParam String imageUrl, @RequestParam String imageUrl2) {
+    	System.out.println(goodsname);
+    	System.out.println(imageUrl);
+    	System.out.println(imageUrl2);
+    	
+    	String a = request.getParameter("goodsname");
+    	
+    	GoodsVo goods = new GoodsVo();
+    	Integer id = goodsService.queryMaxId() + 1;
+        goods.setId(id);
+        goods.setName(goodsname);
+        goods.setPrimary_pic_url(imageUrl.toString());
+        goods.setList_pic_url(imageUrl2.toString());
+        goodsService.save(goods);
+        
+    	return toResponsSuccess(goods);
+    }
+
+	public List<File> getFile() {
+		return file;
+	}
+
+	public void setFile(List<File> file) {
+		this.file = file;
+	}
+
+	public List<String> getFileFileName() {
+		return fileFileName;
+	}
+
+	public void setFileFileName(List<String> fileFileName) {
+		this.fileFileName = fileFileName;
+	}
+
+	public List<String> getFileContentType() {
+		return fileContentType;
+	}
+
+	public void setFileContentType(List<String> fileContentType) {
+		this.fileContentType = fileContentType;
+	}
+    
+    
 }

@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.platform.annotation.APPLoginUser;
 import com.platform.annotation.IgnoreAuth;
-import com.platform.entity.MlsUserVo;
+import com.platform.entity.MlsUserEntity2;
 import com.platform.entity.UserRecord;
 import com.platform.service.UserRecordSer;
 import com.platform.util.ApiBaseAction;
@@ -41,7 +41,7 @@ public class UserRecordCtr extends ApiBaseAction{
     @IgnoreAuth
     @RequestMapping("list")
     @ResponseBody
-    public Object list(UserRecord userRecord,@APPLoginUser MlsUserVo mlsuser) {
+    public Object list(UserRecord userRecord,@APPLoginUser MlsUserEntity2 mlsuser) {
     	if(userRecord.getPage()==null) {
     		userRecord.setPage(1);
     		userRecord.setSize(10);

@@ -17,4 +17,6 @@ public interface ApiAddressMapper extends BaseDao<AddressVo> {
     List<AddressVo> queryaddressUserlist(Map<String, Object> param);
 
     List<AddressVo> queryAddressCustomerlist(Map<String, Object> param);
+
+    AddressVo queryDefaultAddress(Long userId);
 }

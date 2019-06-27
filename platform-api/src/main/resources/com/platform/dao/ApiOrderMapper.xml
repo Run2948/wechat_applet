@@ -47,6 +47,10 @@
         <result property="all_order_id" column="all_order_id"/>
         <result property="promoter_id" column="promoter_id"/>
         <result property="brokerage" column="brokerage"/>
+        <result property="merchant_id" column="merchant_id"/>
+        <result property="group_buying_id" column="group_buying_id"/>
+        <result property="order_type" column="order_type"/>
+        
     </resultMap>
 
     <select id="queryObject" resultMap="orderMap">
@@ -55,7 +59,22 @@
 		left join nideshop_shipping b on a.shipping_id = b.id
 		where a.id = #{value}
 	</select>
-
+	
+	<select id="queryByAllOrderId" resultMap="orderMap">
+		select *
+		from nideshop_order
+		where all_order_id = #{allOrderId}
+	</select>
+	
+	<select id="queryWaitList" resultMap="orderMap">
+		SELECT * FROM nideshop_order where order_status = 300
+    </select>
+    <select id="queryFxList" resultMap="orderMap">
+    	select * from  nideshop_order 
+    	where 
+    	<![CDATA[ DATE_ADD(confirm_time,INTERVAL 1 WEEK) < now() ]]>
+    	and order_status=301 and fx_status=0
+	</select>
     <select id="queryList" resultMap="orderMap">
         SELECT o.*, g.goods_name, g.list_pic_url, g.goods_id FROM nideshop_order o
         LEFT JOIN nideshop_order_goods g ON o.id = g.order_id
@@ -84,6 +103,9 @@
             </if>
             <if test="promoter_id != null and promoter_id != 0">
                 and o.promoter_id = #{promoter_id}
+            </if>
+            <if test="group_buying_id != null and group_buying_id != 0">
+                and o.group_buying_id = #{group_buying_id}
             </if>
         </where>
         <choose>
@@ -172,7 +194,9 @@
 			`all_price`,
 			`all_order_id`,
 			`promoter_id`,
-			`brokerage`
+			`brokerage`,
+			`merchant_id`,
+			`group_buying_id`
 
 		)
 		values
@@ -213,7 +237,9 @@
 			#{all_price},
 			#{all_order_id},
 			#{promoter_id},
-			#{brokerage}
+			#{brokerage},
+			#{merchant_id},
+			#{group_buying_id}
 			
 		)
 	</insert>
@@ -252,9 +278,10 @@
             <if test="parent_id != null">`parent_id` = #{parent_id},</if>
             <if test="coupon_price != null">`coupon_price` = #{coupon_price},</if>
             <if test="callback_status != null">`callback_status` = #{callback_status},</if>
-            <if test="full_cut_price != null">`full_cut_price` = #{full_cut_price}</if>
-            <if test="promoter_id != null">`promoter_id` = #{promoter_id}</if>
-            <if test="brokerage != null">`brokerage` = #{brokerage}</if>
+            <if test="full_cut_price != null">`full_cut_price` = #{full_cut_price},</if>
+            <if test="promoter_id != null">`promoter_id` = #{promoter_id},</if>
+            <if test="brokerage != null">`brokerage` = #{brokerage},</if>
+            <if test="fx_status != null">`fx_status` = #{fx_status},</if>
         </set>
         where id = #{id}
     </update>
@@ -281,5 +308,17 @@
             #{id}
         </foreach>
     </delete>
+    <select id="queryGroupBuyRefundList" resultMap="orderMap">
+      select * from order
+        <where>
+            <if test="order_status != null and order_status != 0">
+                and order_status = #{order_status}
+            </if>
+            <if test="group_buying_id != null and group_buying_id != 0">
+                and group_buying_id = #{group_buying_id}
+            </if>
+        </where>
+    </select>
+
 
 </mapper>

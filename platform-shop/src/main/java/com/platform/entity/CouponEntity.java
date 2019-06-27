@@ -38,6 +38,10 @@ public class CouponEntity implements Serializable {
     private Date useEndDate;
     //最小商品金额
     private BigDecimal minGoodsAmount;
+    //商户id
+    private Long merchantId;
+    //发放总数量
+    private Integer totalCount;
 
     /**
      * 设置：主键
@@ -191,5 +195,21 @@ public class CouponEntity implements Serializable {
      */
     public BigDecimal getMinGoodsAmount() {
         return minGoodsAmount;
+    }
+
+    public Long getMerchantId() {
+        return merchantId;
+    }
+
+    public void setMerchantId(Long merchantId) {
+        this.merchantId = merchantId;
+    }
+
+    public Integer getTotalCount() {
+        return totalCount;
+    }
+
+    public void setTotalCount(Integer totalCount) {
+        this.totalCount = totalCount;
     }
 }

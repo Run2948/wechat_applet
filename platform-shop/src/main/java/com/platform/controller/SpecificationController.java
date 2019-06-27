@@ -1,22 +1,19 @@
 package com.platform.controller;
 
-import java.util.List;
-import java.util.Map;
-
-import org.apache.shiro.authz.annotation.RequiresPermissions;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
 import com.platform.dao.SpecificationDao;
 import com.platform.entity.SpecificationEntity;
 import com.platform.service.SpecificationService;
 import com.platform.utils.PageUtils;
 import com.platform.utils.Query;
 import com.platform.utils.R;
+import com.platform.utils.ShiroUtils;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -42,7 +39,7 @@ public class SpecificationController {
     public R list(@RequestParam Map<String, Object> params) {
         //查询列表数据
         Query query = new Query(params);
-
+        query.put("merchant_id", ShiroUtils.getUserEntity().getMerchantId());
         List<SpecificationEntity> specificationList = specificationService.queryList(query);
         int total = specificationService.queryTotal(query);
 
@@ -69,6 +66,7 @@ public class SpecificationController {
     @RequestMapping("/save")
     @RequiresPermissions("specification:save")
     public R save(@RequestBody SpecificationEntity specification) {
+    	specification.setMerchant_id(ShiroUtils.getUserEntity().getMerchantId().intValue());
         specificationService.save(specification);
 
         return R.ok();
@@ -101,7 +99,7 @@ public class SpecificationController {
      */
     @RequestMapping("/queryAll")
     public R queryAll(@RequestParam Map<String, Object> params) {
-
+    	params.put("merchant_id", ShiroUtils.getUserEntity().getMerchantId());
         List<SpecificationEntity> list = specificationService.queryList(params);
 
         return R.ok().put("list", list);
@@ -112,6 +110,12 @@ public class SpecificationController {
     @RequestMapping("/queryListByGoodsId")
     public R queryListByGoodsId(@RequestParam Map<String, Object> params) {
     	List<SpecificationEntity>  list = specificationDao.queryListByGoodsId(params.get("goodsId").toString());
-    	return R.ok().put("list", list);
+    	List<SpecificationEntity>  retlist=new ArrayList<SpecificationEntity>();
+    	if(list!=null) {
+	    	for (SpecificationEntity specificationEntity : list) {
+	    		retlist.add(specificationDao.queryObject(specificationEntity.getId()));
+			}
+    	}
+    	return R.ok().put("list", retlist);
     }
 }

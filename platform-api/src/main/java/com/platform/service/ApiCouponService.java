@@ -74,4 +74,12 @@ public class ApiCouponService {
     public List<CouponVo> queryUserCouponList(Map<String, Object> map) {
         return apiCouponMapper.queryUserCouponList(map);
     }
+
+    public Object getUserCoupons(Map param) {
+        return apiCouponMapper.queryUserCouponList(param);
+    }
+
+    public List<CouponVo> getValidUserCoupons(Map param) {
+        return apiCouponMapper.getValidUserCoupons(param);
+    }
 }

@@ -2,6 +2,7 @@ package com.platform.service;
 
 import com.platform.dao.ApiCartMapper;
 import com.platform.entity.CartVo;
+import com.platform.entity.MerCartVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -134,4 +135,14 @@ public class ApiCartService {
         cartDao.deleteByCart(user_id, session_id, checked);
     }
 
+    public List<MerCartVo> queryMerCartList(Long userId) {
+        return cartDao.queryMerCartList(userId);
+    }
+    public List<CartVo> queryCheckedByUserIdAndMerId(Map map){
+        return cartDao.queryCheckedByUserIdAndMerId(map);
+    }
+
+    public String queryMerchantName(Long merchantId) {
+       return  cartDao.queryMerchantName(merchantId);
+    }
 }

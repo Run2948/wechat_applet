@@ -15,6 +15,9 @@
         <result property="useStartDate" column="use_start_date"/>
         <result property="useEndDate" column="use_end_date"/>
         <result property="minGoodsAmount" column="min_goods_amount"/>
+        <result property="merchantId" column="merchantId"/>
+        <result property="totalCount" column="total_count"/>
+
     </resultMap>
 
     <select id="queryObject" resultType="com.platform.entity.CouponEntity">
@@ -29,7 +32,9 @@
 			`send_end_date`,
 			`use_start_date`,
 			`use_end_date`,
-			`min_goods_amount`
+			`min_goods_amount`,
+			`merchant_id` as merchantId,
+			`total_count`
 		from nideshop_coupon
 		where id = #{id}
 	</select>
@@ -46,11 +51,17 @@
         `send_end_date`,
         `use_start_date`,
         `use_end_date`,
-        `min_goods_amount`
+        `min_goods_amount`,
+        `merchant_id` as merchantId,
+        `total_count`
+
         from nideshop_coupon
         WHERE 1=1
         <if test="name != null and name.trim() != ''">
             AND name LIKE concat('%',#{name},'%')
+        </if>
+        <if test="merchantId != null and merchantId != ''">
+            AND merchant_id =#{merchantId}
         </if>
         <choose>
             <when test="sidx != null and sidx.trim() != ''">
@@ -73,7 +84,10 @@
 			`send_end_date`,
 			`use_start_date`,
 			`use_end_date`,
-			`min_goods_amount`)
+			`min_goods_amount`,
+			`merchant_id`,
+			`total_count`
+			)
 		values(
 			#{name},
 			#{typeMoney},
@@ -84,7 +98,10 @@
 			#{sendEndDate},
 			#{useStartDate},
 			#{useEndDate},
-			#{minGoodsAmount})
+			#{minGoodsAmount},
+			#{merchantId},
+			#{totalCount}
+			)
 	</insert>
 
     <update id="update" parameterType="com.platform.entity.CouponEntity">
@@ -99,7 +116,8 @@
             <if test="sendEndDate != null">`send_end_date` = #{sendEndDate},</if>
             <if test="useStartDate != null">`use_start_date` = #{useStartDate},</if>
             <if test="useEndDate != null">`use_end_date` = #{useEndDate},</if>
-            <if test="minGoodsAmount != null">`min_goods_amount` = #{minGoodsAmount}</if>
+            <if test="minGoodsAmount != null">`min_goods_amount` = #{minGoodsAmount},</if>
+            <if test="totalCount != null">`total_count` = #{totalCount}</if>
         </set>
         where id = #{id}
     </update>

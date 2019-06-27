@@ -1,16 +1,18 @@
 package com.platform.service.impl;
 
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import com.platform.dao.OrderDao;
 import com.platform.dao.ShippingDao;
+import com.platform.entity.GroupBuyingEntity;
 import com.platform.entity.OrderEntity;
 import com.platform.entity.ShippingEntity;
 import com.platform.service.OrderService;
 import com.platform.utils.RRException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import java.util.List;
-import java.util.Map;
 
 
 @Service("orderService")
@@ -89,4 +91,16 @@ public class OrderServiceImpl implements OrderService {
         order.setShippingStatus(1);//已发货
         return orderDao.update(order);
     }
+    
+    
+    
+    @Override
+    public List<GroupBuyingEntity> queryGroupList(Map<String, Object> map) {
+        return orderDao.queryGroupList(map);
+    }
+    @Override
+    public int queryGroupTotal(Map<String, Object> map) {
+        return orderDao.queryGroupTotal(map);
+    }
+
 }

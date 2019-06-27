@@ -21,7 +21,9 @@ $(function () {
             {label: '商品序列号', name: 'goodsSn', index: 'goods_sn', width: 80},
             {label: '商品库存', name: 'goodsNumber', index: 'goods_number', width: 80},
             {label: '零售价格(元)', name: 'retailPrice', index: 'retail_price', width: 80},
-            {label: '市场价格(元)', name: 'marketPrice', index: 'market_price', width: 80}]
+            {label: '市场价格(元)', name: 'marketPrice', index: 'market_price', width: 80},
+            {label: '团购价格(元)', name: 'groupPrice', index: 'group_price', width: 80}
+            ]
     });
 });
 
@@ -45,6 +47,7 @@ let vm = new Vue({
         type: '',
         goodsId:0,
         ggArr:[],
+        isSecKill:1,
         params:[
             { param : [] , ggArr:[]},
             { param : [] , ggArr:[]},
@@ -58,7 +61,7 @@ let vm = new Vue({
         add: function () {
             vm.showList = false;
             vm.title = "新增";
-            vm.product = {};
+            vm.product = {groupPrice:0};
             vm.getGoodss();
             vm.type = 'add';
         },
@@ -92,6 +95,7 @@ let vm = new Vue({
                     vm.specifications= r.list;
                 }
             });
+            vm.isSecKill=model.isSecKill;
         },
         saveOrUpdate: function (event) {
             if(vm.attribute.length>2){

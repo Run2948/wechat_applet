@@ -3,7 +3,8 @@ $(function () {
         url: '../sys/user/list',
         colModel: [
             {label: '用户ID', name: 'userId', index: "user_id", key: true, hidden: true},
-            {label: '用户名', name: 'username', width: 75},
+            {label: '登录账号', name: 'username', width: 75},
+            {label: '名称', name: 'merchantName', width: 75},
             {label: '所属部门', name: 'deptName', width: 75},
             {label: '邮箱', name: 'email', width: 90},
             {label: '手机号', name: 'mobile', width: 100},
@@ -48,6 +49,7 @@ var vm = new Vue({
         roleList: {},
         user: {
             status: 1,
+            allShow: 0,
             deptName: '',
             roleIdList: []
         },

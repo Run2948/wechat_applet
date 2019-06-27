@@ -12,10 +12,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.platform.entity.CartEntity;
+import com.platform.entity.GroupBuyingEntity;
 import com.platform.entity.OrderEntity;
 import com.platform.entity.OrderGoodsEntity;
-import com.platform.entity.ShippingEntity;
+import com.platform.entity.SysUserEntity;
 import com.platform.service.OrderGoodsService;
 import com.platform.service.OrderService;
 import com.platform.service.ShippingService;
@@ -23,7 +23,7 @@ import com.platform.utils.Base64;
 import com.platform.utils.PageUtils;
 import com.platform.utils.Query;
 import com.platform.utils.R;
-import com.platform.utils.RRException;
+import com.platform.utils.ShiroUtils;
 
 
 /**
@@ -47,9 +47,10 @@ public class OrderController {
     @RequestMapping("/list")
     @RequiresPermissions("order:list")
     public R list(@RequestParam Map<String, Object> params) {
+        SysUserEntity sysUserEntity= ShiroUtils.getUserEntity();
         // 查询列表数据
         Query query = new Query(params);
-
+        query.put("merchantId",sysUserEntity.getMerchantId());
         List<OrderEntity> orderList = orderService.queryList(query);
         int total = orderService.queryTotal(query);
         for(OrderEntity user : orderList) {
@@ -59,6 +60,23 @@ public class OrderController {
 
         return R.ok().put("page", pageUtil);
     }
+    
+    
+    /**
+     * 列表
+     */
+    @RequestMapping("/groupList")
+    public R groupList(@RequestParam Map<String, Object> params) {
+        SysUserEntity sysUserEntity= ShiroUtils.getUserEntity();
+        // 查询列表数据
+        Query query = new Query(params);
+        query.put("merchantId",sysUserEntity.getMerchantId());
+        List<GroupBuyingEntity> list = orderService.queryGroupList(query);
+        int total = orderService.queryGroupTotal(query);
+        PageUtils pageUtil = new PageUtils(list, total, query.getLimit(), query.getPage());
+        return R.ok().put("page", pageUtil);
+    }
+
 
 
     /**
@@ -68,6 +86,20 @@ public class OrderController {
     @RequiresPermissions("order:info")
     public R info(@PathVariable("id") Integer id) {
         OrderEntity order = orderService.queryObject(id);
+        Map<String, Object> params =new HashMap<String, Object>();
+        params.put("orderId", order.getId());
+        List<OrderGoodsEntity> list=  orderGoodsService.queryList(params);
+        String goodsName="";
+        //商品规格详情
+      	String goodsSpecifitionNameValue="";
+        for (OrderGoodsEntity orderGoodsEntity : list) {
+        	goodsName=goodsName+orderGoodsEntity.getGoodsName()+",";
+			if(orderGoodsEntity.getGoodsSpecifitionNameValue()!=null) {
+				goodsSpecifitionNameValue=goodsSpecifitionNameValue+orderGoodsEntity.getGoodsSpecifitionNameValue()+",";
+			}
+		}
+        order.setGoodsNames(goodsName);
+        order.setGoodsSpecifitionNameValue(goodsSpecifitionNameValue);
         order.setUserName(Base64.decode(order.getUserName()));
         order.setAddress(order.getProvince() + order.getCity() + order.getDistrict() + order.getAddress());
         return R.ok().put("order", order);

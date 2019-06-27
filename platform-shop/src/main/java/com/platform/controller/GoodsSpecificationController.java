@@ -16,6 +16,7 @@ import com.platform.service.GoodsSpecificationService;
 import com.platform.utils.PageUtils;
 import com.platform.utils.Query;
 import com.platform.utils.R;
+import com.platform.utils.ShiroUtils;
 
 /**
  * 商品对应规格表值表Controller
@@ -37,6 +38,7 @@ public class GoodsSpecificationController {
     @RequiresPermissions("goodsspecification:list")
     public R list(@RequestParam Map<String, Object> params) {
         //查询列表数据
+    	params.put("merchantId", ShiroUtils.getUserEntity().getMerchantId());
         Query query = new Query(params);
 
         List<GoodsSpecificationEntity> goodsSpecificationList = goodsSpecificationService.queryList(query);
@@ -64,6 +66,7 @@ public class GoodsSpecificationController {
     @RequestMapping("/save")
     @RequiresPermissions("goodsspecification:save")
     public R save(@RequestBody GoodsSpecificationEntity goodsSpecification) {
+    	goodsSpecification.setMerchantId(ShiroUtils.getUserEntity().getMerchantId().intValue());
         goodsSpecificationService.save(goodsSpecification);
 
         return R.ok();
@@ -96,7 +99,7 @@ public class GoodsSpecificationController {
      */
     @RequestMapping("/queryAll")
     public R queryAll(@RequestParam Map<String, Object> params) {
-
+    	params.put("merchantId", ShiroUtils.getUserEntity().getMerchantId());
         List<GoodsSpecificationEntity> list = goodsSpecificationService.queryList(params);
 
         return R.ok().put("list", list);

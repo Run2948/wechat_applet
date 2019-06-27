@@ -31,7 +31,9 @@ var vm = new Vue({
         add: function () {
             vm.showList = false;
             vm.title = "新增";
-            vm.specification = {};
+            vm.specification = {
+            		sortOrder: 1
+            };
         },
         update: function (event) {
             var id = getSelectedRow("#jqGrid");

@@ -8,6 +8,7 @@
         <result property="id" column="id"/>
         <result property="name" column="name"/>
         <result property="sortOrder" column="sort_order"/>
+		<result property="merchant_id" column="merchant_id"/>
     </resultMap>
 
 	<select id="queryObject" resultType="com.platform.entity.SpecificationEntity">
@@ -16,7 +17,7 @@
 
 	<select id="queryList" resultType="com.platform.entity.SpecificationEntity">
 		select * from nideshop_specification
-		  WHERE 1=1
+		  WHERE 1=1 and merchant_id = #{merchant_id}
         <if test="name != null and name.trim() != ''">
             AND name LIKE concat('%',#{name},'%')
         </if>
@@ -35,7 +36,7 @@
 	
  	<select id="queryTotal" resultType="int">
 		select count(*) from nideshop_specification 
-		  WHERE 1=1
+		  WHERE 1=1 and merchant_id = #{merchant_id}
         <if test="name != null and name.trim() != ''">
             AND name LIKE concat('%',#{name},'%')
         </if>
@@ -45,12 +46,14 @@
 		insert into nideshop_specification
 		(
 			`name`, 
-			`sort_order`
+			`sort_order`,
+			`merchant_id`
 		)
 		values
 		(
 			#{name}, 
-			#{sortOrder}
+			#{sortOrder}, 
+			#{merchant_id}
 		)
 	</insert>
 	 
@@ -75,10 +78,6 @@
 	</delete>
 	
 	<select id="queryListByGoodsId" resultType="com.platform.entity.SpecificationEntity">
-		SELECT * FROM `nideshop_specification` a WHERE 	EXISTS 
-		(SELECT b.specification_id FROM nideshop_goods_specification b WHERE goods_id=#{value} AND a.`id` = b.specification_id);
+		SELECT specification_id as id  FROM   nideshop_goods_specification WHERE goods_id = #{value} GROUP BY specification_id 
 	</select>
-	
-	
-
 </mapper>

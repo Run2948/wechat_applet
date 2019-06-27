@@ -5,6 +5,7 @@ import com.platform.service.GoodsIssueService;
 import com.platform.utils.PageUtils;
 import com.platform.utils.Query;
 import com.platform.utils.R;
+import com.platform.utils.ShiroUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -33,7 +34,7 @@ public class GoodsIssueController {
     public R list(@RequestParam Map<String, Object> params) {
         //查询列表数据
         Query query = new Query(params);
-
+        query.put("merchant_id", ShiroUtils.getUserEntity().getMerchantId());
         List<GoodsIssueEntity> goodsIssueList = goodsIssueService.queryList(query);
         int total = goodsIssueService.queryTotal(query);
 
@@ -59,6 +60,7 @@ public class GoodsIssueController {
     @RequestMapping("/save")
     @RequiresPermissions("goodsissue:save")
     public R save(@RequestBody GoodsIssueEntity goodsIssue) {
+    	goodsIssue.setMerchant_id(ShiroUtils.getUserEntity().getMerchantId().intValue());
         goodsIssueService.save(goodsIssue);
 
         return R.ok();

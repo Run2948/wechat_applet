@@ -7,11 +7,12 @@
 	<!-- 用于select查询公用抽取的列 -->
 	<sql id="columns">
 		REPORT_ID as reportId,MLS_USER_ID as mlsUserId,TYPES ,TYPES_STR as typesStr,PRICE ,REMARKS,C_TIME
-		as ctime
+		as ctime,ORDER_ID as orderId
 	</sql>
 
 	<insert id="insert" useGeneratedKeys="true"	keyProperty="reportId">
-		INSERT INTO USER_RECORD (MLS_USER_ID,TYPES ,TYPES_STR ,	PRICE ,REMARKS) VALUES (#{mlsUserId} , #{types} ,#{typesStr} ,#{price} ,#{remarks} )
+		INSERT INTO USER_RECORD (MLS_USER_ID,TYPES ,TYPES_STR ,	PRICE ,REMARKS, ORDER_ID) 
+		VALUES (#{mlsUserId} , #{types} ,#{typesStr} ,#{price} ,#{remarks} ,#{orderId})
 	</insert>
 
 	<update id="update"><!-- UPDATE USER_RECORD SET TYPES = #{types} , TYPES_STR 
@@ -44,6 +45,12 @@
 			</if>
 			<if test="mlsUserId != null">
 				AND MLS_USER_ID = #{mlsUserId}
+			</if>
+			<if test="orderId != null">
+				AND ORDER_ID = #{orderId}
+			</if>
+			<if test="types != null">
+				AND TYPES = #{types}
 			</if>
 		</where>
 	</sql>

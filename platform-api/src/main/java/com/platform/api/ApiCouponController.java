@@ -1,6 +1,7 @@
 package com.platform.api;
 
 import com.alibaba.fastjson.JSONObject;
+import com.platform.annotation.IgnoreAuth;
 import com.platform.annotation.LoginUser;
 import com.platform.cache.J2CacheUtils;
 import com.platform.entity.*;
@@ -49,7 +50,32 @@ public class ApiCouponController extends ApiBaseAction {
         List<CouponVo> couponVos = apiCouponService.queryUserCoupons(param);
         return toResponsSuccess(couponVos);
     }
-
+    /**
+     * 获取用户可用优惠券列表
+     */
+    @ApiOperation(value = "获取用户可用优惠券列表")
+    @GetMapping("/getValidCouponList")
+    public Object getValidCouponList(@LoginUser UserVo loginUser,Long merchantId, BigDecimal goodsTotalPrice ) {
+        Map param = new HashMap();
+        param.put("user_id", loginUser.getUserId());
+        param.put("merchantId", merchantId);
+        param.put("goodsTotalPrice",goodsTotalPrice);
+        List<CouponVo> couponVos = apiCouponService.queryUserCoupons(param);
+        List<CouponVo> validCouponVos= apiCouponService.getValidUserCoupons(param);
+        return toResponsSuccess(validCouponVos);
+    }
+    /**
+     * 获取商户优惠券列表
+     */
+    @ApiOperation(value = "获取商户优惠券列表")
+    @PostMapping("/listMer")
+    public Object listMer(@LoginUser UserVo loginUser,@RequestBody GoodsVo goodsVo) {
+        Map param = new HashMap();
+        //param.put("user_id", loginUser.getUserId());
+        param.put("merchantId", goodsVo.getMerchantId());
+        List<CouponVo> couponVos = apiCouponService.queryList(param);
+        return toResponsSuccess(couponVos);
+    }
     /**
      * 根据商品获取可用优惠券列表
      */
@@ -128,6 +154,57 @@ public class ApiCouponController extends ApiBaseAction {
     }
 
     /**
+     * 用户主动领取商户领取优惠券
+     */
+    @IgnoreAuth
+    @ApiOperation(value = "用户主动领取商户领取优惠券")
+    @PostMapping("getMerCoupon")
+    public Object getMerCoupon(@LoginUser UserVo loginUser) {
+        //1 用户优惠券信息中增加
+        //2 优惠券表中数量减少
+        JSONObject jsonParam = getJsonRequest();
+        String id = jsonParam.getString("id");
+        Map params = new HashMap();
+        /*loginUser=new UserVo();
+        loginUser.setUserId(new Long(13));*/
+        params.put("user_id", loginUser.getUserId());
+        params.put("send_type", 8);
+        params.put("id",id);
+        List<CouponVo> couponVos = apiCouponService.queryUserCoupons(params);
+        if (null != couponVos && couponVos.size() > 0) {
+            return toResponsFail("已经领取过，不能重复领取");
+        }
+
+
+        // 领取
+        Map couponParam = new HashMap();
+        couponParam.put("send_type", 8);
+        params.put("id",id);
+        CouponVo newCouponConfig = apiCouponService.queryObject(Integer.parseInt(id));
+        //判断优惠券是否被领完
+        Map userParams = new HashMap();
+        userParams.put("coupon_id",id);
+        int count=  apiUserCouponService.queryUserGetTotal(userParams);
+        if(newCouponConfig.getTotalCount()<=count){
+            return toResponsFail("优惠券已领完");
+        }
+        if (null != newCouponConfig) {
+            UserCouponVo userCouponVo = new UserCouponVo();
+            userCouponVo.setAdd_time(new Date());
+            userCouponVo.setCoupon_id(newCouponConfig.getId());
+            userCouponVo.setCoupon_number(CharUtil.getRandomString(12));
+            userCouponVo.setUser_id(loginUser.getUserId());
+            userCouponVo.setMerchantId(newCouponConfig.getMerchantId());
+            userCouponVo.setCoupon_price(newCouponConfig.getType_money());
+            apiUserCouponService.save(userCouponVo);
+            return toResponsSuccess(userCouponVo);
+        }else {
+            return toResponsFail("领取失败");
+        }
+
+    }
+
+    /**
      * 　　填写手机号码，领券
      */
     @ApiOperation(value = "领券优惠券")
@@ -171,6 +248,7 @@ public class ApiCouponController extends ApiBaseAction {
             userCouponVo.setCoupon_id(newCouponConfig.getId());
             userCouponVo.setCoupon_number(CharUtil.getRandomString(12));
             userCouponVo.setUser_id(loginUser.getUserId());
+            userCouponVo.setCoupon_price(newCouponConfig.getType_money());
             apiUserCouponService.save(userCouponVo);
             return toResponsSuccess(userCouponVo);
         } else {
@@ -206,6 +284,7 @@ public class ApiCouponController extends ApiBaseAction {
             userCouponVo.setUser_id(loginUser.getUserId());
             userCouponVo.setSource_key(sourceKey);
             userCouponVo.setReferrer(referrer);
+            userCouponVo.setCoupon_price(newCouponConfig.getType_money());
             apiUserCouponService.save(userCouponVo);
             //
             List<UserCouponVo> userCouponVos = new ArrayList();

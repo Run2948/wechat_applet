@@ -144,7 +144,7 @@ var vm = new Vue({
             });
         },
         handleSuccess: function (res, file) {
-            vm.goodsSpecification.picUrl = file.response.url;
+        	this.$set(vm.goodsSpecification,'picUrl',file.response.url)
         },
         eyeImage: function () {
             var url = vm.goodsSpecification.picUrl;

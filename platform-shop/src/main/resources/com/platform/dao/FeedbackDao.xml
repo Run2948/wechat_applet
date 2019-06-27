@@ -39,7 +39,7 @@
 		`add_time`,
 		`status`
 		from nideshop_feedback
-		WHERE 1=1
+		WHERE 1=1 
 		<if test="name != null and name.trim() != ''">
 			AND user_name LIKE concat('%',#{name},'%')
 		</if>
@@ -58,7 +58,7 @@
 	
  	<select id="queryTotal" resultType="int">
 		select count(*) from nideshop_feedback
-		WHERE 1=1
+		WHERE 1=1 
         <if test="name != null and name.trim() != ''">
             AND user_name LIKE concat('%',#{name},'%')
         </if>
@@ -72,7 +72,8 @@
 			`feed_Type`,
 			`content`,
 			`add_time`,
-			`status` )
+			`status`,
+			`merchant_id` )
 		values(
 			#{userId},
 			#{userName},
@@ -80,7 +81,8 @@
 			#{feedType},
 			#{content},
 			#{addTime},
-			#{status})
+			#{status},
+			#{merchant_id})
 	</insert>
 	 
 	<update id="update" parameterType="com.platform.entity.FeedbackEntity">

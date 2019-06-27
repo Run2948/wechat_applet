@@ -2,6 +2,9 @@ package com.platform.dao;
 
 import com.platform.entity.OrderVo;
 
+import java.util.List;
+import java.util.Map;
+
 /**
  * 
  * 
@@ -11,5 +14,9 @@ import com.platform.entity.OrderVo;
  */
 public interface ApiOrderMapper extends BaseDao<OrderVo> {
 	public void updateStatus(OrderVo vo);
-	
+	public List<OrderVo> queryWaitList();
+	public List<OrderVo> queryFxList();
+	public List<OrderVo> queryByAllOrderId(String allOrderId);
+
+    List<OrderVo> queryGroupBuyRefundList(Map map);
 }

@@ -46,6 +46,7 @@
 	    <property name="filterChainDefinitions">  
 	        <value>
 	        	/statics/**=anon
+	        	/h5/**=anon
 				/api/**=anon
 				/api/**=noSessionCreation
 	        	/login.html=anon

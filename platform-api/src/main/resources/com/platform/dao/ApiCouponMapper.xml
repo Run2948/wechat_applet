@@ -22,6 +22,8 @@
         <result property="min_transmit_num" column="min_transmit_num"/>
         <result property="user_coupon_id" column="user_coupon_id"/>
         <result property="coupon_status" column="coupon_status"/>
+        <result property="merchantId" column="merchant_id"/>
+        <result property="totalCount" column="total_count"/>
     </resultMap>
 
     <select id="queryObject" resultMap="couponMap">
@@ -40,6 +42,9 @@
         <if test="enabled != null and enabled == true">
             and a.use_end_date >= now()
             and now() >= a.use_start_date
+        </if>
+        <if test="merchantId != null and merchantId !=''">
+            and a.merchant_id = #{merchantId}
         </if>
         <choose>
             <when test="sidx != null and sidx.trim() != ''">
@@ -92,7 +97,7 @@
             <if test="send_end_date != null">`send_end_date` = #{send_end_date},</if>
             <if test="use_start_date != null">`use_start_date` = #{use_start_date},</if>
             <if test="use_end_date != null">`use_end_date` = #{use_end_date},</if>
-            <if test="min_goods_amount != null">`min_goods_amount` = #{min_goods_amount}</if>
+            <if test="min_goods_amount != null">`min_goods_amount` = #{min_goods_amount},</if>
             <if test="coupon_status != null">`coupon_status` = #{coupon_status}</if>
         </set>
         where id = #{id}
@@ -121,12 +126,18 @@
         select a.*,b.coupon_number,b.user_id,b.coupon_status,b.id user_coupon_id
         from nideshop_coupon a
         left join nideshop_user_coupon b on a.id = b.coupon_id
-        where 1 = 1
+        where 1 = 1 and a.merchant_id=b.merchant_id
+        <if test="id != null">
+            and a.`id` = #{id}
+        </if>
         <if test="user_id != null">
             and b.`user_id` = #{user_id}
         </if>
         <if test="send_type != null">
             and a.send_type = #{send_type}
+        </if>
+        <if test="merchantId != null  and merchant_id !=''">
+            and a.merchant_id = #{merchantId}
         </if>
         <if test="coupon_status != null">
             and b.coupon_status = #{coupon_status}
@@ -182,7 +193,7 @@
         where 1 = 1
         and a.use_end_date >= now()
         and now() >= a.use_start_date
-        and a.send_type in (1,4)
+        and a.send_type in (1,4,8)
         and b.user_id = #{user_id} and b.order_id is null
     </select>
 
@@ -192,6 +203,19 @@
         left join nideshop_user_coupon b on a.id = b.coupon_id
         where 1 = 1
         and b.id = #{id}
+    </select>
+    <select id="getValidUserCoupons" resultMap="couponMap">
+        select a.*,b.coupon_number,b.user_id,b.id as user_coupon_id
+        from nideshop_coupon a
+        left join nideshop_user_coupon b on a.id = b.coupon_id
+        where 1 = 1
+        and a.use_end_date >= now()
+        and now() >= a.use_start_date
+        and a.send_type in (1,4,8)
+        and b.coupon_status=1
+        and a.merchant_id=#{merchantId}
+        and a.min_goods_amount &lt;= #{goodsTotalPrice}
+        and b.user_id = #{user_id} and b.order_id is null
     </select>
 
 </mapper>

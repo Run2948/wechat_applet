@@ -78,6 +78,8 @@ public class GoodsServiceImpl implements GoodsService {
         productEntity.setRetailPrice(goods.getRetailPrice());
         productEntity.setMarketPrice(goods.getMarketPrice());
         productEntity.setGoodsSpecificationIds("");
+        productEntity.setMerchant_id(goods.getMerchantId().intValue());
+        productEntity.setGroupPrice(goods.getGroupPrice());
         productDao.save(productEntity);
 
         goods.setAddTime(new Date());

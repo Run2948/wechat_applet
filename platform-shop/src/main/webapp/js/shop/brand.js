@@ -5,17 +5,9 @@ $(function () {
             label: 'id', name: 'id', index: 'id', key: true, hidden: true
         }, {
             label: '品牌名称', name: 'name', index: 'name', width: 80
-        }, {
-            label: '图片', name: 'listPicUrl', index: 'list_pic_url', width: 80, formatter: function (value) {
-                return transImg(value);
-            }
-        }, {
+        },  {
             label: '描述', name: 'simpleDesc', index: 'simple_desc', width: 80
-        }, {
-            label: '图片', name: 'picUrl', index: 'pic_url', width: 80, formatter: function (value) {
-                return transImg(value);
-            }
-        }, {
+        },  {
             label: '排序', name: 'sortOrder', index: 'sort_order', width: 80
         }, {
             label: '显示', name: 'isShow', index: 'is_show', width: 80, formatter: function (value) {
@@ -24,7 +16,7 @@ $(function () {
         }, {
             label: '展示价格', name: 'floorPrice', index: 'floor_Price', width: 80
         }, {
-            label: 'app显示图片', name: 'appListPicUrl', index: 'app_list_pic_url', width: 80, formatter: function (value) {
+            label: '主图片', name: 'appListPicUrl', index: 'app_list_pic_url', width: 80, formatter: function (value) {
                 return transImg(value);
             }
         }, {
@@ -77,7 +69,6 @@ var vm = new Vue({
         },
         saveOrUpdate: function (event) {
             var url = vm.brand.id == null ? "../brand/save" : "../brand/update";
-            alert("12312")
             console.log(JSON.stringify(vm.brand));
             Ajax.request({
                 type: "POST",

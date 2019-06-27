@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 
 /**
  * @author lipengjun
@@ -33,7 +35,16 @@ public class UserCouponVo implements Serializable {
     private Long referrer;
     //优惠券金额
     private BigDecimal coupon_price;
-
+    private Long merchantId;
+    private Integer totalCount;
+    //状态 1. 可用 2. 已用 3. 过期
+    private Integer coupon_status;
+    //使用开始时间
+    private Date use_start_date;
+    //使用结束时间
+    private Date use_end_date;
+    //最小使用金额
+    private BigDecimal min_goods_amount;
     public Integer getId() {
         return id;
     }
@@ -114,6 +125,55 @@ public class UserCouponVo implements Serializable {
 	public void setCoupon_price(BigDecimal coupon_price) {
 		this.coupon_price = coupon_price;
 	}
+
+    public Long getMerchantId() {
+        return merchantId;
+    }
+
+    public void setMerchantId(Long merchantId) {
+        this.merchantId = merchantId;
+    }
+
+    public Integer getTotalCount() {
+        return totalCount;
+    }
+
+    public void setTotalCount(Integer totalCount) {
+        this.totalCount = totalCount;
+    }
+
+	public Integer getCoupon_status() {
+		return coupon_status;
+	}
+
+	public void setCoupon_status(Integer coupon_status) {
+		this.coupon_status = coupon_status;
+	}
+
+	public Date getUse_start_date() {
+		return use_start_date;
+	}
+
+	public void setUse_start_date(Date use_start_date) {
+		this.use_start_date = use_start_date;
+	}
+
+	public Date getUse_end_date() {
+		return use_end_date;
+	}
+
+	public void setUse_end_date(Date use_end_date) {
+		this.use_end_date = use_end_date;
+	}
+
+	public BigDecimal getMin_goods_amount() {
+		return min_goods_amount;
+	}
+
+	public void setMin_goods_amount(BigDecimal min_goods_amount) {
+		this.min_goods_amount = min_goods_amount;
+	}
+    
     
     
 }

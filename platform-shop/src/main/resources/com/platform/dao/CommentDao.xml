@@ -39,7 +39,7 @@
         nideshop_goods.name value_name
         from nideshop_comment LEFT JOIN nideshop_user ON nideshop_comment.user_id = nideshop_user.id
         LEFT JOIN nideshop_goods ON nideshop_comment.value_id = nideshop_goods.id
-        WHERE 1=1
+        WHERE 1=1 
         <if test="userName != null and userName.trim() != ''">
             AND nideshop_user.username LIKE concat('%',#{userName},'%')
         </if>
@@ -68,7 +68,7 @@
     <select id="queryTotal" resultType="int">
         select count(*) from nideshop_comment LEFT JOIN nideshop_user ON nideshop_comment.user_id = nideshop_user.id
         LEFT JOIN nideshop_goods ON nideshop_comment.value_id = nideshop_goods.id
-        WHERE 1=1
+        WHERE 1=1 
         <if test="userName != null and userName.trim() != ''">
             AND nideshop_user.username LIKE concat('%',#{userName},'%')
         </if>
@@ -90,14 +90,17 @@
 			`content`,
 			`add_time`,
 			`status`,
-			`user_id`)
+			`user_id`,
+			`merchant_id`
+			)
 		values(
 			#{typeId},
 			#{valueId},
 			#{content},
 			#{addTime},
 			#{status},
-			#{userId})
+			#{userId},
+			#{merchant_id})
 	</insert>
 
     <update id="update" parameterType="com.platform.entity.CommentEntity">

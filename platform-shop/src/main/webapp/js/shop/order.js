@@ -27,13 +27,13 @@ $(function () {
             {
                 label: '订单类型', name: 'orderType', index: 'order_type', width: 80, formatter: function (value) {
                     if (value == '1') {
-                        return '普通订单';
+                        return '购物车订单';
                     } else if (value == '2') {
-                        return '团购订单';
+                        return '普通订单';
                     } else if (value == '3') {
-                        return '砍价订单';
+                        return '秒杀订单';
                     } else if (value == '4') {
-                        return '立即购买';
+                        return '团购订单';
                     }
                     return '-';
                 }

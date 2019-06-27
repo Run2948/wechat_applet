@@ -52,35 +52,24 @@
                     <i-option v-for="citem in params[i].ggArr" :value="citem.id" :key="citem.id">{{citem.value}}</i-option>
                 </i-select>
             </Form-item>
-            <!--<Form-item label="规格" v-if="attribute.indexOf(2)>-1" prop="guige">-->
-                <!--<i-select v-model="guige" filterable multiple>-->
-                    <!--<i-option v-for="guige in guiges" :value="guige.id" :key="guige.id">{{guige.value}}</i-option>-->
-                <!--</i-select>-->
-            <!--</Form-item>-->
-            <!--<Form-item label="重量" v-if="attribute.indexOf(4)>-1" prop="weight">-->
-                <!--<i-select v-model="weight" filterable multiple>-->
-                    <!--<i-option v-for="weight in weights" :value="weight.id" :key="weight.id">{{weight.value}}</i-option>-->
-                <!--</i-select>-->
-            <!--</Form-item>-->
             <Form-item label="商品序列号" prop="goodsSn">
                 <i-input v-model="product.goodsSn" placeholder="商品序列号"/>
             </Form-item>
             <Form-item label="商品库存" prop="goodsNumber">
-                <Input-number :min="0" :step="1" v-model="product.goodsNumber" placeholder="商品库存"
-                              style="width: 188px;"/>
+                <Input-number :min="0" :step="1" v-model="product.goodsNumber" placeholder="商品库存"  style="width: 188px;"/>
             </Form-item>
             <Form-item label="零售价格" prop="retailPrice">
-                <Input-number :min="0" :step="1" v-model="product.retailPrice" placeholder="零售价格"
-                              style="width: 188px;"/>
+                <Input-number :min="0" :step="1" v-model="product.retailPrice" placeholder="零售价格" style="width: 188px;"/>
             </Form-item>
             <Form-item label="市场价格" prop="marketPrice">
-                <Input-number :min="0" :step="1" v-model="product.marketPrice" placeholder="市场价格"
-                              style="width: 188px;"/>
+                <Input-number :min="0" :step="1" v-model="product.marketPrice" placeholder="市场价格"  style="width: 188px;"/>
+            </Form-item>
+            <Form-item label="团购价格(元)" prop="groupPrice" v-if="isSecKill==3">
+                <Input-number :min="0" :step="1" v-model="product.groupPrice" placeholder="团购价格(元)"  style="width: 188px;"/>
             </Form-item>
             <Form-item>
                 <i-button type="primary" @click="handleSubmit('formValidate')">提交</i-button>
-                <i-button type="warning" @click="reload" style="margin-left: 8px"/>
-                返回</i-button>
+                <i-button type="warning" @click="reload" style="margin-left: 8px"/>返回</i-button>
                 <i-button type="ghost" @click="handleReset('formValidate')" style="margin-left: 8px">重置</i-button>
             </Form-item>
         </i-form>

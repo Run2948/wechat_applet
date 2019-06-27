@@ -2,7 +2,6 @@ package com.platform.utils;
 
 import org.apache.commons.beanutils.PropertyUtilsBean;
 import org.apache.commons.lang.ArrayUtils;
-import org.springframework.util.Assert;
 
 import java.beans.PropertyDescriptor;
 import java.math.BigDecimal;
@@ -211,47 +210,8 @@ public class MapUtils {
         return null;
     }
 
-    /**
-     * 如果value不为空 ，则放到map中
-     *
-     * @param map
-     * @param key
-     * @param value
-     */
-    public static void putIfValueNotNull(Map<String, Object> map, String key, Object value) {
-        Assert.notNull(map);
-        Assert.hasText(key);
-        if (value != null)
-            map.put(key, value);
-    }
 
-    /**
-     * 如果value不为空 ，则放到map中
-     *
-     * @param map
-     * @param key
-     * @param value
-     */
-    public static void putIfValueNotEmpty(Map<String, Object> map, String key, String value) {
-        Assert.notNull(map);
-        Assert.hasText(key);
-        if (!StringUtils.isNullOrEmpty(value))
-            map.put(key, value);
-    }
 
-    /**
-     * 将map中指定的key的value值进行处理
-     *
-     * @param key
-     * @param map
-     * @param helper
-     */
-    public static void convertMapValuePattern(String key, Map<String, Object> map, DealMapValueHelper helper) {
-        Assert.hasText(key);
-        Assert.notNull(map);
-        Assert.notNull(helper);
-        helper.dealValue(key, map);
-    }
 
     /**
      * 将javabean实体类转为map类型，然后返回一个map类型的值

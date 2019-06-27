@@ -1,8 +1,6 @@
 package com.platform.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import org.apache.commons.lang.StringUtils;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -25,7 +23,7 @@ public class CouponVo implements Serializable {
     private String name;
     //金额
     private BigDecimal type_money;
-    //发放方式 0：按订单发放 1：按用户发放 2:商品转发送券 3：按商品发放 4:新用户注册 5：线下发放 6评价好评红包（固定或随机红包） 7包邮
+    //发放方式 0：按订单发放 1：按用户发放 2:商品转发送券 3：按商品发放 4:新用户注册 5：线下发放 6评价好评红包（固定或随机红包） 7包邮 8用户主动领取优惠券
     private Integer send_type;
     //最小金额
     private BigDecimal min_amount;
@@ -57,7 +55,9 @@ public class CouponVo implements Serializable {
     private Integer min_transmit_num;
     //优惠券状态 1 可用 2 已用 3 过期
     private Integer coupon_status = 1;
-
+    //商户id
+    private Long merchantId;
+    private Integer totalCount;
     public Integer getUser_coupon_id() {
         return user_coupon_id;
     }
@@ -200,5 +200,21 @@ public class CouponVo implements Serializable {
 
     public void setMin_transmit_num(Integer min_transmit_num) {
         this.min_transmit_num = min_transmit_num;
+    }
+
+    public Long getMerchantId() {
+        return merchantId;
+    }
+
+    public void setMerchantId(Long merchantId) {
+        this.merchantId = merchantId;
+    }
+
+    public Integer getTotalCount() {
+        return totalCount;
+    }
+
+    public void setTotalCount(Integer totalCount) {
+        this.totalCount = totalCount;
     }
 }

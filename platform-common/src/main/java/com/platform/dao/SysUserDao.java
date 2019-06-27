@@ -1,10 +1,11 @@
 package com.platform.dao;
 
-import com.platform.entity.SysUserEntity;
-import com.platform.entity.UserWindowDto;
-
 import java.util.List;
 import java.util.Map;
+
+import com.platform.entity.MlsUserEntity2;
+import com.platform.entity.SysUserEntity;
+import com.platform.entity.UserWindowDto;
 
 /**
  * 系统用户
@@ -42,4 +43,13 @@ public interface SysUserDao extends BaseDao<SysUserEntity> {
      * @return
      */
     List<UserWindowDto> queryListByBean(UserWindowDto userWindowDto);
+    /**
+       *更新商户ID
+     */
+    int updateMerchantId(SysUserEntity t);
+    
+    int mlsUseCount(String tel);
+    void insertMlsUse(MlsUserEntity2 t);
+    void updateMlsUse(MlsUserEntity2 t);
 }
+

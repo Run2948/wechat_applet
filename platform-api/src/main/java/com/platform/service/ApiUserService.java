@@ -106,4 +106,8 @@ public class ApiUserService {
         userVo1.setRealName(userVo.getUsername());
         userDao.update(userVo1);
     }
+    
+    public int updatefx(UserVo vo) {
+    	return userDao.updatefx(vo);
+    }
 }

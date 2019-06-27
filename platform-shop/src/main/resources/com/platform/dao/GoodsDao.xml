@@ -41,9 +41,15 @@
         <result property="updateUserId" column="update_user_id"/>
         <result property="isSecKill" column="is_secKill"/>
         <result property="startTime" column="start_time"/>
+        <result property="brokerage_percent" column="brokerage_percent"/>
+        <result property="merchantId" column="merchantId"/>
+        <result property="endTime" column="end_time"/>
+        <result property="successTime" column="success_time"/>
+         <result property="successPeople" column="success_people"/>
+        <result property="groupPrice" column="group_price"/>
     </resultMap>
 
-    <select id="queryObject" resultType="com.platform.entity.GoodsEntity">
+    <select id="queryObject" resultMap="goodsMap">
 		select * from nideshop_goods where id = #{value}
 	</select>
 
@@ -84,9 +90,17 @@
         nideshop_goods.create_user_id,
         nideshop_goods.create_user_dept_id,
         nideshop_goods.update_user_id,
+        nideshop_goods.brokerage_percent,
+        nideshop_goods.is_secKill,
+        nideshop_goods.start_time,
+        nideshop_goods.end_time,
+        nideshop_goods.success_time,
+        nideshop_goods.success_people,
+        nideshop_goods.group_price,
         nideshop_category.name category_name,
         nideshop_attribute_category.name attribute_category_name,
-        nideshop_brand.name brand_name
+        nideshop_brand.name brand_name,
+        nideshop_goods.merchant_id merchantId
         from nideshop_goods
         LEFT JOIN nideshop_category
         ON nideshop_goods.category_id = nideshop_category.id
@@ -97,6 +111,9 @@
         ${filterSql}
         <if test="name != null and name != ''">
             AND nideshop_goods.name LIKE concat('%',#{name},'%')
+        </if>
+        <if test="merchantId != null and merchantId != ''">
+            AND nideshop_goods.merchant_id =#{merchantId}
         </if>
         AND nideshop_goods.is_Delete = #{isDelete}
         <choose>
@@ -118,6 +135,9 @@
         ${filterSql}
         <if test="name != null and name != ''">
             AND name LIKE concat('%',#{name},'%')
+        </if>
+        <if test="merchantId != null and merchantId != ''">
+            AND nideshop_goods.merchant_id =#{merchantId}
         </if>
         AND nideshop_goods.is_Delete = #{isDelete}
     </select>
@@ -159,7 +179,15 @@
         `market_price`,
         `create_user_id`,
         `create_user_dept_id`,
-        `update_user_id`
+        `update_user_id`,
+        `brokerage_percent`,
+        `merchant_id`,
+        `is_secKill`,
+        `start_time`,
+        `end_time`,
+        `success_time`,
+        `success_people`,
+        `group_price`
         )
         values
         (
@@ -197,7 +225,15 @@
         #{marketPrice},
         #{createUserId},
         #{createUserDeptId},
-        #{updateUserId}
+        #{updateUserId},
+        #{brokerage_percent},
+        #{merchantId},
+        #{isSecKill},
+        #{startTime},
+        #{endTime},
+        #{successTime},
+        #{successPeople},
+        #{groupPrice}
         )
     </insert>
 
@@ -238,6 +274,13 @@
             <if test="createUserId != null">`create_user_id` = #{createUserId},</if>
             <if test="createUserId != null">`create_user_dept_id` = #{createUserDeptId},</if>
             <if test="updateUserId != null">`update_user_id` = #{updateUserId},</if>
+            <if test="brokerage_percent != null">`brokerage_percent` = #{brokerage_percent},</if>
+            <if test="isSecKill != null">`is_secKill` = #{isSecKill},</if>
+            <if test="startTime != null">`start_time` = #{startTime},</if>
+            <if test="endTime != null">`end_time` = #{endTime},</if>
+            <if test="successTime != null">`success_time` = #{successTime},</if>
+            <if test="successPeople != null">`success_people` = #{successPeople},</if>
+            <if test="groupPrice != null">`group_price` = #{groupPrice},</if>
         </set>
         where id = #{id}
     </update>

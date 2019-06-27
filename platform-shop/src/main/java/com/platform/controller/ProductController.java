@@ -5,6 +5,8 @@ import com.platform.service.ProductService;
 import com.platform.utils.PageUtils;
 import com.platform.utils.Query;
 import com.platform.utils.R;
+import com.platform.utils.ShiroUtils;
+
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -34,12 +36,10 @@ public class ProductController {
     public R list(@RequestParam Map<String, Object> params) {
         //查询列表数据
         Query query = new Query(params);
-
+        query.put("merchant_id", ShiroUtils.getUserEntity().getMerchantId());
         List<ProductEntity> productList = productService.queryList(query);
         int total = productService.queryTotal(query);
-
         PageUtils pageUtil = new PageUtils(productList, total, query.getLimit(), query.getPage());
-
         return R.ok().put("page", pageUtil);
     }
 
@@ -50,7 +50,6 @@ public class ProductController {
     @RequiresPermissions("product:info")
     public R info(@PathVariable("id") Integer id) {
         ProductEntity product = productService.queryObject(id);
-
         return R.ok().put("product", product);
     }
 
@@ -60,6 +59,7 @@ public class ProductController {
     @RequestMapping("/save")
     @RequiresPermissions("product:save")
     public R save(@RequestBody ProductEntity product) {
+    	product.setMerchant_id(ShiroUtils.getUserEntity().getMerchantId().intValue());
         productService.save(product);
 
         return R.ok();
@@ -95,9 +95,7 @@ public class ProductController {
      */
     @RequestMapping("/queryAll")
     public R queryAll(@RequestParam Map<String, Object> params) {
-
         List<ProductEntity> list = productService.queryList(params);
-
         return R.ok().put("list", list);
     }
 
@@ -112,7 +110,6 @@ public class ProductController {
         Map<String, Object> params = new HashMap<>();
         params.put("goodsId", goodsId);
         List<ProductEntity> list = productService.queryList(params);
-
         return R.ok().put("list", list);
     }
 }

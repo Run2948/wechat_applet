@@ -44,6 +44,7 @@
         <result property="list_pic_url" column="list_pic_url"/>
         <result property="gid" column="gid"/>
         <result property="realName" column="real_name"/>
+        <result property="merchantId" column="merchantId"/>
     </resultMap>
 
     <select id="queryObject" resultType="com.platform.entity.OrderEntity">
@@ -57,7 +58,7 @@
         SELECT 
         o.id AS id,o.order_sn as orderSn,u.username AS username,u.real_name as realName,o.order_type as orderType, 
         o.order_status as orderStatus, o.shipping_status as shippingStatus,
-        o.pay_status as payStatus,o.shipping_name as shippingName, 
+        o.pay_status as payStatus,o.shipping_name as shippingName, o.merchant_id as merchantId,
         o.shipping_no as shippingNo,o.actual_price as actualPrice,  
         o.order_price as orderPrice,o.goods_price as goodsPrice,
         o.add_time as addTime, g.goods_name, g.list_pic_url,g.id as gid
@@ -80,6 +81,9 @@
         <if test="orderType != null and orderType.trim() != ''">
             AND o.order_type = #{orderType}
         </if>
+        <if test="merchantId != null and merchantId != ''">
+            AND o.merchant_id = #{merchantId}
+        </if>
         <choose>
             <when test="sidx != null and sidx.trim() != ''">
                 order by ${sidx} ${order}
@@ -92,6 +96,46 @@
             limit #{offset}, #{limit}
         </if>
     </select>
+    
+    
+      <select id="queryGroupList" resultType="com.platform.entity.GroupBuyingVo">
+      	SELECT `id`, `goods_id`, `goods_name`, `group_num`, `success_num`, `types`, `merchant_id` FROM  `group_buying`   WHERE 1=1
+        <if test="goodsName != null and goodsName.trim() != ''">
+            AND goods_name LIKE concat('%',#{goodsName},'%')
+        </if>
+       
+        <if test="types != null">
+            AND `types` = #{types}
+        </if>
+        <if test="merchantId != null and merchantId != ''">
+            AND merchant_id = #{merchantId}
+        </if>
+        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by ${sidx} ${order}
+            </when>
+            <otherwise>
+                order by id desc
+            </otherwise>
+        </choose>
+        <if test="offset != null and limit != null">
+            limit #{offset}, #{limit}
+        </if>
+    </select>
+    
+     <select id="queryGroupTotal" resultType="int">
+        select count(*) from `group_buying` WHERE 1=1
+       <if test="goodsName != null and goodsName.trim() != ''">
+            AND goods_name LIKE concat('%',#{goodsName},'%')
+        </if>
+        <if test="types != null">
+            AND `types` = #{types}
+        </if>
+        <if test="merchantId != null and merchantId != ''">
+            AND merchant_id = #{merchantId}
+        </if>
+    </select>
+    
 
     <select id="queryTotal" resultType="int">
         select count(*) from nideshop_order WHERE 1=1
@@ -109,6 +153,9 @@
         </if>
         <if test="orderType != null and orderType.trim() != ''">
             AND order_type = #{orderType}
+        </if>
+        <if test="merchantId != null and merchantId != ''">
+            AND merchant_id = #{merchantId}
         </if>
     </select>
 

@@ -18,9 +18,11 @@
                 #if($shiro.hasPermission("sys:user:save"))
                 <i-button type="info" @click="add"><i class="fa fa-plus"></i>&nbsp;新增</i-button>
                 #end
+
                 #if($shiro.hasPermission("sys:user:update"))
                 <i-button type="warning" @click="update"><i class="fa fa-pencil-square-o"></i>&nbsp;修改</i-button>
                 #end
+
                 #if($shiro.hasPermission("sys:user:delete"))
                 <i-button type="error" @click="del"><i class="fa fa-trash-o"></i>&nbsp;删除</i-button>
                 #end
@@ -33,8 +35,11 @@
     <Card v-show="!showList">
         <p slot="title">{{title}}</p>
         <i-form ref="formValidate" :model="user" :rules="ruleValidate" :label-width="80">
-            <Form-item label="用户名" prop="username">
+            <Form-item label="登录账号" prop="username">
                 <i-input v-model="user.username" placeholder="登录账号"/>
+            </Form-item>
+            <Form-item label="名称" prop="username">
+                <i-input v-model="user.merchantName" placeholder="名称"/>
             </Form-item>
             <Form-item label="所属部门" prop="deptName">
                 <i-input type="text" v-model="user.deptName" icon="eye" readonly="readonly"
@@ -51,8 +56,20 @@
                 <Checkbox-group v-model="user.roleIdList">
                     <Checkbox :label="role.roleId" v-for="role in roleList">{{role.roleName}}</Checkbox>
                 </Checkbox-group>
+            </Form-item>            
+            <Form-item label="本人分佣" prop="fx">
+                <i-input v-model="user.fx" placeholder="例子：15%"/>
             </Form-item>
-
+            <Form-item label="分佣一级" prop="fx1">
+                <i-input v-model="user.fx1" placeholder="例子：15%"/>
+            </Form-item>
+            <Form-item label="分佣二级" prop="fx2">
+                <i-input v-model="user.fx2"  placeholder="例子：15%"/>
+            </Form-item>
+			<Form-item label="平台分佣" prop="pfx">
+                <i-input v-model="user.pfx"  placeholder="例子：15%"/>
+            </Form-item>
+            
             <Form-item label="状态" prop="status">
                 <Radio-group v-model="user.status">
                     <Radio label="0">
@@ -60,6 +77,16 @@
                     </Radio>
                     <Radio label="1">
                         <span>正常</span>
+                    </Radio>
+                </Radio-group>
+            </Form-item>
+             <Form-item label="是否显示其他商户" prop="allShow">
+                <Radio-group v-model="user.allShow">
+                    <Radio label="0">
+                        <span>不显示</span>
+                    </Radio>
+                    <Radio label="1">
+                        <span>显示</span>
                     </Radio>
                 </Radio-group>
             </Form-item>

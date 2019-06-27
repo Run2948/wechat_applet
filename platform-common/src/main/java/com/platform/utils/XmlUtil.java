@@ -1,13 +1,14 @@
 package com.platform.utils;
 
-import org.dom4j.Document;
-import org.dom4j.DocumentHelper;
-import org.dom4j.Element;
-
 import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
+
+import org.dom4j.Document;
+import org.dom4j.DocumentHelper;
+import org.dom4j.Element;
 
 /**
  * xml相关的工具类
@@ -60,6 +61,39 @@ public class XmlUtil {
             for (int i = 0; i < children.size(); i++) {
                 Element child = (Element) children.get(i);
                 map.put(child.getName(), child.getTextTrim());
+            }
+        }
+        return map;
+    }
+    
+    /**
+     * 将xml格式的字符串转换成Map对象,并且过滤控制和排序
+     *
+     * @param xmlStr xml格式的字符串
+     * @return Map对象
+     * @throws Exception 异常
+     */
+    public static Map<Object, Object> xmlStrToTreeMap(String xmlStr) throws Exception {
+        if (StringUtils.isNullOrEmpty(xmlStr)) {
+            return null;
+        }
+        Map<Object, Object> map = new TreeMap<Object, Object>();
+        // 将xml格式的字符串转换成Document对象
+        Document doc = DocumentHelper.parseText(xmlStr);
+        // 获取根节点
+        Element root = doc.getRootElement();
+        // 获取根节点下的所有元素
+        List children = root.elements();
+        // 循环所有子元素
+        if (children != null && children.size() > 0) {
+            for (int i = 0; i < children.size(); i++) {
+                Element child = (Element) children.get(i);
+                if("sign".equals(child.getName())) {
+                	continue;
+                }
+                if(StringUtils.isNotEmpty(child.getTextTrim())) {
+                	map.put(child.getName(), child.getTextTrim());
+                }
             }
         }
         return map;

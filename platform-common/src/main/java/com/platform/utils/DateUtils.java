@@ -3,6 +3,7 @@ package com.platform.utils;
 import org.apache.log4j.Logger;
 import org.springframework.util.StringUtils;
 
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -134,11 +135,32 @@ public class DateUtils {
         }
         return resultDate;
     }
+    
+    public static String compare_date(String DATE1, String DATE2) {
+        
+        
+        DateFormat df = new SimpleDateFormat("yyyy-MM-dd hh:mm");
+        try {
+            Date dt1 = df.parse(DATE1);
+            Date dt2 = df.parse(DATE2);
+            if (dt1.getTime() > dt2.getTime()) {
+                return DATE1;
+            } else if (dt1.getTime() < dt2.getTime()) {
+                return DATE2;
+            } else {
+                return DATE1;
+            }
+        } catch (Exception exception) {
+            exception.printStackTrace();
+        }
+        return DATE1;
+    }
 
 
     public static void main(String[] args) {
-        Date date = new Date();
-        String str = "20170818223629599";
-        System.out.println(DateUtils.getDateFormat(str));
+    	 String d= compare_date("2995-11-12 15:21", "1999-12-11 09:59");
+         System.out.println("i=="+d);
     }
+    
+    
 }

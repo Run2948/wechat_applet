@@ -73,10 +73,18 @@ var vm = new Vue({
             listPicUrl: '',
             categoryId: '',
             isOnSale: 1,
-            isNew: 1,
+            isNew: 0,
             isAppExclusive: 0,
+            brokerage_percent:0,
             isLimited: 0,
             isHot: 0,
+            retailPrice: 0,
+            marketPrice: 0,
+            goodsNumber: 0,           
+            isSecKill :"1",
+            successPeople: 0,
+            successTime: 0,
+            groupPrice: 1,
             categoryName: ''
         },
         ruleValidate: {
@@ -106,8 +114,17 @@ var vm = new Vue({
                 isOnSale: 1,
                 isNew: 1,
                 isAppExclusive: 0,
+                brokerage_percent:0,
                 isLimited: 0,
                 isHot: 0,
+                retailPrice: 0,
+                marketPrice: 0,
+                goodsNumber: 0,
+                sellVolume:0,
+                isSecKill :1,
+                successPeople: 0,
+                successTime: 0,
+                groupPrice: 1,
                 categoryName: ''
             };
             $('#goodsDesc').editable('setHTML', '');
@@ -283,6 +300,7 @@ var vm = new Vue({
                 async: true,
                 successCallback: function (r) {
                     vm.goods = r.goods;
+                    vm.goods.isSecKill = r.goods.isSecKill+"";
                     $('#goodsDesc').editable('setHTML', vm.goods.goodsDesc);
                     vm.getCategory();
                 }

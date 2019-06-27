@@ -1,12 +1,9 @@
 package com.platform.controller;
 
+import com.platform.entity.SysUserEntity;
 import com.platform.entity.UserCouponEntity;
-import com.platform.entity.UserEntity;
 import com.platform.service.UserCouponService;
-import com.platform.utils.Base64;
-import com.platform.utils.PageUtils;
-import com.platform.utils.Query;
-import com.platform.utils.R;
+import com.platform.utils.*;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -34,8 +31,9 @@ public class UserCouponController {
     @RequiresPermissions("usercoupon:list")
     public R list(@RequestParam Map<String, Object> params) {
         //查询列表数据
+        SysUserEntity sysUserEntity= ShiroUtils.getUserEntity();
         Query query = new Query(params);
-
+        query.put("merchantId",sysUserEntity.getMerchantId());
         List<UserCouponEntity> userCouponList = userCouponService.queryList(query);
         int total = userCouponService.queryTotal(query);
         for(UserCouponEntity user : userCouponList) {
@@ -63,6 +61,8 @@ public class UserCouponController {
     @RequestMapping("/save")
     @RequiresPermissions("usercoupon:save")
     public R save(@RequestBody UserCouponEntity userCoupon) {
+        SysUserEntity sysUserEntity= ShiroUtils.getUserEntity();
+        userCoupon.setMerchantId(sysUserEntity.getMerchantId());
         userCouponService.save(userCoupon);
 
         return R.ok();

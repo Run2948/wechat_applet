@@ -20,6 +20,8 @@ public class GoodsIssueEntity implements Serializable {
     private String question;
     //回答
     private String answer;
+    //商户ID
+    private Integer merchant_id;
 
     /**
      * 设置：主键
@@ -62,4 +64,14 @@ public class GoodsIssueEntity implements Serializable {
     public String getAnswer() {
         return answer;
     }
+
+	public Integer getMerchant_id() {
+		return merchant_id;
+	}
+
+	public void setMerchant_id(Integer merchant_id) {
+		this.merchant_id = merchant_id;
+	}
+    
+    
 }

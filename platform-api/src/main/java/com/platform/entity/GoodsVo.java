@@ -2,6 +2,7 @@ package com.platform.entity;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.sql.Timestamp;
 import java.util.Date;
 
 
@@ -83,7 +84,7 @@ public class GoodsVo implements Serializable {
     //是否秒杀商品
   	private Integer is_secKill;
   	//秒杀开始时间
-  	private Date start_time;
+  	private Timestamp start_time;
   	//是否是服务型商品
   	private Integer is_service;
     //新增
@@ -91,6 +92,17 @@ public class GoodsVo implements Serializable {
     private double brokerage_percent;
     //品牌名称
     private String brand_name;
+    //商户id
+    private Long merchantId;
+    //折扣
+    private String discount;
+    //分佣比例
+    private String user_brokerage_price;
+    private Timestamp end_time;//活动结束时间
+    private Integer success_time;//成团时间 单位分钟
+    private Integer success_people;//成团人数
+    private BigDecimal group_price;//团购价格(元)
+
 
     public Integer getId() {
         return id;
@@ -364,13 +376,6 @@ public class GoodsVo implements Serializable {
 		this.is_secKill = is_secKill;
 	}
 
-	public Date getStart_time() {
-		return start_time;
-	}
-
-	public void setStart_time(Date start_time) {
-		this.start_time = start_time;
-	}
 
 	public Integer getIs_service() {
 		return is_service;
@@ -394,5 +399,74 @@ public class GoodsVo implements Serializable {
 
     public void setBrand_name(String brand_name) {
         this.brand_name = brand_name;
+    }
+
+    public Long getMerchantId() {
+        return merchantId;
+    }
+
+    public void setMerchantId(Long merchantId) {
+        this.merchantId = merchantId;
+    }
+
+	public String getDiscount() {
+		return discount;
+	}
+
+	public void setDiscount(String discount) {
+		this.discount = discount;
+	}
+
+	public String getUser_brokerage_price() {
+		return user_brokerage_price;
+	}
+
+	public void setUser_brokerage_price(String user_brokerage_price) {
+		this.user_brokerage_price = user_brokerage_price;
+	}
+
+
+    public Integer getSuccess_time() {
+        return success_time;
+    }
+
+    public void setSuccess_time(Integer success_time) {
+        this.success_time = success_time;
+    }
+
+    public Integer getSuccess_people() {
+        return success_people;
+    }
+
+    public void setSuccess_people(Integer success_people) {
+        this.success_people = success_people;
+    }
+
+    public BigDecimal getGroup_price() {
+        return group_price;
+    }
+
+    public void setGroup_price(BigDecimal group_price) {
+        this.group_price = group_price;
+    }
+
+    public static long getSerialVersionUID() {
+        return serialVersionUID;
+    }
+
+    public Timestamp getStart_time() {
+        return start_time;
+    }
+
+    public void setStart_time(Timestamp start_time) {
+        this.start_time = start_time;
+    }
+
+    public Timestamp getEnd_time() {
+        return end_time;
+    }
+
+    public void setEnd_time(Timestamp end_time) {
+        this.end_time = end_time;
     }
 }

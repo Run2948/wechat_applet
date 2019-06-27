@@ -10,7 +10,7 @@ import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 import com.platform.annotation.IgnoreAuth;
-import com.platform.entity.MlsUserVo;
+import com.platform.entity.MlsUserEntity2;
 import com.platform.entity.UserVo;
 import com.platform.service.ApiUserService;
 import com.platform.service.MlsUserSer;
@@ -44,6 +44,8 @@ public class AuthorizationInterceptor extends HandlerInterceptorAdapter {
         response.setHeader("Access-Control-Allow-Headers", "x-requested-with");
         response.setHeader("Access-Control-Allow-Origin", request.getHeader("Origin"));
 
+
+
         IgnoreAuth annotation;
         if (handler instanceof HandlerMethod) {
             annotation = ((HandlerMethod) handler).getMethodAnnotation(IgnoreAuth.class);
@@ -69,15 +71,15 @@ public class AuthorizationInterceptor extends HandlerInterceptorAdapter {
 		}
 		if(request.getAttribute(LOGIN_USER_KEY)==null){
 			if(openId.startsWith("weglapp_")) {//app登录
-				MlsUserVo mlsUser=mlsUserSer.getEntityMapper().findByDeviceId(openId);
-				if(mlsUser==null) {
+				MlsUserEntity2 mlsUser=mlsUserSer.getEntityMapper().findByDeviceId(openId);
+				if(mlsUser==null&&annotation == null) {
 					throw new ApiRRException("请先登录", 401);
 				}
 		        //设置userId到request里，后续根据userId，获取用户信息
 		        request.setAttribute(LOGIN_USER_KEY, mlsUser);
 			}else {
 				UserVo userVo = userService.queryByOpenId(openId);
-				if(userVo==null) {
+				if(userVo==null&&annotation == null) {
 					throw new ApiRRException("请先登录", 401);
 				}
 		        //设置userId到request里，后续根据userId，获取用户信息

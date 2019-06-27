@@ -5,6 +5,8 @@ import com.platform.service.CommentService;
 import com.platform.utils.PageUtils;
 import com.platform.utils.Query;
 import com.platform.utils.R;
+import com.platform.utils.ShiroUtils;
+
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -33,7 +35,7 @@ public class CommentController {
     public R list(@RequestParam Map<String, Object> params) {
         //查询列表数据
         Query query = new Query(params);
-
+        query.put("merchant_id", ShiroUtils.getUserEntity().getMerchantId());
         List<CommentEntity> commentList = commentService.queryList(query);
         int total = commentService.queryTotal(query);
 
@@ -59,6 +61,7 @@ public class CommentController {
     @RequestMapping("/save")
     @RequiresPermissions("comment:save")
     public R save(@RequestBody CommentEntity comment) {
+    	comment.setMerchant_id(ShiroUtils.getUserEntity().getMerchantId().intValue());
         commentService.save(comment);
 
         return R.ok();

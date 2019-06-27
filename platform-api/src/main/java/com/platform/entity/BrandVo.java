@@ -2,6 +2,7 @@ package com.platform.entity;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.List;
 
 
 /**
@@ -41,6 +42,9 @@ public class BrandVo implements Serializable {
     //总折扣金额
     private BigDecimal sum_discount;
     private String logo;
+    private List<GoodsVo> goods;
+    //商户id
+    public  Long merchantId;
     public Integer getId() {
         return id;
     }
@@ -160,5 +164,20 @@ public class BrandVo implements Serializable {
 	public void setLogo(String logo) {
 		this.logo = logo;
 	}
-    
+
+	public List<GoodsVo> getGoods() {
+		return goods;
+	}
+
+	public void setGoods(List<GoodsVo> goods) {
+		this.goods = goods;
+	}
+
+    public Long getMerchantId() {
+        return merchantId;
+    }
+
+    public void setMerchantId(Long merchantId) {
+        this.merchantId = merchantId;
+    }
 }

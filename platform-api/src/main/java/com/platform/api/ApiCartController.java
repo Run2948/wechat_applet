@@ -200,6 +200,7 @@ public class ApiCartController extends ApiBaseAction {
             }
             cartInfo.setGoods_specifition_ids(productInfo.getGoods_specification_ids());
             cartInfo.setChecked(1);
+            cartInfo.setMerchant_id(goodsInfo.getMerchantId());
             cartService.save(cartInfo);
         } else {
             //如果已经存在购物车中，则数量增加
@@ -393,46 +394,65 @@ public class ApiCartController extends ApiBaseAction {
 
     /**
      * 订单提交前的检验和填写相关订单信息
+     * activityType 1 直接购买  2 团购购买
      */
     @ApiOperation(value = "订单提交前的检验和填写相关订单信息")
     @GetMapping("checkout")
-    public Object checkout(@LoginUser UserVo loginUser, Integer couponId, @RequestParam(defaultValue = "cart") String type) {
+    public Object checkout(@LoginUser UserVo loginUser, Integer couponId, @RequestParam(defaultValue = "cart") String type,Integer  addressId,String activityType) {
+        //activityType="2";
         Map<String, Object> resultObj = new HashMap();
         //根据收货地址计算运费
         BigDecimal freightPrice = new BigDecimal(0.00);
+        //订单总金额
+        BigDecimal goodsTotalPrice=new BigDecimal(0.00);
         //默认收货地址
-        Map param = new HashMap();
-        param.put("user_id", loginUser.getUserId());
-        List addressEntities = addressService.queryaddressUserlist(param);
-
-        if (null == addressEntities || addressEntities.size() == 0) {
-            resultObj.put("checkedAddress", new AddressVo());
-        } else {
-            resultObj.put("checkedAddress", addressEntities.get(0));
+        AddressVo checkedAddress=null;
+        if(com.platform.utils.StringUtils.isNullOrEmpty(addressId) || addressId==0){
+            checkedAddress = addressService.queryDefaultAddress(loginUser.getUserId());//设置默认地址
         }
+        else{
+            checkedAddress=addressService.queryObject(addressId);
+        }
+        resultObj.put("checkedAddress", checkedAddress);
         // * 获取要购买的商品和总价
         ArrayList checkedGoodsList = new ArrayList();
-        BigDecimal goodsTotalPrice;
+
+       List<MerCartVo> merCartVoList=new ArrayList<>();
         if (type.equals("cart")) {
             Map<String, Object> cartData = (Map<String, Object>) this.getCart(loginUser);
+            List<CartVo> cartVoList=new ArrayList<>();
 
-            for (CartVo cartEntity : (List<CartVo>) cartData.get("cartList")) {
-                if (cartEntity.getChecked() == 1) {
-                    checkedGoodsList.add(cartEntity);
-                }
-                //计算运费
-                Integer goodId = cartEntity.getGoods_id();
-                GoodsVo goods = goodsService.queryObject(goodId);
-                if(goods.getExtra_price() != null) {
-                	freightPrice = freightPrice.add(goods.getExtra_price().multiply(new BigDecimal(cartEntity.getNumber())));
-                }
+            //查询用户购物车信息
+            List<MerCartVo> merCartVos=cartService.queryMerCartList(loginUser.getUserId());
+            for(MerCartVo merCartVo:merCartVos){
+                freightPrice=freightPrice.add(merCartVo.getFreightPrice());
+                goodsTotalPrice=goodsTotalPrice.add(merCartVo.getOrderTotalPrice());
+                merCartVo.setActualPrice(merCartVo.getFreightPrice().add(merCartVo.getOrderTotalPrice()));
+                Map map=new HashMap();
+                map.put("user_id",loginUser.getUserId());
+                map.put("merchantId",merCartVo.getMerchantId());
+                map.put("goodsTotalPrice",merCartVo.getOrderTotalPrice());
+                cartVoList=cartService.queryCheckedByUserIdAndMerId(map);
+                merCartVo.setCartVoList(cartVoList);
+                //获取用户可用优惠券列表
+                List<CouponVo> couponVos = apiCouponService.queryUserCoupons(map);
+                List<CouponVo> validCouponVos= apiCouponService.getValidUserCoupons(map);
+                merCartVo.setUserCouponList(validCouponVos);
+                merCartVoList.add(merCartVo);
             }
-            goodsTotalPrice = (BigDecimal) ((HashMap) cartData.get("cartTotal")).get("checkedGoodsAmount");
+            //goodsTotalPrice = (BigDecimal) ((HashMap) cartData.get("cartTotal")).get("checkedGoodsAmount");
         } else { // 是直接购买的
             BuyGoodsVo goodsVO = (BuyGoodsVo) J2CacheUtils.get(J2CacheUtils.SHOP_CACHE_NAME, "goods" + loginUser.getUserId() + "");
             ProductVo productInfo = productService.queryObject(goodsVO.getProductId());
+            GoodsVo goods = goodsService.queryObject(goodsVO.getGoodsId());
             //计算订单的费用
             //商品总价
+            if(goods.getIs_secKill()==3){
+                if("2".equals(activityType)){//团购购买
+                    productInfo.setRetail_price(productInfo.getGroup_price());
+
+                }
+            }
             goodsTotalPrice = productInfo.getRetail_price().multiply(new BigDecimal(goodsVO.getNumber()));
 
             CartVo cartVo = new CartVo();
@@ -441,23 +461,42 @@ public class ApiCartController extends ApiBaseAction {
             cartVo.setRetail_price(productInfo.getRetail_price());
             cartVo.setList_pic_url(productInfo.getList_pic_url());
             checkedGoodsList.add(cartVo);
-            
+
             //计算运费
-            GoodsVo goods = goodsService.queryObject(goodsVO.getGoodsId());
+
             if(goods.getExtra_price() != null) {
             	freightPrice = freightPrice.add(goods.getExtra_price().multiply(new BigDecimal(cartVo.getNumber())));
             }
+            MerCartVo merCartVo=new MerCartVo();
+            merCartVo.setMerchantId(productInfo.getMerchant_id());
+            String merchantName  = cartService.queryMerchantName(merCartVo.getMerchantId());
+            merCartVo.setMerchantName(merchantName);
+            merCartVo.setCartVoList(checkedGoodsList);
+            merCartVo.setOrderTotalPrice(goodsTotalPrice);
+            merCartVo.setFreightPrice(freightPrice);
+            merCartVo.setActualPrice(goodsTotalPrice.add(freightPrice));
+            //获取优惠券
+            Map map=new HashMap();
+            map.put("user_id",loginUser.getUserId());
+            map.put("merchantId",merCartVo.getMerchantId());
+            map.put("goodsTotalPrice",merCartVo.getOrderTotalPrice());
+            List<CouponVo> couponVos = apiCouponService.queryUserCoupons(map);
+            List<CouponVo> validCouponVos= apiCouponService.getValidUserCoupons(map);
+            merCartVo.setUserCouponList(validCouponVos);
+            merCartVoList.add(merCartVo);
+
+
         }
 
 
         //获取可用的优惠券信息
         BigDecimal couponPrice = new BigDecimal(0.00);
-        if (couponId != null && couponId != 0) {
+        /*if (couponId != null && couponId != 0) {
             CouponVo couponVo = apiCouponMapper.getUserCoupon(couponId);
             if (couponVo != null) {
                 couponPrice = couponVo.getType_money();
             }
-        }
+        }*/
 
         //订单的总价
         BigDecimal orderTotalPrice = goodsTotalPrice.add(freightPrice);
@@ -468,7 +507,8 @@ public class ApiCartController extends ApiBaseAction {
         resultObj.put("freightPrice", freightPrice);
 
         resultObj.put("couponPrice", couponPrice);
-        resultObj.put("checkedGoodsList", checkedGoodsList);
+        resultObj.put("checkedGoodsList", merCartVoList);
+        //resultObj.put("checkedGoodsList", checkedGoodsList);
         resultObj.put("goodsTotalPrice", goodsTotalPrice);
         resultObj.put("orderTotalPrice", orderTotalPrice);
         resultObj.put("actualPrice", actualPrice);

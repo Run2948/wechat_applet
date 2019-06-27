@@ -25,6 +25,8 @@ public class GoodsSpecificationEntity implements Serializable {
     private String value;
     //规范图片
     private String picUrl;
+    //商户ID
+    private Integer merchantId;
 
     /**
      * 翻译用字段
@@ -119,4 +121,13 @@ public class GoodsSpecificationEntity implements Serializable {
     public String getPicUrl() {
         return picUrl;
     }
+
+	public Integer getMerchantId() {
+		return merchantId;
+	}
+
+	public void setMerchantId(Integer merchantId) {
+		this.merchantId = merchantId;
+	}
+    
 }

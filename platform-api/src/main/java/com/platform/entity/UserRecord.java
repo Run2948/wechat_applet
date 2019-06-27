@@ -29,6 +29,8 @@ public class UserRecord  {
 	private Integer page;
 	private Integer size;
 	private Integer offset;
+	//订单ID
+	private Integer orderId;
 	public Integer getOffset() {
 		return offset;
 	}
@@ -136,5 +138,11 @@ public class UserRecord  {
 	 */
 	public String getCtime() {
 		return ctime;
+	}
+	public Integer getOrderId() {
+		return orderId;
+	}
+	public void setOrderId(Integer orderId) {
+		this.orderId = orderId;
 	}
 }

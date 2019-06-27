@@ -6,20 +6,36 @@
 
 	<!-- 用于select查询公用抽取的列 -->
 	<sql id="columns">
-		MLS_USER_ID as mlsUserId,USER_NAME as userName,NICKNAME as nickname,DEVICE_ID as deviceId,USER_TEL as userTel,PROFILE_PHOTO as profilePhoto,ALL_SALES as allSales,TODAY_SALES as todaySales,ALL_PROFIT as allProfit,GET_PROFIT as getProfit,FATHER_USER_ID as fatherUserId,SON_USER_SUM as sonUserSum,C_TIME as ctime
+		MLS_USER_ID as mlsUserId,USER_NAME as userName,NICKNAME as nickname,DEVICE_ID as deviceId,USER_TEL as userTel,LOGIN_PASSWORD as loginPassword,
+		PROFILE_PHOTO as profilePhoto,ALL_SALES as allSales,TODAY_SALES as todaySales,ALL_PROFIT as allProfit,
+		GET_PROFIT as getProfit,FATHER_USER_ID as fatherUserId,SON_USER_SUM as sonUserSum,C_TIME as ctime,
+		FX ,FX1 ,FX2,FID,PFX ,ROOT_ID as rootId,MERCHANT_ID as merchantId
 	</sql>
 
 	<insert id="insert" useGeneratedKeys="true" keyProperty="mlsUserId" >
         INSERT INTO MLS_USER (
+        	NICKNAME,
         	LOGIN_PASSWORD ,
         	DEVICE_ID ,
         	USER_TEL ,
-        	C_TIME 
+        	C_TIME ,
+        	FX ,
+        	FX1 ,
+        	FX2 ,
+        	PFX ,
+        	FID,ROOT_ID,
+        	MERCHANT_ID,USER_ID
         ) VALUES (
+        	#{nickname} ,
         	#{loginPassword} ,
         	#{deviceId} ,
         	#{userTel} ,        	
-        	now() 
+        	now() ,
+        	#{fx} ,
+        	#{fx1} ,
+        	#{fx2} ,
+        	#{pfx} ,
+        	#{fid} ,#{rootId},#{merchantId},#{userId}
         )
 	</insert>
     
@@ -28,6 +44,18 @@
 	        DEVICE_ID = #{deviceId} 
         WHERE 
 	        USER_TEL = #{userTel} 	             
+	</update>
+	
+	<update id="updateGetProfit" >
+        UPDATE MLS_USER SET	        
+	        GET_PROFIT = GET_PROFIT + #{getProfit} 
+        WHERE 
+	        MLS_USER_ID = #{mlsUserId} 	             
+	</update>
+	
+	<update id="updateTodaySales" >
+        UPDATE MLS_USER SET	        
+	        TODAY_SALES = 0	             
 	</update>
 
     <delete id="deleteById">
@@ -39,12 +67,25 @@
         DELETE FROM MLS_USER <include refid="where"/>  
     </delete>
     
-    <select id="getById" resultType="com.platform.entity.MlsUserVo">
+    <select id="getById" resultType="com.platform.entity.MlsUserEntity2">
 		SELECT <include refid="columns" />
 		    FROM MLS_USER 
 	        WHERE 
 		MLS_USER_ID = #{mlsUserId} 
 	</select>
+	<update id="updateRootId" >
+        UPDATE MLS_USER SET	        
+	        ROOT_ID =  #{mlsUserId} 
+        WHERE 
+	        MLS_USER_ID = #{mlsUserId}            
+	</update>
+	
+	<update id="tx" >
+        UPDATE MLS_USER SET	        
+	        GET_PROFIT = GET_PROFIT - #{getProfit} 
+        WHERE 
+	        MLS_USER_ID = #{mlsUserId} 	          
+	</update>
 	
 	<sql id="where">
 		<where>	      				
@@ -60,6 +101,12 @@
 		       <if test="@Ognl@isNotEmpty(userTel)">
 					AND USER_TEL = #{userTel}
 			   </if>
+		       <if test="@Ognl@isNotEmpty(userId)">
+					AND USER_ID = #{userId}
+			   </if>
+			   <if test="@Ognl@isNotEmpty(fid)">
+					AND FID = #{fid}
+			   </if>
 		</where>
 	</sql>
 		
@@ -68,23 +115,31 @@
 		<include refid="where"/>    
     </select>
     
-    <select id="findByEntity" resultType="com.platform.entity.MlsUserVo">
+    <select id="findByEntity" resultType="com.platform.entity.MlsUserEntity2">
     	SELECT <include refid="columns" />
 	    FROM MLS_USER 
 		<include refid="where"/>
 		
-		<if test="@Ognl@isNotEmpty(sortColumns)">
+		<!-- <if test="@Ognl@isNotEmpty(sortColumns)">
 			ORDER BY ${sortColumns}
-		</if>
+		</if> -->
     </select>
 	<!--     业务sql      -->
-	<select id="findByDeviceId" resultType="com.platform.entity.MlsUserVo">
+	<select id="findByDeviceId" resultType="com.platform.entity.MlsUserEntity2">
     	SELECT <include refid="columns" />,LOGIN_PASSWORD as loginPassword
 	    FROM MLS_USER  where  DEVICE_ID = #{deviceId} LIMIT 1
     </select>
-    <select id="findByUserTel" resultType="com.platform.entity.MlsUserVo">
+    <select id="findByUserTel" resultType="com.platform.entity.MlsUserEntity2">
     	SELECT <include refid="columns" />,LOGIN_PASSWORD as loginPassword
 	    FROM MLS_USER where  USER_TEL = #{userTel} LIMIT 1
+    </select>
+    <select id="findByUserId" resultType="com.platform.entity.MlsUserEntity2">
+    	SELECT <include refid="columns" />,LOGIN_PASSWORD as loginPassword
+	    FROM MLS_USER where  USER_ID = #{userId} LIMIT 1
+    </select>
+    <select id="findByMerchantId" resultType="com.platform.entity.MlsUserEntity2">
+    	SELECT <include refid="columns" />,LOGIN_PASSWORD as loginPassword
+	    FROM MLS_USER where  merchant_id = #{merchantId} and FID='-1' LIMIT 1
     </select>
     
     
@@ -92,10 +147,48 @@
         UPDATE MLS_USER SET	        
 			ALL_SALES = ALL_SALES + #{todaySales} ,
 			TODAY_SALES = TODAY_SALES + #{todaySales} ,
-			ALL_PROFIT = ALL_PROFIT + #{getProfit} ,
-			GET_PROFIT = GET_PROFIT + #{getProfit}
+			ALL_PROFIT = ALL_PROFIT + #{getProfit}
 		WHERE 
 			MLS_USER_ID = #{mlsUserId} 
 	</update>
+	
+	<update id="cancelMoney" >
+        UPDATE MLS_USER SET	        
+			ALL_SALES = ALL_SALES - #{todaySales} ,
+			TODAY_SALES = TODAY_SALES - #{todaySales} ,
+			ALL_PROFIT = ALL_PROFIT - #{getProfit}
+		WHERE 
+			MLS_USER_ID = #{mlsUserId} 
+	</update>
+	
+	<update id="updateFid" >
+        UPDATE MLS_USER SET	        
+			FID = #{fid} 
+		WHERE 
+			MLS_USER_ID = #{mlsUserId} 
+	</update>
+	
+	<select id="getSysUser" resultType="map">
+		SELECT `merchant_id`,`merchant_name`,`FX`,`FX1`,`FX2`,`PFX`,`all_show` FROM  `sys_user` WHERE user_id= #{value} 
+	</select>
+	<select id="getSysUserByMid" resultType="map">
+		SELECT `merchant_id`,`merchant_name`,`FX`,`FX1`,`FX2`,`PFX`,`all_show` FROM  `sys_user` WHERE merchant_id= #{mid} 
+	</select>
+	<insert id="insertUserGoods" >
+        INSERT INTO `nideshop_user_goods` ( `user_id`, `goods_id`, `name`, `goods_brief`, `retail_price`, `market_price`, `primary_pic_url`)
+		VALUES (#{userId} ,#{goodsId} , #{name} , #{goodsBrief} , #{retailPrice} , #{marketPrice} , #{primaryPicUrl}  )
+	</insert>
+	<select id="getUserGoods" resultType="com.platform.entity.UserGoods">
+			SELECT  `user_goods_id` as userGoodsId,  `user_id` as userId,  `goods_id` as goodsId,  `name`, `goods_brief` as goodsBrief,  `retail_price` as retailPrice,  `market_price` as marketPrice,  `primary_pic_url` as primaryPicUrl FROM  `nideshop_user_goods` WHERE user_id= #{value} 
+	</select>
+
+	<select id="findUserGoods" resultType="com.platform.entity.UserGoods">
+		SELECT  `user_goods_id` as userGoodsId,  `user_id` as userId,  `goods_id` as goodsId,  `name`, `goods_brief` as goodsBrief,  `retail_price` as retailPrice,  `market_price` as marketPrice,  `primary_pic_url` as primaryPicUrl FROM  `nideshop_user_goods` WHERE user_id= #{userId}  and  goods_id=#{goodsId}
+	</select>
+	<!-- 根据key，查询value -->
+	<select id="queryByKey" parameterType="string" resultType="string">
+		select value from sys_config where `key` = #{key}
+	</select>
+	
 </mapper>
 

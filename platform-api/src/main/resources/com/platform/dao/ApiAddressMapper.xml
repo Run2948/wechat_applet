@@ -51,15 +51,7 @@
         FROM
         nideshop_address
         WHERE
-        user_id = #{user_id}
-        AND id NOT IN (
-        SELECT
-        address_user_id
-        FROM
-        nideshop_customer
-        WHERE
-        user_id = #{user_id}
-        )
+        user_id = #{user_id}        
         <choose>
             <when test="sidx != null and sidx.trim() != ''">
                 order by ${sidx} ${order}
@@ -79,14 +71,6 @@
         nideshop_address
         WHERE
         user_id = #{user_id}
-        AND id NOT IN (
-        SELECT
-        address_user_id
-        FROM
-        nideshop_customer
-        WHERE
-        user_id = #{user_id}
-        )
     </select>
     <select id="queryAddressCustomerlist" resultMap="addressMap">
         SELECT
@@ -95,14 +79,6 @@
         nideshop_address
         WHERE
         user_id = #{user_id}
-        AND id  IN (
-        SELECT
-        address_user_id
-        FROM
-        nideshop_customer
-        WHERE
-        user_id = #{user_id}
-        )
         <choose>
             <when test="sidx != null and sidx.trim() != ''">
                 order by ${sidx} ${order}
@@ -122,14 +98,6 @@
         nideshop_address
         WHERE
         user_id = #{user_id}
-        AND id  IN (
-        SELECT
-        address_user_id
-        FROM
-        nideshop_customer
-        WHERE
-        user_id = #{user_id}
-        )
     </select>
 
 
@@ -188,4 +156,7 @@
             #{id}
         </foreach>
     </delete>
+    <select id="queryDefaultAddress" parameterType="java.lang.Long" resultMap="addressMap">
+        select * from nideshop_address where is_default= 1 and user_id=#{userId}
+    </select>
 </mapper>

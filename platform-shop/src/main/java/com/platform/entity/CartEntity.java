@@ -2,7 +2,6 @@ package com.platform.entity;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.util.Date;
 
 
 /**
@@ -42,6 +41,8 @@ public class CartEntity implements Serializable {
     private Integer checked;
     //商品图片
     private String listPicUrl;
+    //商户id
+    private Long merchantId;
 
     /**
      * 设置：主键
@@ -235,5 +236,13 @@ public class CartEntity implements Serializable {
 
     public void setUserName(String userName) {
         this.userName = userName;
+    }
+
+    public Long getMerchantId() {
+        return merchantId;
+    }
+
+    public void setMerchantId(Long merchantId) {
+        this.merchantId = merchantId;
     }
 }

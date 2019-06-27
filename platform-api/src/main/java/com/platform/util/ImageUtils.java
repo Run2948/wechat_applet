@@ -11,6 +11,7 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.AttributedCharacterIterator;
+import java.text.AttributedString;
 
 import javax.imageio.ImageIO;
 
@@ -86,6 +87,32 @@ public class ImageUtils {
         g2d.dispose();// 释放图形上下文使用的系统资源
          
         return baseBufferedImage;
+    }
+    
+    /**
+     * 绘制文字
+     * @param base
+     * @param text
+     * @param x
+     * @param y
+     * @param codeUrl
+     * @return
+     * @throws Exception
+     */
+    public static String coverText(String base, int x, int y, String codeUrl, AttributedString as) throws Exception{
+    	
+    	//原图
+        BufferedImage buffImg = ImageIO.read(new FileInputStream(base));
+        
+        // 创建Graphics2D对象，用在底图对象上绘图
+        Graphics2D g2d = buffImg.createGraphics();
+        // 绘制
+        g2d.drawString(as.getIterator(), x, y);
+        g2d.dispose();// 释放图形上下文使用的系统资源
+		
+        ImageIO.write(buffImg, "png", new File(codeUrl));
+        
+        return codeUrl;
     }
     
     /**

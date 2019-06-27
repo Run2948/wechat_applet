@@ -13,6 +13,14 @@ public class LoginInfo  {
     private String province;
     private String country;
 	private int promoterId;
+	private Long merchantId;	//商户id
+	
+	public Long getMerchantId() {
+		return merchantId;
+	}
+	public void setMerchantId(Long merchantId) {
+		this.merchantId = merchantId;
+	}
 	public String getCode() {
 		return code;
 	}

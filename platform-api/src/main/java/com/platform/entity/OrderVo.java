@@ -98,6 +98,7 @@ public class OrderVo implements Serializable {
     private Map handleOption; //可操作的选项
     private BigDecimal full_cut_price; //订单满减
     private String full_region;//区县
+    //1购物车、2普通、3秒杀、4团购
     private String order_type; // 订单状态
     private String goods_name;//商品名称
     private String list_pic_url;//图片地址
@@ -109,6 +110,12 @@ public class OrderVo implements Serializable {
     private int promoter_id;
     //本订单佣金
     private BigDecimal brokerage;
+    //fx状态 默认为0是没有分润金额，已分润状态变成1
+    private Integer fx_status;
+    //商户id
+    private Integer merchant_id;
+    //团购ID
+    private String group_buying_id;
 
     public String getFull_region() {
     //    return full_region;
@@ -583,4 +590,29 @@ public class OrderVo implements Serializable {
     public void setBrokerage(BigDecimal brokerage) {
         this.brokerage = brokerage;
     }
+
+	public Integer getFx_status() {
+		return fx_status;
+	}
+
+	public void setFx_status(Integer fx_status) {
+		this.fx_status = fx_status;
+	}
+
+	public Integer getMerchant_id() {
+		return merchant_id;
+	}
+
+	public void setMerchant_id(Integer merchant_id) {
+		this.merchant_id = merchant_id;
+	}
+
+	public String getGroup_buying_id() {
+		return group_buying_id;
+	}
+
+	public void setGroup_buying_id(String group_buying_id) {
+		this.group_buying_id = group_buying_id;
+	}
+	
 }

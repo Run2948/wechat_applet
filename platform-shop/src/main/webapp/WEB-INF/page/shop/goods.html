@@ -81,7 +81,7 @@
 
         <Tabs value="name1">
             <Tab-Pane label="通用信息" name="name1">
-                <i-form ref="formValidate" :model="goods" :rules="ruleValidate" :label-width="80">
+                <i-form ref="formValidate" :model="goods" :rules="ruleValidate" :label-width="100">
                     <Form-item label="商品类型" prop="categoryId">
                         <i-input v-model="goods.categoryName" @on-click="categoryTree" icon="eye" readonly="readonly"
                                  placeholder="商品类型"/>
@@ -98,6 +98,34 @@
                             </i-option>
                         </i-select>
                     </Form-item>
+                    
+                     <Form-item label="商品类型" prop="isSecKill" style="width: 268px;">
+                        <i-select v-model="goods.isSecKill" >
+                            <i-option value="1">普通商品</i-option>
+                            <i-option value="2">秒杀</i-option>
+                            <i-option value="3">团购</i-option>
+                        </i-select>
+                    </Form-item>
+                    <Form-item label="活动开始时间" prop="startTime" v-if="goods.isSecKill==3||goods.isSecKill==2">
+		                <Date-picker v-model="goods.startTime" placeholder="活动开始时间"></Date-picker>
+		            </Form-item>
+		            <Form-item label="活动结束时间" prop="endTime" v-if="goods.isSecKill==3||goods.isSecKill==2" >
+		                <Date-picker v-model="goods.endTime" placeholder="活动结束时间"></Date-picker>
+		            </Form-item>
+		            
+		            <Form-item label="成团时间(分钟)" prop="successTime"   v-if="goods.isSecKill==3" >
+                        <Input-number :min="0" :step="1" v-model="goods.successTime" placeholder="成团时间 单位分钟"
+                                      style="width: 188px;"/>
+                    </Form-item>
+                    <Form-item label="成团时间人数" prop="successPeople"  v-if="goods.isSecKill==3">
+                        <Input-number :min="0" :step="1" v-model="goods.successPeople" placeholder="成团时间 单位分钟"
+                                      style="width: 188px;"/>
+                    </Form-item>
+                     <Form-item label="团购价" prop="groupPrice" v-if="goods.isSecKill==3">
+                        <Input-number :min="0" :step="1" v-model="goods.groupPrice" placeholder="团购价"   style="width: 188px;"/>
+                    </Form-item>
+                    
+                    
                     <Form-item label="类别" prop="attributeCategory" style="width: 268px;">
                         <i-select v-model="goods.attributeCategory" filterable label-in-value>
                             <i-option v-for="attributeCategory in attributeCategories" :value="attributeCategory.id"
@@ -109,6 +137,8 @@
                         <Input-number :min="0" :step="1" v-model="goods.goodsNumber" placeholder="商品库存"
                                       style="width: 188px;"/>
                     </Form-item>
+                   
+                    
                     <!--<Form-item label="商品单位" prop="goodsUnit" style="width: 268px;">-->
                     <!--<i-select v-model="goods.goodsUnit" filterable>-->
                     <!--<i-option v-for="macro in macros" :value="macro.value" :key="macro.value">{{macro.name}}-->
@@ -127,13 +157,13 @@
                         <Input-number :min="0" :step="1" v-model="goods.marketPrice" placeholder="市场价"
                                       style="width: 188px;"/>
                     </Form-item>
-                    <!--<Form-item label="专柜价格" prop="counterPrice">-->
-                    <!--<Input-number :min="0" :step="1" v-model="goods.counterPrice" placeholder="专柜价格"-->
-                    <!--style="width: 188px;"/>-->
-                    <!--</Form-item>-->
+                    <Form-item label="分佣比例" prop="brokerage_percent">
+                    	<Input-number :min="0" :step="1" v-model="goods.brokerage_percent" placeholder="分佣比例"   style="width: 188px;"/>
+                    </Form-item>
                     <Form-item label="邮费价格" prop="extraPrice">
                     <Input-number :min="0" :step="1" v-model="goods.extraPrice" placeholder="邮费价格" style="width: 188px;"/>
                     </Form-item>
+                    <!--  
                     <Row>
                         <i-col span="16">
                             <Form-item label="商品主图" prop="primaryPicUrl">
@@ -157,10 +187,11 @@
                             </Form-item>
                         </i-col>
                     </Row>
+                    -->
                     <Row>
                         <i-col span="16">
                             <Form-item label="商品列表图" prop="listPicUrl">
-                                <i-input v-model="goods.listPicUrl" placeholder="商品列表图" readonly/>
+                                <i-input v-model="goods.listPicUrl" placeholder="商品封面" />
                             </Form-item>
                         </i-col>
                         <i-col span="3">

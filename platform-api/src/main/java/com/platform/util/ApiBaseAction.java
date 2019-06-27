@@ -158,15 +158,12 @@ public class ApiBaseAction {
      * @return 客户端Ip
      */
     public Long getUserId() {
-//        String token = request.getHeader(AuthorizationInterceptor.LOGIN_TOKEN_KEY);
-//        UserVo user =(UserVo) request.getAttribute(AuthorizationInterceptor.LOGIN_USER_KEY);
-//        //查询token信息
-//        TokenEntity tokenEntity = tokenService.queryByToken(token);
-//        if (tokenEntity == null || tokenEntity.getExpireTime().getTime() < System.currentTimeMillis()) {
-//            return null;
-//        }
-       // UserVo user =new UserVo();
-      //  user.setUserId(new Long(12));
-        return 469L;
+    	UserVo user =(UserVo) request.getAttribute(AuthorizationInterceptor.LOGIN_USER_KEY);
+    	if(user == null) {
+    		return 476L;
+    	}else {
+    		return user.getUserId();
+    	}
+        
     }
 }

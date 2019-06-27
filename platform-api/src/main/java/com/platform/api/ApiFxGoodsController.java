@@ -2,15 +2,14 @@ package com.platform.api;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.platform.annotation.APPLoginUser;
 import com.platform.annotation.IgnoreAuth;
 import com.platform.annotation.LoginUser;
 import com.platform.entity.*;
 import com.platform.service.*;
 import com.platform.util.*;
 import com.platform.utils.Base64;
-import com.platform.utils.CharUtil;
-import com.platform.utils.DateUtils;
-import com.platform.utils.Query;
+import com.platform.utils.*;
 import com.qiniu.util.StringUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -25,6 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.math.BigDecimal;
 import java.util.*;
 import java.util.List;
 
@@ -79,18 +79,36 @@ public class ApiFxGoodsController extends ApiBaseAction {
     @ApiOperation(value = "分销商品首页")
     @IgnoreAuth
     @GetMapping(value = "index")
-    public Object index(Integer brand_id) {
+    public Object index(@APPLoginUser MlsUserEntity2 loginUser,
+    					@RequestParam(value = "page", defaultValue = "1") Integer page,
+                        @RequestParam(value = "size", defaultValue = "10") Integer size,
+                        @RequestParam Integer brand_id) {
         //
-        Map param = new HashMap();
-        param.put("nideshop_goods.is_delete", 0);
-        param.put("nideshop_goods.is_on_sale", 1);
-        param.put("nideshop_goods.brand_id", brand_id);
+        //查询列表数据
+        Map params = new HashMap();
+//        params.put("nideshop_goods.is_delete", 0);
+//        params.put("nideshop_goods.is_on_sale", 1);
+//        params.put("nideshop_goods.brand_id", brand_id);
+        params.put("page", page);
+        params.put("limit", size);
+        params.put("sidx", "id");
+        params.put("order", "asc");
+        params.put("is_delete", 0);
+        params.put("is_on_sale", 1);
+        params.put("brand_id",brand_id);
+        Query query = new Query(params);
+        List<GoodsVo> goodsList = goodsService.queryFxList(query);
+        for(GoodsVo vo : goodsList) {
+	    	vo.setDiscount(vo.getRetail_price().multiply(new BigDecimal("10")).divide(vo.getMarket_price(), 1, BigDecimal.ROUND_HALF_UP).toString());
+	    	vo.setUser_brokerage_price(vo.getRetail_price().multiply(new BigDecimal(vo.getBrokerage_percent())).multiply(new BigDecimal(loginUser.getFx()).divide(new BigDecimal("10000"))).setScale(2, BigDecimal.ROUND_HALF_UP).toString());
+        }
+        int total = goodsService.queryFxTotal(query);
 
-        List<GoodsVo> goodsList = goodsService.queryFxList(param);
-        //
-        return toResponsSuccess(goodsList);
+        ApiPageUtils pageUtil = new ApiPageUtils(goodsList, total, query.getLimit(), query.getPage());
+
+        return toResponsSuccess(pageUtil);
     }
-    
+
     /**
      * 秒杀产品列表
      */
@@ -517,7 +535,7 @@ public class ApiFxGoodsController extends ApiBaseAction {
     @ApiOperation(value = "商品详情页")
     @IgnoreAuth
     @GetMapping(value = "related")
-    public Object related(Integer id) {
+    public Object related(@APPLoginUser MlsUserEntity2 loginUser,Integer id) {
         Map<String, Object> resultObj = new HashMap();
         Map param = new HashMap();
         param.put("goods_id", id);
@@ -535,15 +553,25 @@ public class ApiFxGoodsController extends ApiBaseAction {
             //查找同分类下的商品
             GoodsVo goodsCategory = goodsService.queryObject(id);
             Map paramRelated = new HashMap();
-            paramRelated.put("fields", "id, name, list_pic_url, retail_price");
+//            paramRelated.put("fields", "id, name, list_pic_url, retail_price");
             paramRelated.put("category_id", goodsCategory.getCategory_id());
             relatedGoods = goodsService.queryList(paramRelated);
         } else {
             Map paramRelated = new HashMap();
             paramRelated.put("goods_ids", relatedGoodsIds);
-            paramRelated.put("fields", "id, name, list_pic_url, retail_price");
-            relatedGoods = goodsService.queryList(paramRelated);
+//            paramRelated.put("fields", "id, name, list_pic_url, retail_price");
+            relatedGoods = goodsService.queryFxList(paramRelated);
+
         }
+        if (relatedGoods!=null){
+            relatedGoods=relatedGoods.subList(0,4);
+        }
+        
+        for(GoodsVo vo : relatedGoods) {
+	    	vo.setDiscount(vo.getRetail_price().multiply(new BigDecimal("10")).divide(vo.getMarket_price(), 1, BigDecimal.ROUND_HALF_UP).toString());
+	    	vo.setUser_brokerage_price(vo.getRetail_price().multiply(new BigDecimal(vo.getBrokerage_percent())).multiply(new BigDecimal(loginUser.getFx()).divide(new BigDecimal("10000"))).setScale(2, BigDecimal.ROUND_HALF_UP).toString());
+        }
+        
         resultObj.put("goodsList", relatedGoods);
         return toResponsSuccess(resultObj);
     }
@@ -636,9 +664,9 @@ public class ApiFxGoodsController extends ApiBaseAction {
         goodsData.setGoodsList(goodsData.getData());
         return toResponsSuccess(goodsData);
     }
-    
 
-    
+
+
     /**
      * 商品二维码图片请求
      */
@@ -646,60 +674,60 @@ public class ApiFxGoodsController extends ApiBaseAction {
     @IgnoreAuth
     @GetMapping("getGoodCode")
     public Object getGoodCode(Integer goodId) {
-        String urlPath = System.getProperty("catalina.home") + "/webapps/ROOT/";//系统路径
-		String pagePath = "statics/goodQrCode/"+this.getUserId()+"/";//文件目录
-		String qrCode = this.getUserId() + goodId + ".png";//文件名称
-		String qrcodeUrl = urlPath + pagePath + qrCode;//全部路径
-		String returnUrl = pagePath + qrCode;//返回路径
-    	//查看文件夹是否存在
-		QRCodeUtils.dirExists(new File(urlPath + pagePath));
-		//判断文件是否存在，存在就返回路径 
-		if(QRCodeUtils.fileExists(new File(qrcodeUrl))){
-			toResponsSuccess(returnUrl);
-		}
-		
-		//底图
-		String baseFilePath = urlPath + "statics/base/base.png";
-		
-		
+        String urlPath = request.getServletContext().getRealPath(File.separator);//系统路径
+		String pagePath = "statics"+File.separator+"goodQrCode"+File.separator+this.getUserId()+File.separator;//文件目录
+        String qrCode = this.getUserId() + goodId + ".png";//文件名称
+        String qrcodeUrl = urlPath + pagePath + qrCode;//全部路径
+        String returnUrl = pagePath + qrCode;//返回路径
+        //查看文件夹是否存在
+        QRCodeUtils.dirExists(new File(urlPath + pagePath));
+        //判断文件是否存在，存在就返回路径
+        if(QRCodeUtils.fileExists(new File(qrcodeUrl))){
+            toResponsSuccess(returnUrl);
+        }
+
+        //底图
+        String baseFilePath = urlPath + "statics/base/base.png";
+
+
 
         //获取商品主图和2张配图
         GoodsVo goods = goodsService.queryObject(goodId);
         String p1 = goods.getPrimary_pic_url();//主图
         String p2 = goods.getList_pic_url();//配图1
         String p3 = goods.getList_pic_url();//配图2
-        
+
         //获取logo
-      	BrandVo brand = brandService.queryObject(goods.getBrand_id());
-      	String p4 = brand.getLogo();
+        BrandVo brand = brandService.queryObject(goods.getBrand_id());
+        String p4 = brand.getLogo();
         /**
-        获取二维码图(调用小程序API)
-        String accessToken = tokenService.getAccessToken() ;
-        BufferedInputStream bis = QRCodeUtils.getGoodQrCode(accessToken,this.getUserId(), goodId);
-        **/
-        
+         获取二维码图(调用小程序API)
+         String accessToken = tokenService.getAccessToken() ;
+         BufferedInputStream bis = QRCodeUtils.getGoodQrCode(accessToken,this.getUserId(), goodId);
+         **/
+
         try {
-        	 //非调用小程序生产二维码
-        	String content = "www.baidu.com";
-        	BufferedImage qrcode = QRCodeUtil.createImage(content, null, false);
-        	
+            //非调用小程序生产二维码
+            String content = "www.baidu.com";
+            BufferedImage qrcode = QRCodeUtil.createImage(content, null, false);
+
 //        	FileInputStream baseIn = new FileInputStream(baseFilePath);  
 //        	InputStream p1In = ImageUtils.getImage(p1);
 //        	InputStream p2In = ImageUtils.getImage(p1);
 //        	InputStream p3In = ImageUtils.getImage(p1);
-        	
-			String newUrl = ImageUtils.coverImage(baseFilePath, p1, 34, 306, 645, 645, qrcodeUrl);
-			ImageUtils.coverImage(newUrl, p2, 700, 306, 315, 315, qrcodeUrl);
-			ImageUtils.coverImage(newUrl, p3, 700, 642, 315, 315, qrcodeUrl);
-			ImageUtils.coverImage(newUrl, p4, 50, 50, 125, 125, qrcodeUrl);
-			ImageUtils.coverImage(newUrl, qrcode, 48, 1025, 200, 200, qrcodeUrl);
-			ImageUtils.coverText(newUrl, brand.getName(), 220, 100, qrcodeUrl,new Font("Courier",Font.BOLD,40),Color.black);
-			ImageUtils.coverText(newUrl, goods.getName(), 53, 240, qrcodeUrl,new Font("Courier",Font.BOLD,40),Color.gray);
-			ImageUtils.coverText(newUrl, "请在微信长按识别二维码选购商品", 280, 1180, qrcodeUrl,new Font("Courier",Font.BOLD,18),Color.lightGray);
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+
+            String newUrl = ImageUtils.coverImage(baseFilePath, p1, 34, 306, 645, 645, qrcodeUrl);
+            ImageUtils.coverImage(newUrl, p2, 700, 306, 315, 315, qrcodeUrl);
+            ImageUtils.coverImage(newUrl, p3, 700, 642, 315, 315, qrcodeUrl);
+            ImageUtils.coverImage(newUrl, p4, 50, 50, 125, 125, qrcodeUrl);
+            ImageUtils.coverImage(newUrl, qrcode, 48, 1025, 200, 200, qrcodeUrl);
+            ImageUtils.coverText(newUrl, brand.getName(), 220, 100, qrcodeUrl,new Font("Courier",Font.BOLD,40),Color.black);
+            ImageUtils.coverText(newUrl, goods.getName(), 53, 240, qrcodeUrl,new Font("Courier",Font.BOLD,40),Color.gray);
+            ImageUtils.coverText(newUrl, "请在微信长按识别二维码选购商品", 280, 1180, qrcodeUrl,new Font("Courier",Font.BOLD,18),Color.lightGray);
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
         return toResponsSuccess(returnUrl);
     }
 }

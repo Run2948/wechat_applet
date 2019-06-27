@@ -3,10 +3,12 @@ package com.platform.controller;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.platform.entity.CouponEntity;
+import com.platform.entity.SysUserEntity;
 import com.platform.service.CouponService;
 import com.platform.utils.PageUtils;
 import com.platform.utils.Query;
 import com.platform.utils.R;
+import com.platform.utils.ShiroUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -34,7 +36,9 @@ public class CouponController {
     @RequiresPermissions("coupon:list")
     public R list(@RequestParam Map<String, Object> params) {
         //查询列表数据
+        SysUserEntity sysUserEntity= ShiroUtils.getUserEntity();
         Query query = new Query(params);
+        query.put("merchantId",sysUserEntity.getMerchantId());
         PageHelper.startPage(query.getPage(), query.getLimit());
         List<CouponEntity> couponList = couponService.queryList(query);
         PageUtils pageUtil = new PageUtils(new PageInfo(couponList));
@@ -60,6 +64,8 @@ public class CouponController {
     @RequestMapping("/save")
     @RequiresPermissions("coupon:save")
     public R save(@RequestBody CouponEntity coupon) {
+        SysUserEntity sysUserEntity= ShiroUtils.getUserEntity();
+        coupon.setMerchantId(sysUserEntity.getMerchantId());
         couponService.save(coupon);
 
         return R.ok();
@@ -92,7 +98,8 @@ public class CouponController {
      */
     @RequestMapping("/queryAll")
     public R queryAll(@RequestParam Map<String, Object> params) {
-
+        SysUserEntity sysUserEntity= ShiroUtils.getUserEntity();
+        params.put("merchantId",sysUserEntity.getMerchantId());
         List<CouponEntity> list = couponService.queryList(params);
 
         return R.ok().put("list", list);

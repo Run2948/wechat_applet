@@ -47,26 +47,29 @@
             </Form-item>
             <Form-item label="发放方式" prop="sendType">
                 <Radio-group v-model="coupon.sendType">
-                    <Radio label="0">
+                  <!--  <Radio label="0">
                         <span>按订单发放</span>
-                    </Radio>
-                    <Radio label="1">
+                    </Radio>-->
+                    <!--<Radio label="1">
                         <span>按用户发放</span>
-                    </Radio>
-                    <Radio label="2">
+                    </Radio>-->
+                    <!--<Radio label="2">
                         <span>商品转发送券</span>
-                    </Radio>
+                    </Radio>-->
                     <!--<Radio label="3">-->
                     <!--<span>按商品发放</span>-->
                     <!--</Radio>-->
-                    <Radio label="4">
+                  <!--  <Radio label="4">
                         <span>新用户注册</span>
-                    </Radio>
+                    </Radio>-->
                     <!--<Radio label="5">-->
                     <!--<span>线下发放</span>-->
                     <!--</Radio>-->
-                    <Radio label="7">
+                   <!-- <Radio label="7">
                         <span>包邮优惠</span>
+                    </Radio>-->
+                    <Radio label="8">
+                        <span>店铺满减</span>
                     </Radio>
                 </Radio-group>
             </Form-item>
@@ -90,6 +93,9 @@
             </Form-item>
             <Form-item label="最小商品金额" prop="minGoodsAmount">
                 <Input-number :min="0" v-model="coupon.minGoodsAmount" placeholder="最小商品金额" style="width: 188px;"/>
+            </Form-item>
+            <Form-item label="发放数量" prop="totalCount">
+                <Input-number :min="0" v-model="coupon.totalCount" placeholder="发放数量" style="width: 188px;"/>
             </Form-item>
             <Form-item>
                 <i-button type="primary" @click="handleSubmit('formValidate')">提交</i-button>

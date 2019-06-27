@@ -1,21 +1,17 @@
 package com.platform.controller;
 
-import java.util.List;
-import java.util.Map;
-
-import org.apache.shiro.authz.annotation.RequiresPermissions;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
 import com.platform.entity.FeedbackEntity;
 import com.platform.service.FeedbackService;
 import com.platform.utils.PageUtils;
 import com.platform.utils.Query;
 import com.platform.utils.R;
+import com.platform.utils.ShiroUtils;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * Controller
@@ -38,7 +34,7 @@ public class FeedbackController {
     public R list(@RequestParam Map<String, Object> params) {
         //查询列表数据
         Query query = new Query(params);
-
+        query.put("merchant_id", ShiroUtils.getUserEntity().getMerchantId());
         List<FeedbackEntity> feedbackList = feedbackService.queryList(query);
         int total = feedbackService.queryTotal(query);
 
@@ -64,6 +60,7 @@ public class FeedbackController {
     @RequestMapping("/save")
     @RequiresPermissions("feedback:save")
     public R save(@RequestBody FeedbackEntity feedback) {
+    	feedback.setMerchant_id(ShiroUtils.getUserEntity().getMerchantId().intValue());
         feedbackService.save(feedback);
 
         return R.ok();

@@ -68,6 +68,7 @@ public class ApiAddressController extends ApiBaseAction {
     public Object save(@LoginUser UserVo loginUser) {
         JSONObject addressJson = this.getJsonRequest();
         AddressVo entity = new AddressVo();
+
         if (null != addressJson) {
             entity.setId(addressJson.getLong("id"));
             entity.setUserId(loginUser.getUserId());
@@ -80,6 +81,12 @@ public class ApiAddressController extends ApiBaseAction {
             entity.setNationalCode(addressJson.getString("nationalCode"));
             entity.setTelNumber(addressJson.getString("telNumber"));
             entity.setIs_default(addressJson.getInteger("is_default"));
+        }
+        Map<String, Object> param = new HashMap<String, Object>();
+        param.put("user_id", loginUser.getUserId());
+        List<AddressVo> addressEntities = addressService.queryList(param);
+        if(addressEntities.size()==0){//第一次添加设置为默认地址
+            entity.setIs_default(1);
         }
         //设置默认地址
         if(entity.getIs_default()==1){
@@ -126,16 +133,5 @@ public class ApiAddressController extends ApiBaseAction {
         List<AddressVo> addressEntities = addressService.queryaddressUserlist(param);
         return toResponsSuccess(addressEntities);
     }
-    /**
-     * 获取用户的收货地址
-     */
-    @IgnoreAuth
-    @ApiOperation(value = "获取客户的收货地址接口", response = Map.class)
-    @GetMapping("addressCustomerlist")
-    public Object addressCustomerlist(@LoginUser UserVo loginUser) {
-        Map<String, Object> param = new HashMap<String, Object>();
-        param.put("user_id", this.getUserId().intValue());
-        List<AddressVo> addressEntities = addressService.queryAddressCustomerlist(param);
-        return toResponsSuccess(addressEntities);
-    }
+  
 }

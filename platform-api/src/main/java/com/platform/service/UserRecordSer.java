@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.platform.dao.UserRecordMapper;
+import com.platform.entity.OrderVo;
+import com.platform.entity.UserRecord;
 
 /**
  * <br>
@@ -21,6 +23,10 @@ public class UserRecordSer  {
 	
 	public UserRecordMapper getEntityMapper(){    	
     	return userRecordDao;
+    }
+
+    public void save(UserRecord ur) {
+    	userRecordDao.insert(ur);
     }
 	
 }

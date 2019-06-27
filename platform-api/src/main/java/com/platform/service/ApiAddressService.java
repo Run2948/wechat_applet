@@ -57,7 +57,8 @@ public class ApiAddressService {
         return addressDao.queryaddressUserlist(param);
     }
 
-    public List<AddressVo> queryAddressCustomerlist(Map<String, Object> param) {
-        return addressDao.queryAddressCustomerlist(param);
+
+    public AddressVo queryDefaultAddress(Long userId) {
+       return addressDao.queryDefaultAddress(userId);
     }
 }

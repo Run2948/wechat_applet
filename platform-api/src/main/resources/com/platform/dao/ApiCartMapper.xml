@@ -20,10 +20,15 @@
         <result property="goods_specifition_ids" column="goods_specifition_ids"/>
         <result property="checked" column="checked"/>
         <result property="list_pic_url" column="list_pic_url"/>
+        <result property="merchant_id" column="merchant_id"/>
     </resultMap>
 
     <select id="queryObject" resultMap="cartMap">
 		select * from nideshop_cart where id = #{value}
+	</select>
+	
+	<select id="queryMrchantGroup" resultMap="cartMap">
+		SELECT merchant_id FROM `nideshop_cart` WHERE user_id =#{user_id} and checked=1 GROUP BY merchant_id
 	</select>
 
     <select id="queryList" resultMap="cartMap">
@@ -45,6 +50,9 @@
         </if>
         <if test="checked != null">
             AND a.checked = #{checked}
+        </if>
+        <if test="merchant_id != null">
+            AND a.merchant_id = #{merchant_id}
         </if>
         <choose>
             <when test="sidx != null and sidx.trim() != ''">
@@ -91,7 +99,9 @@
 			`goods_specifition_name_value`, 
 			`goods_specifition_ids`, 
 			`checked`, 
-			`list_pic_url`
+			`list_pic_url`, 
+			`merchant_id`
+			
 		)
 		values
 		(
@@ -107,7 +117,8 @@
 			#{goods_specifition_name_value}, 
 			#{goods_specifition_ids}, 
 			#{checked}, 
-			#{list_pic_url}
+			#{list_pic_url}, 
+			#{merchant_id}
 		)
 	</insert>
 
@@ -173,5 +184,32 @@
         delete from nideshop_cart
         where  user_id = #{user_id} and  session_id = #{session_id} and  checked = #{checked}
     </delete>
-
+    <select id="queryMerCartList" parameterType="java.lang.Long" resultType="com.platform.entity.MerCartVo">
+            SELECT
+            cart.merchant_id as merchantId,
+            sys.merchant_name as merchantName,
+            sum(
+                cart.retail_price * cart.number
+            ) as orderTotalPrice,
+            sum(
+                goods.extra_price * cart.number
+            ) as freightPrice
+        FROM
+            nideshop_cart cart,
+            nideshop_goods goods,
+            sys_user sys
+        WHERE
+            cart.goods_id = goods.id
+         AND sys.merchant_id=cart.merchant_id
+        AND cart.user_id = #{userId}
+        AND cart.checked = 1
+        GROUP BY
+            cart.merchant_id,sys.merchant_name
+    </select>
+    <select id="queryCheckedByUserIdAndMerId" parameterType="java.util.Map" resultMap="cartMap">
+        select * from nideshop_cart where user_id=#{user_id} and checked = 1 and merchant_id=#{merchantId}
+    </select>
+    <select id="queryMerchantName" parameterType="java.lang.Long" resultType="java.lang.String">
+        select merchant_name from sys_user where merchant_id=#{merchantId}
+    </select>
 </mapper>

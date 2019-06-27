@@ -55,6 +55,9 @@
         <if test="name != null and name.trim() != ''">
             AND name LIKE concat('%',#{name},'%')
         </if>
+        <if test="merchantId != null">
+            AND merchant_id = #{merchantId}
+        </if>
         <choose>
             <when test="sidx != null and sidx.trim() != ''">
                 order by ${sidx} ${order}
@@ -74,6 +77,9 @@
         <if test="name != null and name.trim() != ''">
             AND name LIKE concat('%',#{name},'%')
         </if>
+        <if test="merchantId != null">
+            AND merchant_id = #{merchantId}
+        </if>
     </select>
 
     <insert id="save" parameterType="com.platform.entity.BrandEntity" useGeneratedKeys="true" keyProperty="id">
@@ -88,28 +94,28 @@
 			`app_list_pic_url`,
 			`is_new`,
 			`new_pic_url`,
-			`new_sort_order`)
+			`new_sort_order`,merchant_id)
 		values(
 			#{name},
-			#{listPicUrl},
+			#{appListPicUrl},
 			#{simpleDesc},
-			#{picUrl},
+			#{appListPicUrl},
 			#{sortOrder},
 			#{isShow},
 			#{floorPrice},
 			#{appListPicUrl},
 			#{isNew},
 			#{newPicUrl},
-			#{newSortOrder})
+			#{newSortOrder},#{merchantId})
 	</insert>
 
     <update id="update" parameterType="com.platform.entity.BrandEntity">
         update nideshop_brand
         <set>
             <if test="name != null">`name` = #{name},</if>
-            <if test="listPicUrl != null">`list_pic_url` = #{listPicUrl},</if>
+            <if test="appListPicUrl != null">`list_pic_url` = #{appListPicUrl},</if>
             <if test="simpleDesc != null">`simple_desc` = #{simpleDesc},</if>
-            <if test="picUrl != null">`pic_url` = #{picUrl},</if>
+            <if test="appListPicUrl != null">`pic_url` = #{appListPicUrl},</if>
             <if test="sortOrder != null">`sort_order` = #{sortOrder},</if>
             <if test="isShow != null">`is_show` = #{isShow},</if>
             <if test="floorPrice != null">`floor_price` = #{floorPrice},</if>

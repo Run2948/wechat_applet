@@ -3,7 +3,7 @@ package com.platform.api;
 import com.platform.annotation.APPLoginUser;
 import com.platform.annotation.IgnoreAuth;
 import com.platform.annotation.LoginUser;
-import com.platform.entity.MlsUserVo;
+import com.platform.entity.MlsUserEntity2;
 import com.platform.entity.OrderGoodsVo;
 import com.platform.entity.OrderVo;
 import com.platform.entity.UserVo;
@@ -58,7 +58,7 @@ public class ApiOrderFxController extends ApiBaseAction {
      */
     @ApiOperation(value = "获取订单列表")
     @RequestMapping("list")
-    public Object list(@APPLoginUser MlsUserVo mlsuser, Integer order_status,
+    public Object list(@APPLoginUser MlsUserEntity2 mlsuser, Integer order_status,
                        @RequestParam(value = "page", defaultValue = "1") Integer page,
                        @RequestParam(value = "size", defaultValue = "10") Integer size) {
         //

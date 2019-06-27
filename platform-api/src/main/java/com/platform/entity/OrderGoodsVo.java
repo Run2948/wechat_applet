@@ -56,6 +56,10 @@ public class OrderGoodsVo implements Serializable {
     private String address;
     //联系电话
     private String mobile;
+    
+
+    //使用的优惠券id
+    private Integer coupon_id;
 
     public Integer getId() {
         return id;
@@ -215,6 +219,14 @@ public class OrderGoodsVo implements Serializable {
 
 	public void setMobile(String mobile) {
 		this.mobile = mobile;
+	}
+
+	public Integer getCoupon_id() {
+		return coupon_id;
+	}
+
+	public void setCoupon_id(Integer coupon_id) {
+		this.coupon_id = coupon_id;
 	}
 
 	

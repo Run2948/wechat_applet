@@ -14,10 +14,19 @@
         <result property="order_id" column="order_id"/>
         <result property="source_key" column="source_key"/>
         <result property="referrer" column="referrer"/>
+        <result property="merchantId" column="merchant_id"/>
+        <result property="coupon_status" column="coupon_status"/>
+        <result property="use_start_date" column="use_start_date"/>
+        <result property="use_end_date" column="use_end_date"/>
+        <result property="min_goods_amount" column="min_goods_amount"/>
+        <result property="coupon_price" column="coupon_price"/>
     </resultMap>
 
     <select id="queryObject" resultMap="userCouponMap">
-		select * from nideshop_user_coupon where id = #{value}
+		SELECT u.*,c.use_start_date,c.use_end_date, c.min_goods_amount 
+		FROM nideshop_user_coupon u LEFT JOIN nideshop_coupon c 
+		ON u.coupon_id=c.id 
+		where u.id = #{value}
 	</select>
 
     <select id="queryByCouponNumber" resultMap="userCouponMap">
@@ -27,12 +36,15 @@
     <select id="queryList" resultMap="userCouponMap">
         select a.* from nideshop_user_coupon a
         left join nideshop_coupon b on b.id = a.coupon_id
-        where 1 = 1
+        where 1 = 1 and a.merchant_id=b.merchant_id
         <if test="coupon_number != null">
             and a.coupon_number = #{coupon_number}
         </if>
         <if test="user_id != null">
             and a.user_id = #{user_id}
+        </if>
+        <if test="merchantId != null and merchantId!=''">
+            and a.merchant_id = #{merchantId}
         </if>
         <if test="send_type != null">
             and b.send_type = #{send_type}
@@ -57,7 +69,7 @@
     </select>
 
     <select id="queryTotal" resultType="int">
-		select count(*) from nideshop_user_coupon 
+		select count(*) from nideshop_user_coupon
 	</select>
 
     <insert id="save" parameterType="com.platform.entity.UserCouponVo" useGeneratedKeys="true" keyProperty="id">
@@ -70,7 +82,10 @@
 			`order_id`,
 			`add_time`,
 			`source_key`,
-			`referrer`
+			`referrer`,
+			`merchant_id`,
+			`coupon_price`
+
 		)
 		values
 		(
@@ -81,7 +96,9 @@
 			#{order_id},
 			#{add_time},
 			#{source_key},
-			#{referrer}
+			#{referrer},
+			#{merchantId},
+			#{coupon_price}
 		)
 	</insert>
 
@@ -99,6 +116,15 @@
         </set>
         where id = #{id}
     </update>
+    
+    <update id="updateCouponStatus" parameterType="com.platform.entity.UserCouponVo">
+        update nideshop_user_coupon
+        <set>
+        	<if test="used_time != null">`used_time` = #{used_time},</if>
+            <if test="coupon_status != null">`coupon_status` = #{coupon_status}</if>
+        </set>
+        where id = #{id}
+    </update>
 
     <delete id="delete">
 		delete from nideshop_user_coupon where id = #{value}
@@ -110,4 +136,8 @@
             #{id}
         </foreach>
     </delete>
+
+    <select id="queryUserGetTotal" resultType="int">
+        select count(*) from nideshop_user_coupon where coupon_id=#{coupon_id}
+    </select>
 </mapper>

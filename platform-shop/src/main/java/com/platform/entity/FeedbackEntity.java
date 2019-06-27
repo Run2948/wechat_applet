@@ -44,7 +44,8 @@ public class FeedbackEntity implements Serializable {
 //    private Integer orderId;
     //
 //    private Integer msgArea;
-
+    //商户ID
+    private Integer merchant_id;
     /**
      * 设置：主键
      */
@@ -128,4 +129,12 @@ public class FeedbackEntity implements Serializable {
     public void setStatus(Integer status) {
         this.status = status;
     }
+
+	public Integer getMerchant_id() {
+		return merchant_id;
+	}
+
+	public void setMerchant_id(Integer merchant_id) {
+		this.merchant_id = merchant_id;
+	}
 }

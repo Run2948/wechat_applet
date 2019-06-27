@@ -1,23 +1,15 @@
 package com.platform.controller;
 
-import java.util.List;
-import java.util.Map;
-
+import com.platform.entity.CartEntity;
+import com.platform.entity.SysUserEntity;
+import com.platform.service.CartService;
+import com.platform.utils.*;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import com.platform.entity.AddressEntity;
-import com.platform.entity.CartEntity;
-import com.platform.service.CartService;
-import com.platform.utils.Base64;
-import com.platform.utils.PageUtils;
-import com.platform.utils.Query;
-import com.platform.utils.R;
+import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -40,8 +32,9 @@ public class CartController {
 	@RequiresPermissions("cart:list")
 	public R list(@RequestParam Map<String, Object> params){
 		//查询列表数据
-        Query query = new Query(params);
-
+		SysUserEntity sysUserEntity= ShiroUtils.getUserEntity();
+		Query query = new Query(params);
+		query.put("merchantId",sysUserEntity.getMerchantId());
 		List<CartEntity> cartList = cartService.queryList(query);
 		int total = cartService.queryTotal(query);
 		for(CartEntity user : cartList) {

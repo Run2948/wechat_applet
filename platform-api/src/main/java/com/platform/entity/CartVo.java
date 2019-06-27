@@ -2,7 +2,6 @@ package com.platform.entity;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.util.Date;
 
 
 /**
@@ -46,6 +45,9 @@ public class CartVo implements Serializable {
 
     //商品图片
     private String list_pic_url;
+    
+    //商户ID
+    private Long merchant_id;
 
     public Integer getId() {
         return id;
@@ -177,8 +179,12 @@ public class CartVo implements Serializable {
     public void setCrash_save_price(BigDecimal crash_save_price) {
         this.crash_save_price = crash_save_price;
     }
-	
-	
 
-	
+    public Long getMerchant_id() {
+        return merchant_id;
+    }
+
+    public void setMerchant_id(Long merchant_id) {
+        this.merchant_id = merchant_id;
+    }
 }

@@ -26,7 +26,9 @@
         <result property="is_return_cash" column="is_return_cash"/>
         <result property="first_buy_money" column="first_buy_money"/>
         <result property="qrCode" column="qr_code"/>
-
+        <result property="fid" column="fid"/>
+		<result property="fx1" column="fx1"/>
+		<result property="fx2" column="fx2"/>
     </resultMap>
 
     <select id="queryObject" resultMap="userMap">
@@ -129,6 +131,15 @@
             <if test="qrCode != null">`qr_code` = #{qrCode}</if>
             <if test="realName != null">`real_name` = #{realName}</if>
 
+        </set>
+        where id = #{userId}
+    </update>
+    
+    <update id="updatefx" parameterType="com.platform.entity.UserVo">
+        update nideshop_user
+        <set>
+            <if test="fx1 != null">`fx1` = #{fx1},</if>
+            <if test="fx2 != null">`fx2` = #{fx2},</if>
         </set>
         where id = #{userId}
     </update>

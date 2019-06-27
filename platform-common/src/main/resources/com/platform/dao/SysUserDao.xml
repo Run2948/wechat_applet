@@ -3,11 +3,11 @@
 
 <mapper namespace="com.platform.dao.SysUserDao">
 	<select id="queryObject" resultType="com.platform.entity.SysUserEntity">
-		select * from sys_user where user_id = #{value}
+		select u.*,u.merchant_id as merchantId,u.merchant_name as merchantName from sys_user u where u.user_id = #{value}
 	</select>
 	
 	<select id="queryList" resultType="com.platform.entity.SysUserEntity">
-		select u.*, (select d.name from sys_dept d where d.dept_id = u.dept_id) deptName from sys_user u
+		select u.*,u.merchant_id as merchantId,u.merchant_name as merchantName ,(select d.name from sys_dept d where d.dept_id = u.dept_id) deptName from sys_user u
 		<where>
 			<if test="createUserId != null">
 				and `create_user_id` = #{createUserId} 
@@ -84,7 +84,8 @@
 			`status`, 
 			`create_user_id`,
 			`dept_id`,
-			`create_time`
+			`create_time`,
+			`merchant_name`,`FX`,`FX1`,`FX2`,`PFX`,all_show
 		)
 		values
 		(
@@ -96,9 +97,14 @@
 			#{status}, 
 			#{createUserId},
 			#{deptId},
-			#{createTime}
+			#{createTime},
+			#{merchantName}, #{fx},	#{fx1},	#{fx2},#{pfx},#{allShow}
 		)
 	</insert>
+	
+	<update id="updateMerchantId" parameterType="com.platform.entity.SysUserEntity">
+		update sys_user  set merchant_id=#{userId} 	where user_id = #{userId} 
+	</update>
 	 
 	<update id="update" parameterType="com.platform.entity.SysUserEntity">
 		update sys_user 
@@ -108,6 +114,12 @@
 			<if test="mobile != null">`mobile` = #{mobile}, </if>
 			<if test="status != null">`status` = #{status}, </if>
 			<if test="deptId != null">`dept_id` = #{deptId}, </if>
+			<if test="merchantName != null">`merchant_name` = #{merchantName}, </if>
+			<if test="fx != null">`fx` = #{fx}, </if>
+			<if test="fx1 != null">`fx1` = #{fx1}, </if>		
+			<if test="fx2 != null">`fx2` = #{fx2}, </if>
+			<if test="pfx != null">`pfx` = #{pfx}, </if>
+			<if test="allShow != null">`all_show` = #{allShow}, </if>
 		</set>
 		where user_id = #{userId} 
 		<if test="createUserId != null">
@@ -131,5 +143,35 @@
 			#{userId}
 		</foreach>
 	</delete>
+		
+	<select id="mlsUseCount" resultType="int">
+        SELECT count(MLS_USER_ID) FROM MLS_USER  where USER_TEL=#{value} 
+    </select>
+    <insert id="insertMlsUse" useGeneratedKeys="true" keyProperty="mlsUserId" >
+        INSERT INTO MLS_USER (
+        	USER_TEL ,
+        	C_TIME ,
+        	FX ,
+        	FX1 ,
+        	FX2 ,
+        	PFX ,
+        	FID,ROOT_ID,
+        	MERCHANT_ID,all_show
+        ) VALUES (
+        	#{userTel} ,        	
+        	now() ,
+        	#{fx} ,
+        	#{fx1} ,
+        	#{fx2} ,
+        	#{pfx} ,
+        	#{fid} ,#{rootId},#{merchantId},#{allShow}
+        )
+	</insert>
+	
+	<update id="updateMlsUse" >
+		update MLS_USER set 
+		`FX` = #{fx}, `FX1`= #{fx1} , `FX2` = #{fx2} , `PFX` =#{pfx} ,all_show=#{allShow}
+			where ROOT_ID = #{rootId} 
+	</update>
 
 </mapper>

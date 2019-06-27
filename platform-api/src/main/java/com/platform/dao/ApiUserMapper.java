@@ -32,5 +32,12 @@ public interface ApiUserMapper extends BaseDao<UserVo> {
      */
     int saveSmsCodeLog(SmsLogVo smsLogVo);
     
+    /**
+     * 更新分销比例
+     * @param vo
+     * @return
+     */
+    int updatefx(UserVo vo);
+    
 }
 

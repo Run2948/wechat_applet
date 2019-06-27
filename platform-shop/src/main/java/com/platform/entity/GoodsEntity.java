@@ -79,9 +79,8 @@ public class GoodsEntity implements Serializable {
     private Integer isHot;
     //市场价
     private BigDecimal marketPrice;
-	//是否秒杀商品
-	private Integer isSecKill;
-	//秒杀开始时间
+	private Integer isSecKill;//商品类型,1:普通商品,2:秒杀,3:团购,4:砍价
+	//开始时间
 	private Date startTime;
     /**
      * 用户ID
@@ -91,6 +90,8 @@ public class GoodsEntity implements Serializable {
      * 用户ID
      */
     private Long createUserDeptId;
+    //分佣百分比
+    private String brokerage_percent;
     /**
      * 用户ID
      */
@@ -108,8 +109,50 @@ public class GoodsEntity implements Serializable {
     private String attributeCategoryName;
     //品牌
     private String brandName;
+    //商户id
+    private Long merchantId;
+    private Date endTime;//活动结束时间
+    private Integer successTime;//成团时间 单位分钟
+    private Integer successPeople;//成团时间 单位分钟
+    private BigDecimal groupPrice;//团购价格(元)
 
-    public Long getCreateUserDeptId() {
+	public Date getEndTime() {
+		return endTime;
+	}
+	public void setEndTime(Date endTime) {
+		this.endTime = endTime;
+	}
+	public Integer getSuccessTime() {
+		return successTime;
+	}
+	public void setSuccessTime(Integer successTime) {
+		this.successTime = successTime;
+	}
+	public Integer getSuccessPeople() {
+		return successPeople;
+	}
+
+	public void setSuccessPeople(Integer successPeople) {
+		this.successPeople = successPeople;
+	}
+
+	public BigDecimal getGroupPrice() {
+		return groupPrice;
+	}
+
+	public void setGroupPrice(BigDecimal groupPrice) {
+		this.groupPrice = groupPrice;
+	}
+
+	public String getBrokerage_percent() {
+		return brokerage_percent;
+	}
+
+	public void setBrokerage_percent(String brokerage_percent) {
+		this.brokerage_percent = brokerage_percent;
+	}
+
+	public Long getCreateUserDeptId() {
         return createUserDeptId;
     }
 
@@ -624,4 +667,12 @@ public class GoodsEntity implements Serializable {
 	public void setStartTime(Date startTime) {
 		this.startTime = startTime;
 	}
+
+    public Long getMerchantId() {
+        return merchantId;
+    }
+
+    public void setMerchantId(Long merchantId) {
+        this.merchantId = merchantId;
+    }
 }

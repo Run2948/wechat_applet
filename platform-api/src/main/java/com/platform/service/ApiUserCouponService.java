@@ -52,4 +52,11 @@ public class ApiUserCouponService {
         userCouponDao.deleteBatch(ids);
     }
 
+    public int queryUserGetTotal(Map userParams) {
+       return userCouponDao.queryUserGetTotal(userParams);
+    }
+    
+    public void updateCouponStatus(UserCouponVo vo) {
+    	userCouponDao.updateCouponStatus(vo);
+    }
 }

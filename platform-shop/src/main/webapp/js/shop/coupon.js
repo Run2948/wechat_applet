@@ -22,6 +22,9 @@ $(function () {
                     } else if (value == 7) {
                         return '包邮优惠';
                     }
+                    else if (value == 8) {
+                        return '店铺满减';
+                    }
                     return '-';
                 }
             },
@@ -56,6 +59,7 @@ $(function () {
                 }
             },
             {label: '最小商品金额', name: 'minGoodsAmount', index: 'min_goods_amount', width: 80},
+            {label: '发放数量', name: 'totalCount', index: 'totalCount', width: 80},
             {
                 label: '操作', width: 70, sortable: false, formatter: function (value, col, row) {
                     if (row.sendType == 1 || row.sendType == 3) {

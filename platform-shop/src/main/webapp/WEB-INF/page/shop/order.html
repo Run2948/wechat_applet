@@ -26,10 +26,10 @@
                 </i-col>
                 <i-col span="4">
                     <i-select v-model="q.orderType">
-                        <i-option value="1">普通订单</i-option>
-                        <i-option value="2">团购订单</i-option>
-                        <i-option value="3">砍价订单</i-option>
-                        <i-option value="4">立即购买</i-option>
+                        <i-option value="1">购物车订单</i-option>
+                        <i-option value="2">普通订单</i-option>
+                        <i-option value="3">秒杀订单</i-option>
+                        <i-option value="4">团购订单</i-option>
                     </i-select>
                 </i-col>
                 <i-button @click="query">查询</i-button>
@@ -74,6 +74,12 @@
         <i-form ref="formValidate" :model="order" :label-width="80">
             <Form-item label="订单号" prop="orderSn">
                 <i-input v-model="order.orderSn" readonly/>
+            </Form-item>
+            <Form-item label="商品名称" prop="goodsNames">
+                <i-input v-model="order.goodsNames" readonly/>
+            </Form-item>
+             <Form-item label="商品规格" prop="goodsSpecifitionNameValue">
+                <i-input v-model="order.goodsSpecifitionNameValue" readonly/>
             </Form-item>
             <Form-item label="会员" prop="userName">
                 <i-input v-model="order.userName" readonly/>

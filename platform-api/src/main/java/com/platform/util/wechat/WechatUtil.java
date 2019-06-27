@@ -54,6 +54,88 @@ public class WechatUtil {
     public static Integer CLIENTTYPE_APP = 1;
 
     /**
+     * 方法描述：企业付款到零钱
+     * @param openid		用户openId
+     * @param payMoney		支付金额
+     * @param userName		真实姓名
+     * @param payCountId	流水号，唯一
+     * @return
+     */
+    public static WechatRefundApiResult wxPayMoneyToUser(String openid, Double payMoney, String userName,String payCountId) {
+        //初始化请求微信服务器的配置信息包括appid密钥等
+        //转换金钱格式
+        BigDecimal bdpayMoney = new BigDecimal(payMoney, MathContext.DECIMAL32);
+        //构建请求参数
+        Map<Object, Object> params = payMoneyToUser(openid, bdpayMoney, userName,payCountId);
+        String mapToXml = MapUtils.convertMap2Xml(params);
+        //请求微信
+        String reponseXml = sendorgPay(mapToXml, WechatConfig.getSslcsf());
+        WechatRefundApiResult result = (WechatRefundApiResult) XmlUtil.xmlStrToBean(reponseXml, WechatRefundApiResult.class);
+        return result;
+    }
+    /**
+     * 方法描述：分账请求参数
+  */
+ private static Map<Object, Object> payMoneyToUser(String openid, BigDecimal bdpayMoney, String userName,String payCountId) {
+ 	
+     Map<Object, Object> params = new HashMap<Object, Object>();
+     //微信分配的公众账号ID（企业号corpid即为此appId）
+     params.put("mch_appid", ResourceUtil.getConfigByName("wx.appId"));
+     //微信支付分配的商户号
+     params.put("mchid", ResourceUtil.getConfigByName("wx.mchId"));
+     //随机字符串，不长于32位。推荐随机数生成算法
+     params.put("nonce_str", CharUtil.getRandomString(16));        
+     //商户侧传给微信的订单号
+     params.put("partner_trade_no", payCountId);
+     params.put("openid", openid);//收款人openid
+     params.put("check_name", "FORCE_CHECK");//强校验真实姓名
+     params.put("re_user_name", userName);//收款用户真实姓名。 
+     params.put("amount", bdpayMoney.multiply(new BigDecimal(100)).intValue());       //转账总金额，单位为分，只能为整数
+     params.put("desc", "销售分润给"+userName+"，金额："+bdpayMoney);//转账备注。
+     //商户系统内部的退款单号，商户系统内部唯一，同一退款单号多次请求只退一笔
+     params.put("spbill_create_ip", "192.168.0.1");
+     //签名前必须要参数全部写在前面
+     params.put("sign", arraySign(params, ResourceUtil.getConfigByName("wx.paySignKey")));
+     return params;
+ }
+    /**
+     * 企业付款逻辑
+     **/
+    public static String sendorgPay(String mapToXml, SSLConnectionSocketFactory sslcsf) {
+        logger.info("*******企业付款（WX Request：" + mapToXml);
+        HttpPost httPost = new HttpPost(ResourceUtil.getConfigByName("wx.orgPay"));
+        httPost.addHeader("Connection", "keep-alive");
+        httPost.addHeader("Accept", "*/*");
+        httPost.addHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
+        httPost.addHeader("Host", "api.mch.weixin.qq.com");
+        httPost.addHeader("X-Requested-With", "XMLHttpRequest");
+        httPost.addHeader("Cache-Control", "max-age=0");
+        httPost.addHeader("User-Agent", "Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 6.0) ");
+        httPost.setEntity(new StringEntity(mapToXml, "UTF-8"));
+        CloseableHttpClient httpClient = HttpClients.custom().setSSLSocketFactory(sslcsf).build();
+        CloseableHttpResponse response = null;
+        try {
+            response = httpClient.execute(httPost);
+            HttpEntity entity = response.getEntity();
+            String xmlStr = EntityUtils.toString(entity, "UTF-8");
+            logger.info("*******企业付款（WX Response：" + xmlStr);
+            return xmlStr;
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            return null;
+        } finally {
+            try {
+                if (response != null) {
+                    response.close();
+                }
+            } catch (IOException e) {
+                logger.error(e.getMessage(), e);
+            }
+        }
+    }
+
+    
+    /**
      * 方法描述：微信退款逻辑
      * 创建时间：2017年4月12日  上午11:04:25
      * 作者： xubo

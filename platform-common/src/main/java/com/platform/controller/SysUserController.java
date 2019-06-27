@@ -1,22 +1,35 @@
 package com.platform.controller;
 
-import com.platform.annotation.SysLog;
-import com.platform.entity.SysUserEntity;
-import com.platform.service.SysUserRoleService;
-import com.platform.service.SysUserService;
-import com.platform.utils.*;
-import com.platform.validator.Assert;
-import com.platform.validator.ValidatorUtils;
-import com.platform.validator.group.AddGroup;
-import com.platform.validator.group.UpdateGroup;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.apache.shiro.crypto.hash.Sha256Hash;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
-import java.util.Map;
+import com.platform.annotation.SysLog;
+import com.platform.dao.SysUserDao;
+import com.platform.entity.MlsUserEntity2;
+import com.platform.entity.SysUserEntity;
+import com.platform.service.SysUserRoleService;
+import com.platform.service.SysUserService;
+import com.platform.utils.Constant;
+import com.platform.utils.PageUtils;
+import com.platform.utils.Query;
+import com.platform.utils.R;
+import com.platform.utils.RRException;
+import com.platform.utils.ResourceUtil;
+import com.platform.utils.ShiroUtils;
+import com.platform.validator.Assert;
+import com.platform.validator.ValidatorUtils;
+import com.platform.validator.group.AddGroup;
+import com.platform.validator.group.UpdateGroup;
 
 /**
  * 系统用户
@@ -30,6 +43,9 @@ import java.util.Map;
 public class SysUserController extends AbstractController {
     @Autowired
     private SysUserService sysUserService;
+    @Autowired
+    private SysUserDao sysUserDao;
+    
     @Autowired
     private SysUserRoleService sysUserRoleService;
 
@@ -113,10 +129,25 @@ public class SysUserController extends AbstractController {
     @RequiresPermissions("sys:user:save")
     public R save(@RequestBody SysUserEntity user) {
         ValidatorUtils.validateEntity(user, AddGroup.class);
-
+        int count=sysUserDao.mlsUseCount(user.getMobile());
+        if(count>0) {
+        	return R.error("手机号已被注册");
+        }
         user.setCreateUserId(getUserId());
         sysUserService.save(user);
-
+        sysUserDao.updateMerchantId(user);
+        
+        MlsUserEntity2 mlsUserVo=new MlsUserEntity2();
+        mlsUserVo.setUserTel(user.getMobile());
+        mlsUserVo.setFx(user.getFx());
+        mlsUserVo.setFx1(user.getFx1());
+        mlsUserVo.setFx2(user.getFx2());
+        mlsUserVo.setPfx(user.getPfx());
+        mlsUserVo.setFid(-1L);
+        mlsUserVo.setRootId(user.getUserId());
+        mlsUserVo.setMerchantId(user.getUserId());
+        mlsUserVo.setAllShow(user.getAllShow());
+        sysUserDao.insertMlsUse(mlsUserVo);
         return R.ok();
     }
 
@@ -131,7 +162,15 @@ public class SysUserController extends AbstractController {
 
         user.setCreateUserId(getUserId());
         sysUserService.update(user);
-
+        MlsUserEntity2 mlsUserVo=new MlsUserEntity2();
+        mlsUserVo.setFx(user.getFx());
+        mlsUserVo.setFx1(user.getFx1());
+        mlsUserVo.setFx2(user.getFx2());
+        mlsUserVo.setPfx(user.getPfx());
+        mlsUserVo.setRootId(user.getUserId());
+        mlsUserVo.setAllShow(user.getAllShow());
+        sysUserDao.updateMlsUse(mlsUserVo);
+        
         return R.ok();
     }
 

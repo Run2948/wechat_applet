@@ -4,10 +4,9 @@ import com.platform.annotation.IgnoreAuth;
 import com.platform.annotation.LoginUser;
 import com.platform.entity.OrderGoodsVo;
 import com.platform.entity.OrderVo;
+import com.platform.entity.UserCouponVo;
 import com.platform.entity.UserVo;
-import com.platform.service.ApiKdniaoService;
-import com.platform.service.ApiOrderGoodsService;
-import com.platform.service.ApiOrderService;
+import com.platform.service.*;
 import com.platform.util.ApiBaseAction;
 import com.platform.util.ApiPageUtils;
 import com.platform.util.wechat.WechatRefundApiResult;
@@ -20,6 +19,7 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -39,7 +39,11 @@ public class ApiOrderController extends ApiBaseAction {
     @Autowired
     private ApiOrderGoodsService orderGoodsService;
     @Autowired
-    private ApiKdniaoService apiKdniaoService;
+    private UserRecordSer userRecordSer;
+    @Autowired
+    private MlsUserSer mlsUserSer;
+    @Autowired
+    private ApiUserCouponService userCouponService;
 
     /**
      */
@@ -65,7 +69,7 @@ public class ApiOrderController extends ApiBaseAction {
         params.put("page", page);
         params.put("limit", size);
         params.put("sidx", "id");
-        params.put("order", "asc");
+        params.put("order", "desc");
         params.put("order_status", order_status);
         //查询列表数据
         Query query = new Query(params);
@@ -173,6 +177,14 @@ public class ApiOrderController extends ApiBaseAction {
     public Object cancelOrder(Integer orderId) {
         try {
             OrderVo orderVo = orderService.queryObject(orderId);
+            
+            List<OrderVo> orders = orderService.queryByAllOrderId(orderVo.getAll_order_id());
+            
+            BigDecimal allPrice = BigDecimal.ZERO;
+            for(OrderVo o : orders) {
+            	allPrice = allPrice.add(o.getAll_price());
+            }
+            
             if (orderVo.getOrder_status() == 300) {
                 return toResponsFail("已发货，不能取消");
             } else if (orderVo.getOrder_status() == 301) {
@@ -182,7 +194,7 @@ public class ApiOrderController extends ApiBaseAction {
             if (orderVo.getPay_status() == 2) {
             	
                 WechatRefundApiResult result = WechatUtil.wxRefund(orderVo.getAll_order_id().toString(),
-                		orderVo.getAll_price().doubleValue(), orderVo.getAll_price().doubleValue());
+                		allPrice.doubleValue(), orderVo.getAll_price().doubleValue());
                 //测试修改金额
 //                WechatRefundApiResult result = WechatUtil.wxRefund(orderVo.getId().toString(), 0.01d, 0.01d);
                 if (result.getResult_code().equals("SUCCESS")) {
@@ -192,11 +204,24 @@ public class ApiOrderController extends ApiBaseAction {
                         orderVo.setOrder_status(402);
                     }
                     
-                    OrderVo vo = new OrderVo();
-                    vo.setPay_status(4);
-                    vo.setOrder_status(orderVo.getOrder_status());
-                    vo.setAll_order_id(orderVo.getAll_order_id());
-                    orderService.updateStatus(vo);
+                    orderVo.setPay_status(4);
+                    orderService.update(orderVo);
+                    
+                    //更新优惠券状态和实际
+                    UserCouponVo uc = new UserCouponVo();
+        			uc.setId(orderVo.getCoupon_id());
+        			uc.setCoupon_status(1);
+        			uc.setUsed_time(null);
+        			userCouponService.updateCouponStatus(uc);
+                    
+                    //去掉订单成功成立分润退还
+                    try {
+                    	orderService.cancelFx(orderVo.getId(), orderVo.getPay_time(), orderVo.getAll_price().multiply(new BigDecimal("100")).intValue());
+                    }catch(Exception e) {
+                    	System.out.println("================取消订单返还分润开始================");
+                    	e.printStackTrace();
+                    	System.out.println("================取消订单返还分润开始================");
+                    }
                     return toResponsSuccess("取消成功");
                 } else {
                     return toResponsObject(400, "取消成失败", "取消成失败");
@@ -211,6 +236,8 @@ public class ApiOrderController extends ApiBaseAction {
         }
         return toResponsSuccess("提交失败");
     }
+    
+
 
     /**
      * 确认收货

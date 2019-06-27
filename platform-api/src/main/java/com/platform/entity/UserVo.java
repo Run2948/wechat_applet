@@ -234,4 +234,5 @@ public class UserVo implements Serializable {
     public void setRealName(String realName) {
         this.realName = realName;
     }
+    
 }

@@ -39,8 +39,18 @@ public class BrandEntity implements Serializable {
     private String newPicUrl;
     //排序
     private Integer newSortOrder;
+    //商户id
+    private Long merchantId;
 
-    /**
+    public Long getMerchantId() {
+		return merchantId;
+	}
+
+	public void setMerchantId(Long merchantId) {
+		this.merchantId = merchantId;
+	}
+
+	/**
      * 设置：主键
      */
     public void setId(Integer id) {

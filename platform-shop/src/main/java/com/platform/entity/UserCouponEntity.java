@@ -38,8 +38,8 @@ public class UserCouponEntity implements Serializable {
 
     //优惠劵名称
     private String couponName;
-
-
+    //商户id
+    private Long merchantId;
     /**
      * 设置：主键
      */
@@ -146,5 +146,13 @@ public class UserCouponEntity implements Serializable {
 
     public void setAddTime(Date addTime) {
         this.addTime = addTime;
+    }
+
+    public Long getMerchantId() {
+        return merchantId;
+    }
+
+    public void setMerchantId(Long merchantId) {
+        this.merchantId = merchantId;
     }
 }

@@ -1,9 +1,14 @@
 package com.platform.service;
 
-import java.math.BigDecimal;
-import java.util.HashMap;
-import java.util.Map;
-
+import com.platform.dao.MlsUserMapper;
+import com.platform.dao.UserRecordMapper;
+import com.platform.entity.MlsUserEntity2;
+import com.platform.entity.OrderVo;
+import com.platform.entity.UserGoods;
+import com.platform.entity.UserRecord;
+import com.platform.util.RedisUtils;
+import com.platform.util.SmsUtils;
+import com.platform.utils.CharUtil;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,14 +16,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import com.platform.dao.MlsUserMapper;
-import com.platform.dao.UserRecordMapper;
-import com.platform.entity.MlsUserVo;
-import com.platform.entity.OrderVo;
-import com.platform.entity.UserRecord;
-import com.platform.util.RedisUtils;
-import com.platform.util.SmsUtils;
-import com.platform.utils.CharUtil;
+import java.math.BigDecimal;
+import java.util.HashMap;
+import java.util.Map;
 
 
 
@@ -42,6 +42,10 @@ public class MlsUserSer  {
 	public MlsUserMapper getEntityMapper() {
 		return mlsUserDao;
 	}
+	
+    public MlsUserEntity2 queryObject(Long userId) {
+        return mlsUserDao.getById(userId);
+    }
 
 	public void sendCode(String mobile) {
 		String random = CharUtil.getRandomNum(6);
@@ -66,7 +70,7 @@ public class MlsUserSer  {
 		return verificationCode.equals(code);
 	}
 	
-	public MlsUserVo insUser(MlsUserVo mlsUser) {
+	public MlsUserEntity2 insUser(MlsUserEntity2 mlsUser) {
 		mlsUserDao.insert(mlsUser);
 		return mlsUser;
 	}
@@ -84,7 +88,7 @@ public class MlsUserSer  {
 		userRecord.setRemarks(orderVo.getGoods_name());
 		userRecordDao.insert(userRecord);
 		
-		MlsUserVo mlsUserVo=new MlsUserVo();
+		MlsUserEntity2 mlsUserVo=new MlsUserEntity2();
 		mlsUserVo.setMlsUserId(userRecord.getMlsUserId());
 		mlsUserVo.setGetProfit(userRecord.getPrice());
 		mlsUserVo.setTodaySales(orderVo.getGoods_price().multiply(BigDecimal.valueOf(100)).intValue());
@@ -92,4 +96,16 @@ public class MlsUserSer  {
 		mlsUserDao.updateMoney(mlsUserVo);
 		
 	}
+	
+	public void updateMoney(MlsUserEntity2  mlsUserVo) {
+		mlsUserDao.updateMoney(mlsUserVo);
+	}
+	
+	public void updateGetProfit(MlsUserEntity2  mlsUserVo) {
+		mlsUserDao.updateGetProfit(mlsUserVo);
+	}
+
+    public UserGoods findUserGoods(UserGoods userGoods) {
+    	return mlsUserDao.findUserGoods(userGoods);
+    }
 }

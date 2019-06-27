@@ -2,7 +2,6 @@ package com.platform.entity;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.util.Date;
 
 
 /**
@@ -33,7 +32,10 @@ public class ProductVo implements Serializable {
     private String goods_name;
     //商品图片
     private String list_pic_url;
-
+    //商户id
+    private Long merchant_id;
+    //活动价格
+    private BigDecimal group_price;
     public String getGoods_name() {
         return goods_name;
     }
@@ -112,5 +114,21 @@ public class ProductVo implements Serializable {
 
     public void setMarket_price(BigDecimal market_price) {
         this.market_price = market_price;
+    }
+
+    public Long getMerchant_id() {
+        return merchant_id;
+    }
+
+    public void setMerchant_id(Long merchant_id) {
+        this.merchant_id = merchant_id;
+    }
+
+    public BigDecimal getGroup_price() {
+        return group_price;
+    }
+
+    public void setGroup_price(BigDecimal group_price) {
+        this.group_price = group_price;
     }
 }

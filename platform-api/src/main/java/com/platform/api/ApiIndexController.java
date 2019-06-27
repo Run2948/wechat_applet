@@ -1,13 +1,13 @@
 package com.platform.api;
 
 import com.github.pagehelper.PageHelper;
+import com.platform.annotation.APPLoginUser;
 import com.platform.annotation.IgnoreAuth;
 import com.platform.entity.*;
 import com.platform.service.*;
 import com.platform.util.ApiBaseAction;
 import com.platform.util.ApiPageUtils;
 import com.platform.utils.Query;
-
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -78,6 +79,7 @@ public class ApiIndexController extends ApiBaseAction {
         param = new HashMap<String, Object>();
         param.put("is_new", 1);
         param.put("is_delete", 0);
+        param.put("is_on_sale", 1);
         param.put("fields", "id, name, list_pic_url, retail_price");
         PageHelper.startPage(0, 4, false);
         List<GoodsVo> newGoods = goodsService.queryList(param);
@@ -85,6 +87,7 @@ public class ApiIndexController extends ApiBaseAction {
         //
         param = new HashMap<String, Object>();
         param.put("is_hot", "1");
+        param.put("is_on_sale", 1);
         param.put("is_delete", 0);
         PageHelper.startPage(0, 3, false);
         List<GoodsVo> hotGoods = goodsService.queryHotGoodsList(param);
@@ -168,6 +171,7 @@ public class ApiIndexController extends ApiBaseAction {
         Map<String, Object> param = new HashMap<String, Object>();
         param.put("is_new", 1);
         param.put("is_delete", 0);
+        param.put("is_on_sale", 1);
 //        param.put("fields", "id, name, list_pic_url, retail_price");
         PageHelper.startPage(0, 4, false);
         List<GoodsVo> newGoods = goodsService.queryList(param);
@@ -199,12 +203,41 @@ public class ApiIndexController extends ApiBaseAction {
         Map<String, Object> param = new HashMap<String, Object>();
         param.put("is_hot", "1");
         param.put("is_delete", 0);
+        param.put("is_on_sale", 1);
         PageHelper.startPage(0, 3, false);
         List<GoodsVo> hotGoods = goodsService.queryHotGoodsList(param);
         resultObj.put("hotGoodsList", hotGoods);
         //
 
         return toResponsSuccess(resultObj);
+    }
+
+    @ApiOperation(value = "新热门商品信息")
+    @GetMapping(value = "newHotGoods")
+    public Object newHotGoods(@APPLoginUser MlsUserEntity2 loginUser, @RequestParam(value = "page", defaultValue = "1") Integer page,
+                              @RequestParam(value = "size", defaultValue = "5") Integer size) {
+    	  //查询列表数据
+        Map params = new HashMap();
+        params.put("is_delete", 0);
+        params.put("is_on_sale", 1);
+        params.put("is_hot", "1");
+        params.put("page", page);
+        params.put("limit", size);
+        params.put("sidx", "id");
+        params.put("order", "asc");
+        //是否显示其他商户 0:不显示，1:显示
+        if(loginUser!=null &&loginUser.getAllShow()==0){
+            params.put("merchantId",loginUser.getMerchantId());
+        }
+        Query query = new Query(params);
+        List<GoodsVo> goodsList = goodsService.queryFxList(query);
+        int total = goodsService.queryFxTotal(query);
+        for(GoodsVo vo : goodsList) {
+	    	vo.setDiscount(vo.getRetail_price().multiply(new BigDecimal("10")).divide(vo.getMarket_price(), 1, BigDecimal.ROUND_HALF_UP).toString());
+	    	vo.setUser_brokerage_price(vo.getRetail_price().multiply(new BigDecimal(vo.getBrokerage_percent())).multiply(new BigDecimal(loginUser.getFx()).divide(new BigDecimal("10000"))).setScale(2, BigDecimal.ROUND_HALF_UP).toString());
+        }
+        ApiPageUtils pageUtil = new ApiPageUtils(goodsList, total, query.getLimit(), query.getPage());
+        return toResponsSuccess(pageUtil);
     }
     
     @ApiOperation(value = "服务性商品信息")
@@ -292,6 +325,8 @@ public class ApiIndexController extends ApiBaseAction {
             param = new HashMap<String, Object>();
             param.put("categoryIds", childCategoryIds);
             param.put("fields", "id as id, name as name, list_pic_url as list_pic_url, retail_price as retail_price");
+            param.put("is_delete",0);
+            param.put("is_on_sale",1);
             PageHelper.startPage(0, 7, false);
             List<GoodsVo> categoryGoods = goodsService.queryList(param);
             Map<String, Object> newCategory = new HashMap<String, Object>();

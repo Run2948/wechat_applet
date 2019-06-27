@@ -28,6 +28,8 @@ public class CommentEntity implements Serializable {
     private Integer status;
     //会员Id
     private Integer userId;
+    //商户ID
+    private Integer merchant_id;
 
     /**
      * 翻译用字段
@@ -150,4 +152,12 @@ public class CommentEntity implements Serializable {
     public Integer getUserId() {
         return userId;
     }
+
+	public Integer getMerchant_id() {
+		return merchant_id;
+	}
+
+	public void setMerchant_id(Integer merchant_id) {
+		this.merchant_id = merchant_id;
+	}
 }

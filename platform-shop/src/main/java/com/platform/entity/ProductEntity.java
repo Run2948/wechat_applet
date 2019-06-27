@@ -29,17 +29,23 @@ public class ProductEntity implements Serializable {
     private BigDecimal retailPrice;
     //市场价格
     private BigDecimal marketPrice;
-
-
-
-    /**
-     * 翻译用字段
-     */
+    //商户ID
+    private Integer merchant_id;
+    
     //商品
     private String goodsName;
     private String specificationValue;
+    private BigDecimal groupPrice;//团购价格(元)
+    
+    public BigDecimal getGroupPrice() {
+		return groupPrice;
+	}
 
-    public String getSpecificationValue() {
+	public void setGroupPrice(BigDecimal groupPrice) {
+		this.groupPrice = groupPrice;
+	}
+
+	public String getSpecificationValue() {
         return specificationValue;
     }
 
@@ -146,4 +152,12 @@ public class ProductEntity implements Serializable {
     public void setGoodsName(String goodsName) {
         this.goodsName = goodsName;
     }
+
+	public Integer getMerchant_id() {
+		return merchant_id;
+	}
+
+	public void setMerchant_id(Integer merchant_id) {
+		this.merchant_id = merchant_id;
+	}
 }

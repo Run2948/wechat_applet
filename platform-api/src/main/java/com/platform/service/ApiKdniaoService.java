@@ -21,7 +21,7 @@ public class ApiKdniaoService {
     public static void main(String[] args) {
         ApiKdniaoService api = new ApiKdniaoService();
         try {
-            List result = api.getOrderTracesByJson("HTKY", "70142422037713");
+            List result = api.getOrderTracesByJson("YD", "3907732889203");
             System.out.print(result);
 
         } catch (Exception e) {
@@ -30,11 +30,12 @@ public class ApiKdniaoService {
     }
 
     //电商ID
-    private String EBusinessID = "";
+    private String EBusinessID = "1432027";
     //电商加密私钥，快递鸟提供，注意保管，不要泄漏
-    private String AppKey = "";
+    private String AppKey = "ff8ad728-3a5f-4500-b795-e146798be34b";
     //请求url
-    private String ReqURL = "http://api.kdniao.cc/Ebusiness/EbusinessOrderHandle.aspx";
+    private String ReqURL = "http://api.kdniao.com/Ebusiness/EbusinessOrderHandle.aspx";
+    
     /**
      * Json方式 查询订单物流轨迹
      *
@@ -45,6 +46,7 @@ public class ApiKdniaoService {
         List<Map<String, Object>> resultObj = new ArrayList();
 
         try {
+
             String requestData = "{'OrderCode':'','ShipperCode':'" + expCode + "','LogisticCode':'" + expNo + "'}";
 
             Map<String, String> params = new HashMap<String, String>();
@@ -71,7 +73,6 @@ public class ApiKdniaoService {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        System.out.print(resultObj);
         return resultObj;
     }
 

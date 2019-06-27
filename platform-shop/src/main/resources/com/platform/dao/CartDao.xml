@@ -20,6 +20,7 @@
         <result property="goodsSpecifitionIds" column="goods_specifition_ids"/>
         <result property="checked" column="checked"/>
         <result property="listPicUrl" column="list_pic_url"/>
+        <result property="merchantId" column="merchant_id"/>
     </resultMap>
 
     <select id="queryObject" resultType="com.platform.entity.CartEntity">
@@ -38,6 +39,9 @@
 		
 		<if test="userId != null and userId != ''">
             AND a.user_id = #{userId}
+        </if>
+        <if test="merchantId != null and merchantId != ''">
+            AND a.merchant_id = #{merchantId}
         </if>
         <choose>
             <when test="sidx != null and sidx.trim() != ''">

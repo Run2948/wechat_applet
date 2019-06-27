@@ -93,6 +93,27 @@ public class OrderEntity implements Serializable {
     private String realName;
     
     private String gid;
+    //商户id
+    private Long merchantId;
+    private String goodsNames;
+    //商品规格详情
+  	private String goodsSpecifitionNameValue;
+
+    public String getGoodsSpecifitionNameValue() {
+		return goodsSpecifitionNameValue;
+	}
+
+	public void setGoodsSpecifitionNameValue(String goodsSpecifitionNameValue) {
+		this.goodsSpecifitionNameValue = goodsSpecifitionNameValue;
+	}
+
+	public String getGoodsNames() {
+		return goodsNames;
+	}
+
+	public void setGoodsNames(String goodsNames) {
+		this.goodsNames = goodsNames;
+	}
 
     public String getRealName() {
 		return realName;
@@ -581,5 +602,12 @@ public class OrderEntity implements Serializable {
 	public void setGid(String gid) {
 		this.gid = gid;
 	}
-    
+
+    public Long getMerchantId() {
+        return merchantId;
+    }
+
+    public void setMerchantId(Long merchantId) {
+        this.merchantId = merchantId;
+    }
 }

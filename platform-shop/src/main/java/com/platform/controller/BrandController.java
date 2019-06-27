@@ -1,10 +1,13 @@
 package com.platform.controller;
 
 import com.platform.entity.BrandEntity;
+import com.platform.entity.SysUserEntity;
 import com.platform.service.BrandService;
 import com.platform.utils.PageUtils;
 import com.platform.utils.Query;
 import com.platform.utils.R;
+import com.platform.utils.ShiroUtils;
+
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -33,7 +36,8 @@ public class BrandController {
     public R list(@RequestParam Map<String, Object> params) {
         //查询列表数据
         Query query = new Query(params);
-
+        SysUserEntity sysUserEntity= ShiroUtils.getUserEntity();
+        query.put("merchantId",sysUserEntity.getMerchantId());
         List<BrandEntity> brandList = brandService.queryList(query);
         int total = brandService.queryTotal(query);
 
@@ -59,8 +63,9 @@ public class BrandController {
     @RequestMapping("/save")
     @RequiresPermissions("brand:save")
     public R save(@RequestBody BrandEntity brand) {
-        brandService.save(brand);
-
+	    SysUserEntity sysUserEntity= ShiroUtils.getUserEntity();
+	    brand.setMerchantId(sysUserEntity.getMerchantId());
+	    brandService.save(brand);
         return R.ok();
     }
 
@@ -71,7 +76,6 @@ public class BrandController {
     @RequiresPermissions("brand:update")
     public R update(@RequestBody BrandEntity brand) {
         brandService.update(brand);
-
         return R.ok();
     }
 
@@ -82,7 +86,6 @@ public class BrandController {
     @RequiresPermissions("brand:delete")
     public R delete(@RequestBody Integer[] ids) {
         brandService.deleteBatch(ids);
-
         return R.ok();
     }
 
@@ -91,9 +94,9 @@ public class BrandController {
      */
     @RequestMapping("/queryAll")
     public R queryAll(@RequestParam Map<String, Object> params) {
-
+        SysUserEntity sysUserEntity= ShiroUtils.getUserEntity();
+        params.put("merchantId",sysUserEntity.getMerchantId());
         List<BrandEntity> list = brandService.queryList(params);
-
         return R.ok().put("list", list);
     }
 }

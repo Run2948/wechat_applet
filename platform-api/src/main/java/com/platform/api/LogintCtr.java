@@ -2,6 +2,7 @@
 package com.platform.api;
 
 
+import java.util.List;
 import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
@@ -19,7 +20,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.platform.annotation.IgnoreAuth;
-import com.platform.entity.MlsUserVo;
+import com.platform.entity.MlsUserEntity2;
 import com.platform.service.MlsUserSer;
 import com.platform.util.ApiBaseAction;
 
@@ -49,12 +50,13 @@ public class LogintCtr extends ApiBaseAction{
 		if (!mlsUserSer.verificationCode(mobile,captcha)) {
 			toResponsFail("验证码证错误");
 		};
-		MlsUserVo mlsUser=new MlsUserVo ();
+		MlsUserEntity2 mlsUser=new MlsUserEntity2 ();
 		mlsUser.setDeviceId("weglapp_"+ UUID.randomUUID());
 		mlsUser.setUserTel(mobile);
 		int tol=mlsUserSer.getEntityMapper().update(mlsUser);
 		if(tol==0) {
 			mlsUserSer.insUser(mlsUser);
+			mlsUserSer.getEntityMapper().updateRootId(mlsUser);
 		}
 		mlsUserSer.getEntityMapper().findByUserTel(mobile);
 		return toResponsSuccess(mlsUser);
@@ -68,6 +70,54 @@ public class LogintCtr extends ApiBaseAction{
 	public Object register(@ApiParam(name = "mobile", value = "手机号") @RequestParam String mobile) {
 		mlsUserSer.sendCode(mobile);
 		return toResponsSuccess("发送成功");
+	}
+	
+	
+	@ApiOperation(value="邀请注册" ,httpMethod="POST")
+	@PostMapping("/inviteReg")
+	@ResponseBody
+	@IgnoreAuth
+	public Object inviteReg(
+			@ApiParam(name = "mobile", value = "手机号") @RequestParam String mobile,
+			@ApiParam(name = "captcha", value = "验证码") @RequestParam String captcha,
+			@ApiParam(name = "inviteCode", value = "邀请码") @RequestParam Long inviteCode,
+			HttpServletRequest request){
+		if(StringUtils.isEmpty(mobile)) {
+			return toResponsFail("用户手机号不可为空");
+		}
+		if (!mlsUserSer.verificationCode(mobile,captcha)) {
+			return toResponsFail("验证码证错误");
+		}
+		
+		MlsUserEntity2 mlsUser = new MlsUserEntity2 ();
+		mlsUser.setUserTel(mobile);
+		List<MlsUserEntity2> userList = mlsUserSer.getEntityMapper().findByEntity(mlsUser);
+		if(userList == null || userList.size() == 0) {
+			mlsUser.setDeviceId("weglapp_"+ UUID.randomUUID());
+			if(inviteCode!=null) {
+				mlsUser.setFid(inviteCode);
+				MlsUserEntity2 fmlsUser= mlsUserSer.getEntityMapper().getById(inviteCode);
+				if(fmlsUser!=null) {
+					mlsUser.setFx(fmlsUser.getFx());
+					mlsUser.setFx1(fmlsUser.getFx1());
+					mlsUser.setFx2(fmlsUser.getFx2());
+					mlsUser.setPfx(fmlsUser.getPfx());
+					if(fmlsUser.getFid()!=null && fmlsUser.getFid()==-1l) {
+						mlsUser.setFid(null);
+					}
+					mlsUser.setMerchantId(fmlsUser.getMerchantId());
+					mlsUser.setRootId(fmlsUser.getRootId());
+				}
+			}
+			mlsUserSer.insUser(mlsUser);
+			if(inviteCode==null) {
+				mlsUserSer.getEntityMapper().updateRootId(mlsUser);
+			}
+		}else {
+			return toResponsFail("手机号已经被注册！");
+		}
+		mlsUserSer.getEntityMapper().findByUserTel(mobile);
+		return toResponsSuccess(mlsUser);
 	}
 	
 }

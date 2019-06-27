@@ -1,10 +1,12 @@
 package com.platform.controller;
 
 import com.platform.entity.GoodsEntity;
+import com.platform.entity.SysUserEntity;
 import com.platform.service.GoodsService;
 import com.platform.utils.PageUtils;
 import com.platform.utils.Query;
 import com.platform.utils.R;
+import com.platform.utils.ShiroUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -31,9 +33,10 @@ public class GoodsController {
     @RequestMapping("/list")
     @RequiresPermissions("goods:list")
     public R list(@RequestParam Map<String, Object> params) {
+        SysUserEntity sysUserEntity= ShiroUtils.getUserEntity();
         //查询列表数据
         Query query = new Query(params);
-
+        query.put("merchantId",sysUserEntity.getMerchantId());
         query.put("isDelete", 0);
         List<GoodsEntity> goodsList = goodsService.queryList(query);
         int total = goodsService.queryTotal(query);
@@ -60,6 +63,8 @@ public class GoodsController {
     @RequestMapping("/save")
     @RequiresPermissions("goods:save")
     public R save(@RequestBody GoodsEntity goods) {
+        SysUserEntity sysUserEntity= ShiroUtils.getUserEntity();
+        goods.setMerchantId(sysUserEntity.getMerchantId());
         goodsService.save(goods);
 
         return R.ok();
@@ -94,6 +99,7 @@ public class GoodsController {
     public R queryAll(@RequestParam Map<String, Object> params) {
 
         params.put("isDelete", 0);
+        params.put("merchantId", ShiroUtils.getUserEntity().getMerchantId());
         List<GoodsEntity> list = goodsService.queryList(params);
 
         return R.ok().put("list", list);
@@ -109,10 +115,12 @@ public class GoodsController {
     @RequestMapping("/historyList")
     public R historyList(@RequestParam Map<String, Object> params) {
         //查询列表数据
+        SysUserEntity sysUserEntity= ShiroUtils.getUserEntity();
         Query query = new Query(params);
-
+        query.put("merchantId",sysUserEntity.getMerchantId());
         query.put("isDelete", 1);
         List<GoodsEntity> goodsList = goodsService.queryList(query);
+
         int total = goodsService.queryTotal(query);
 
         PageUtils pageUtil = new PageUtils(goodsList, total, query.getLimit(), query.getPage());
