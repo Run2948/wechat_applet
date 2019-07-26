@@ -985,7 +985,6 @@ CREATE TABLE `qrtz_cron_triggers` (
 
 /*Data for the table `qrtz_cron_triggers` */
 
-insert  into `qrtz_cron_triggers`(`SCHED_NAME`,`TRIGGER_NAME`,`TRIGGER_GROUP`,`CRON_EXPRESSION`,`TIME_ZONE_ID`) values ('PlatformScheduler','TASK_1','DEFAULT','0 0/1 * * * ?','Asia/Shanghai'),('PlatformScheduler','TASK_2','DEFAULT','0 0/2 * * * ?','Asia/Shanghai');
 
 /*Table structure for table `qrtz_fired_triggers` */
 
@@ -1028,7 +1027,6 @@ CREATE TABLE `qrtz_job_details` (
 
 /*Data for the table `qrtz_job_details` */
 
-insert  into `qrtz_job_details`(`SCHED_NAME`,`JOB_NAME`,`JOB_GROUP`,`DESCRIPTION`,`JOB_CLASS_NAME`,`IS_DURABLE`,`IS_NONCONCURRENT`,`IS_UPDATE_DATA`,`REQUESTS_RECOVERY`,`JOB_DATA`) values ('PlatformScheduler','TASK_1','DEFAULT',NULL,'com.platform.utils.ScheduleJob','0','0','0','0','Õ≠\0sr\0org.quartz.JobDataMapﬂ∞ƒ®ﬂ©—ã\0\0xr\0&org.quartz.utils.StringKeyDirtyFlagMap¬àÈÑª∆ù(\0Z\0allowsTransientDataxr\0org.quartz.utils.DirtyFlagMapÊÆ≠(v\nŒÇ\0Z\0dirtyL\0mapt\0Ljava/util/Map;xpsr\0java.util.HashMap€Å√ñ`—É\0F\0\nloadFactorI\0	thresholdxp?@\0\0\0\0\0w\0\0\0\0\0\0t\0\rJOB_PARAM_KEYsr\0%com.platform.entity.ScheduleJobEntity\0\0\0\0\0\0\0\0L\0beanNamet\0Ljava/lang/String;L\0\ncreateTimet\0Ljava/util/Date;L\0cronExpressionq\0~\0	L\0jobIdt\0Ljava/lang/Long;L\0\nmethodNameq\0~\0	L\0paramsq\0~\0	L\0remarkq\0~\0	L\0statust\0Ljava/lang/Integer;xpt\0testTasksr\0java.util.DatehjAKYt\0\0xpw\0\0X€µ”∞xt\00 0/30 * * * ?sr\0java.lang.Long;Ã§—åœ£ﬂÇ\0J\0valuexr\0java.lang.Number∆¨’ù’†ÀÇ\0\0xp\0\0\0\0\0\0\0t\0testt\0platformt\0ÊúâÂèÇÊï∞ÊµãËØïsr\0java.lang.Integer‚†§ÛÅá∏\0I\0valuexq\0~\0\0\0\0x\0'),('PlatformScheduler','TASK_2','DEFAULT',NULL,'com.platform.utils.ScheduleJob','0','0','0','0','Õ≠\0sr\0org.quartz.JobDataMapﬂ∞ƒ®ﬂ©—ã\0\0xr\0&org.quartz.utils.StringKeyDirtyFlagMap¬àÈÑª∆ù(\0Z\0allowsTransientDataxr\0org.quartz.utils.DirtyFlagMapÊÆ≠(v\nŒÇ\0Z\0dirtyL\0mapt\0Ljava/util/Map;xpsr\0java.util.HashMap€Å√ñ`—É\0F\0\nloadFactorI\0	thresholdxp?@\0\0\0\0\0w\0\0\0\0\0\0t\0\rJOB_PARAM_KEYsr\0%com.platform.entity.ScheduleJobEntity\0\0\0\0\0\0\0\0L\0beanNamet\0Ljava/lang/String;L\0\ncreateTimet\0Ljava/util/Date;L\0cronExpressionq\0~\0	L\0jobIdt\0Ljava/lang/Long;L\0\nmethodNameq\0~\0	L\0paramsq\0~\0	L\0remarkq\0~\0	L\0statust\0Ljava/lang/Integer;xpt\0testTasksr\0java.util.DatehjAKYt\0\0xpw\0\0Xƒ∑≈†xt\00 0/30 * * * ?sr\0java.lang.Long;Ã§—åœ£ﬂÇ\0J\0valuexr\0java.lang.Number∆¨’ù’†ÀÇ\0\0xp\0\0\0\0\0\0\0t\0test2pt\0Êó†ÂèÇÊï∞ÊµãËØïsr\0java.lang.Integer‚†§ÛÅá∏\0I\0valuexq\0~\0\0\0\0x\0'),('PlatformScheduler','TASK_3','DEFAULT',NULL,'com.platform.utils.ScheduleJob','0','0','0','0','Õ≠\0sr\0org.quartz.JobDataMapﬂ∞ƒ®ﬂ©—ã\0\0xr\0&org.quartz.utils.StringKeyDirtyFlagMap¬àÈÑª∆ù(\0Z\0allowsTransientDataxr\0org.quartz.utils.DirtyFlagMapÊÆ≠(v\nŒÇ\0Z\0dirtyL\0mapt\0Ljava/util/Map;xpsr\0java.util.HashMap€Å√ñ`—É\0F\0\nloadFactorI\0	thresholdxp?@\0\0\0\0\0w\0\0\0\0\0\0t\0\rJOB_PARAM_KEYsr\0%com.platform.entity.ScheduleJobEntity\0\0\0\0\0\0\0\0L\0beanNamet\0Ljava/lang/String;L\0\ncreateTimet\0Ljava/util/Date;L\0cronExpressionq\0~\0	L\0jobIdt\0Ljava/lang/Long;L\0\nmethodNameq\0~\0	L\0paramsq\0~\0	L\0remarkq\0~\0	L\0statust\0Ljava/lang/Integer;xpt\0luckDrawTasksr\0java.util.DatehjAKYt\0\0xpw\0\0fÒòúúfxt\0\r0/5 * * * * ?sr\0java.lang.Long;Ã§—åœ£ﬂÇ\0J\0valuexr\0java.lang.Number∆¨’ù’†ÀÇ\0\0xp\0\0\0\0\0\0\0t\0testppsr\0java.lang.Integer‚†§ÛÅá∏\0I\0valuexq\0~\0\0\0\0\0x\0'),('PlatformScheduler','TASK_4','DEFAULT',NULL,'com.platform.utils.ScheduleJob','0','0','0','0','Õ≠\0sr\0org.quartz.JobDataMapﬂ∞ƒ®ﬂ©—ã\0\0xr\0&org.quartz.utils.StringKeyDirtyFlagMap¬àÈÑª∆ù(\0Z\0allowsTransientDataxr\0org.quartz.utils.DirtyFlagMapÊÆ≠(v\nŒÇ\0Z\0dirtyL\0mapt\0Ljava/util/Map;xpsr\0java.util.HashMap€Å√ñ`—É\0F\0\nloadFactorI\0	thresholdxp?@\0\0\0\0\0w\0\0\0\0\0\0t\0\rJOB_PARAM_KEYsr\0%com.platform.entity.ScheduleJobEntity\0\0\0\0\0\0\0\0L\0beanNamet\0Ljava/lang/String;L\0\ncreateTimet\0Ljava/util/Date;L\0cronExpressionq\0~\0	L\0jobIdt\0Ljava/lang/Long;L\0\nmethodNameq\0~\0	L\0paramsq\0~\0	L\0remarkq\0~\0	L\0statust\0Ljava/lang/Integer;xpt\0brandServicesr\0java.util.DatehjAKYt\0\0xpw\0\0g@>»∏xt\0\r0 10 19 * * ?sr\0java.lang.Long;Ã§—åœ£ﬂÇ\0J\0valuexr\0java.lang.Number∆¨’ù’†ÀÇ\0\0xp\0\0\0\0\0\0\0t\0\rbeginCountPaypt\0ÁªüËÆ°ÊØèÂ§©Êî∂Áõäsr\0java.lang.Integer‚†§ÛÅá∏\0I\0valuexq\0~\0\0\0\0x\0');
 
 /*Table structure for table `qrtz_locks` */
 
@@ -1041,7 +1039,6 @@ CREATE TABLE `qrtz_locks` (
 
 /*Data for the table `qrtz_locks` */
 
-insert  into `qrtz_locks`(`SCHED_NAME`,`LOCK_NAME`) values ('PlatformScheduler','STATE_ACCESS'),('PlatformScheduler','TRIGGER_ACCESS');
 
 /*Table structure for table `qrtz_paused_trigger_grps` */
 
@@ -1067,7 +1064,6 @@ CREATE TABLE `qrtz_scheduler_state` (
 
 /*Data for the table `qrtz_scheduler_state` */
 
-insert  into `qrtz_scheduler_state`(`SCHED_NAME`,`INSTANCE_NAME`,`LAST_CHECKIN_TIME`,`CHECKIN_INTERVAL`) values ('PlatformScheduler','izuf688rg4xz5qoke9ztxxz1561086700557',1561643981164,15000);
 
 /*Table structure for table `qrtz_simple_triggers` */
 
@@ -1132,7 +1128,6 @@ CREATE TABLE `qrtz_triggers` (
 
 /*Data for the table `qrtz_triggers` */
 
-insert  into `qrtz_triggers`(`SCHED_NAME`,`TRIGGER_NAME`,`TRIGGER_GROUP`,`JOB_NAME`,`JOB_GROUP`,`DESCRIPTION`,`NEXT_FIRE_TIME`,`PREV_FIRE_TIME`,`PRIORITY`,`TRIGGER_STATE`,`TRIGGER_TYPE`,`START_TIME`,`END_TIME`,`CALENDAR_NAME`,`MISFIRE_INSTR`,`JOB_DATA`) values ('PlatformScheduler','TASK_1','DEFAULT','TASK_1','DEFAULT',NULL,1507388820000,-1,5,'PAUSED','CRON',1507388787000,0,NULL,2,'¨Ì\0sr\0org.quartz.JobDataMapü∞ÉËø©∞À\0\0xr\0&org.quartz.utils.StringKeyDirtyFlagMapÇË√˚≈](\0Z\0allowsTransientDataxr\0org.quartz.utils.DirtyFlagMapÊ.≠(v\nŒ\0Z\0dirtyL\0mapt\0Ljava/util/Map;xpsr\0java.util.HashMap⁄¡√`—\0F\0\nloadFactorI\0	thresholdxp?@\0\0\0\0\0w\0\0\0\0\0\0t\0\rJOB_PARAM_KEYsr\0%com.platform.entity.ScheduleJobEntity\0\0\0\0\0\0\0\0L\0beanNamet\0Ljava/lang/String;L\0\ncreateTimet\0Ljava/util/Date;L\0cronExpressionq\0~\0	L\0jobIdt\0Ljava/lang/Long;L\0\nmethodNameq\0~\0	L\0paramsq\0~\0	L\0remarkq\0~\0	L\0statust\0Ljava/lang/Integer;xpt\0testTasksr\0java.util.DatehjÅKYt\0\0xpw\0\0X∫ıì0xt\0\r0 0/1 * * * ?sr\0java.lang.Long;ã‰êÃè#ﬂ\0J\0valuexr\0java.lang.NumberÜ¨ïî‡ã\0\0xp\0\0\0\0\0\0\0t\0testt\0platformt\0ÊúâÂèÇÊï∞ÊµãËØïsr\0java.lang.Integer‚†§˜Åá8\0I\0valuexq\0~\0\0\0\0x\0'),('PlatformScheduler','TASK_2','DEFAULT','TASK_2','DEFAULT',NULL,1507388880000,-1,5,'PAUSED','CRON',1507388787000,0,NULL,2,'¨Ì\0sr\0org.quartz.JobDataMapü∞ÉËø©∞À\0\0xr\0&org.quartz.utils.StringKeyDirtyFlagMapÇË√˚≈](\0Z\0allowsTransientDataxr\0org.quartz.utils.DirtyFlagMapÊ.≠(v\nŒ\0Z\0dirtyL\0mapt\0Ljava/util/Map;xpsr\0java.util.HashMap⁄¡√`—\0F\0\nloadFactorI\0	thresholdxp?@\0\0\0\0\0w\0\0\0\0\0\0t\0\rJOB_PARAM_KEYsr\0%com.platform.entity.ScheduleJobEntity\0\0\0\0\0\0\0\0L\0beanNamet\0Ljava/lang/String;L\0\ncreateTimet\0Ljava/util/Date;L\0cronExpressionq\0~\0	L\0jobIdt\0Ljava/lang/Long;L\0\nmethodNameq\0~\0	L\0paramsq\0~\0	L\0remarkq\0~\0	L\0statust\0Ljava/lang/Integer;xpt\0testTasksr\0java.util.DatehjÅKYt\0\0xpw\0\0X√wƒ`xt\0\r0 0/2 * * * ?sr\0java.lang.Long;ã‰êÃè#ﬂ\0J\0valuexr\0java.lang.NumberÜ¨ïî‡ã\0\0xp\0\0\0\0\0\0\0t\0test2pt\0Êó†ÂèÇÊï∞ÊµãËØïsr\0java.lang.Integer‚†§˜Åá8\0I\0valuexq\0~\0\0\0\0x\0');
 
 /*Table structure for table `schedule_job` */
 
