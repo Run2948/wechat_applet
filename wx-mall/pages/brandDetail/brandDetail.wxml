@@ -1,0 +1,32 @@
+<view class="container">
+    <view class="brand-info">
+        <view class="name">
+            <image class="img" src="{{brand.app_list_pic_url}}" background-size="cover"></image>
+            <view class="info-box">
+                <view class="info">
+                    <text class="txt">{{brand.name}}</text>
+                    <text class="line"></text>
+                </view>
+            </view>
+        </view>
+        <view class="desc">
+            {{brand.simple_desc}}
+        </view>
+    </view>
+
+    <view class="cate-item" wx:if="{{ goodsList.length > 0 }}">
+        <view class="b">
+            <block wx:for="{{goodsList}}" wx:for-index="iindex" wx:for-item="iitem">
+            <navigator class="item {{iindex % 2 == 0 ? 'item-b' : ''}}" url="../goods/goods?id={{iitem.id}}">
+                <image class="img" src="{{iitem.list_pic_url}}" background-size="cover"></image>
+                <text class="name">{{iitem.name}}</text>
+                <text class="price">￥{{iitem.retail_price}}</text>
+            </navigator>
+            </block>
+        </view>
+    </view>
+    <view class="empty-view" wx:if="{{ goodsList.length <= 0 }}">
+      <image class="icon" src="../../static/images/allorder.png"></image>
+      <text class="text">无商品信息</text>
+    </view>
+</view>

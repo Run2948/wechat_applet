@@ -1,0 +1,22 @@
+<!--pages/customer/cuslist/cuslist.wxml-->
+<view class="container"> 
+  <view class='cont'>
+    <view class='selinfo'>
+      <image class="sel" src="../../../static/images/logo40.png"></image>
+      <label>嗨街二号 申请获得</label>
+    </view>
+    <view class='tit'>以下权限</view>
+    <view class='selinfo'>
+        <image class="sel" src="../../../static/images/icon_xz.png"></image>
+        <label>获取你的公开信息（昵称、头像、地区及性别）</label>
+    </view>
+    <view class="bottom-btn">
+        <button class="r" open-type="getUserInfo" bindgetuserinfo="bindGetUserInfo">同意</button>
+    </view>
+    <view class="bottom-new" wx:if="{{id == -2}}">
+        <button class="r" bindtap='goUrl'>拒绝</button>
+    </view>
+  </view>
+</view>
+
+

@@ -1,0 +1,26 @@
+<!--component/show-index-data/show-index-data.wxml -->
+<view class="recom-section" wx:if="{{data.length>0}}">
+		<view class="h">
+			<view class="title">
+				<text>{{name}}</text>
+				<text class="desc">{{name}}购更实惠</text>
+			</view>
+			<view class="more"><navigator url="{{type==1?'../group/group':'../spike/spike'}}">更多</navigator></view>
+		</view> 
+		<view class="b cont">
+			<view class="pro-box">
+				<view class="li" wx:for="{{data}}" wx:for-index="index" wx:for-item="item" wx:key="{{item.id}}" data-id="{{item.id}}" bindtap="gotoDetail">
+					<view class="flotel">
+						<view class="bqel">
+							<label class="lael">{{type==1?'团购':'秒杀'}}</label>
+						</view> 
+					</view>
+					<image class="prourl" src="{{item.list_pic_url}}"></image>
+					<view class="pricebox">
+						<text class="xprice">¥{{type==1?item.group_price:item.retail_price}}</text>
+						<text class="pprice" wx:if="{{type==1}}">拼</text>
+					</view>
+				</view>
+			</view>
+		</view>
+	</view>

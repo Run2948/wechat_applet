@@ -1,0 +1,170 @@
+<scroll-view class="container" style="height: {{winHeight}}rpx" scroll-y="true" scroll-top="{{scrollTop}}" bindscroll="scrollDa">
+  <view wx:if="{{!openAttr}}"> 
+    <swiper class="goodsimgs" indicator-dots="true" autoplay="true" interval="3000" duration="1000">
+      <swiper-item wx:for="{{gallery}}" wx:key="{{item.id}}">
+        <image src="{{item.img_url}}" background-size="cover"></image>
+      </swiper-item>
+    </swiper> 
+    <view class='f_home' bindtap='goUrl'><image class='icon_home' src="../../static/images/icon_home.png"></image></view>
+    <view class="goods-info">
+      <view class="c">
+        <view class="tx price">
+           <text class='pri dzprice'>￥{{goods.retail_price || '0.00'}}</text>
+           <text class='pri yjprice' wx:if="{{goods.market_price}}">原价：￥{{goods.market_price}}</text>
+           <!-- <button open-type="share" class='icon_fx'></button> -->
+        </view>
+        <text class="tx name">{{goods.name || ''}}</text>
+        <text class="tx desc">{{goods.goods_brief || ''}}</text> 
+        <view class="brand" wx:if="{{brand.name}}">
+          <navigator url="../brandDetail/brandDetail?id={{brand.brandId}}">
+            <text>{{brand.name || ''}}</text>
+          </navigator>
+        </view>
+      </view>
+    </view>
+    <view class="section-nav section-attr">
+      <view class="l" bindtap='callphone'> 
+       <text class="icon">💁‍</text>
+        <!-- <image class="icon" src="../../static/images/ic_menu_choice_nor.png"></image> -->
+        <text>客服</text>
+      </view> 
+       <button class="r" bindtap='goBuy'>立即购买</button>
+    </view>
+    <view class="comments" wx:if="{{comment.count > 0}}">
+      <view class="h">
+        <navigator url="../comment/comment?valueId={{goods.id}}&typeId=0">
+          <text class="t">评价({{comment.count > 999 ? '999+' : comment.count}})</text>
+          <text class="i">查看全部</text>
+        </navigator>
+      </view>
+      <view class="b">
+        <view class="item">
+          <view class="info">
+            <view class="user">
+              <image src="{{comment.data.avatar}}"></image>
+              <text>{{comment.data.nickname}}</text>
+            </view>
+            <view class="time">{{comment.data.add_time}}</view>
+          </view>
+          <view class="content">
+            {{comment.data.content}}
+          </view>
+          <view class="imgs" wx:if="{{comment.data.pic_list.length > 0}}">
+            <image class="img" wx:for="{{comment.data.pic_list}}" wx:key="{{item.id}}" src="{{item.pic_url}}"></image>
+          </view> 
+        </view>
+      </view>
+    </view>
+    <view class="goods-attr">
+      <view class="t">商品详情</view>
+      <view class="l">
+        <view class="item" wx:for="{{attribute}}" wx:key="{{item.name}}">
+          <text class="left">{{item.name}}</text>
+          <text class="right">{{item.value}}</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="detail">
+      <import src="../../lib/wxParse/wxParse.wxml" />
+      <template is="wxParse" data="{{wxParseData:goodsDetail.nodes}}" />
+    </view>
+  </view>
+  <!-- 商品规格 -->
+  <view class="attr-pop"> 
+    <view class="spec-con">
+      <view class="spec-item" wx:for="{{specificationList}}" wx:key="{{item.specification_id}}">
+        <view class="name">{{item.name}}<text class='hdx'>*</text></view>
+        <view class="values">
+          <view class="value {{vitem.checked ? 'selected' : ''}}" bindtap="clickSkuValue" wx:for="{{item.valueList}}" wx:for-item="vitem" wx:key="{{vitem.id}}" data-value-id="{{vitem.id}}" data-name-id="{{vitem.specification_id}}">{{vitem.value}}</view>
+        </view>
+      </view>
+      <view class="number-item" id="every">
+          <view class="name">数量<text class='hdx'>*</text></view>
+          <view class="selnum">
+            <view class="cut" bindtap="cutNumber">-</view>
+            <input value="{{number}}" class="number" disabled="true" type="number" />
+            <view class="add" bindtap="addNumber">+</view>
+          </view>
+      </view>
+    </view>
+  </view>
+  <!-- 邮寄地址 -->
+  <view class="add-address">
+    <!-- <view class="ntit">邮寄地址</view> -->
+    <view class="add-form">
+        <view class="form-item">
+            <label><text class='hdx'>*</text>姓名</label>
+            <input class="input" bindinput="bindinputName" placeholder="姓名" value="{{address.userName}}"/>
+        </view>
+        <view class="form-item">
+            <label><text class='hdx'>*</text>联系方式</label>
+            <input class="input" bindinput="bindinputMobile" value="{{address.telNumber}}" maxlength="15" type="number" placeholder="联系方式"/>
+        </view>
+        <view class="form-item">
+            <label><text class='hdx'>*</text>送至</label>
+            <input class="input" value="{{address.full_region}}" disabled="true" bindtap="chooseRegion" placeholder="省份、城市、区县"/>
+            <image class='seladress' src="../../static/images/xsmune.png" bindtap='alertView'></image>
+        </view>
+        <view class="form-item">
+            <label></label>
+            <input class="input" bindinput="bindinputAddress" value="{{address.detailInfo}}" placeholder="详细地址, 如街道、楼盘号等"/>
+        </view> 
+    </view> 
+    <view class="region-select" wx:if="{{openSelectRegion}}">
+      <view class="hd">
+        <view class="region-selected">
+          <view class="item {{item.id == 0 ? 'disabled' : ''}} {{(regionType -1) === index ? 'selected' : ''}}" bindtap="selectRegionType" data-region-type-index="{{index}}" wx:for="{{selectRegionList}}" wx:key="{{item.id}}">{{item.name}}</view>
+        </view>
+        <view class="done {{selectRegionDone ? '' : 'disabled'}}" bindtap="doneSelectRegion">确定</view>
+      </view>
+      <scroll-view scroll-y class="bd">
+        <view class="region-list">
+          <view class="item {{item.selected ? 'selected' : ''}}" bindtap="selectRegion" data-region-index="{{index}}" wx:for="{{regionList}}" wx:key="{{item.id}}">{{item.name}}</view>
+        </view>
+      </scroll-view>
+    </view>
+</view>
+<view class='proMoney'><label>商品金额</label><text>￥{{checkedSpecPrice*number?checkedSpecPrice*number:goods.retail_price*number}}</text></view>
+<view class='proMoney'><label>运费</label><text>￥{{goods.extra_price || 0}}</text></view>
+<view class='proMoney'><label>总计</label><text>￥{{checkedSpecPrice*number?checkedSpecPrice*number:goods.retail_price*number+goods.extra_price}}</text></view>
+<view class="bottom-btn">
+  <button class="r" bindtap='buyGoods'>立即提交订单</button>
+</view>
+<view class='comney'>由霞光智睿（上海）提供技术服务</view> 
+</scroll-view>
+ <view class="section-nav posBtn" wx:if="{{isbol}}">
+      <view class="l" bindtap='callphone'> 
+       <text class="icon">💁‍</text>
+        <!-- <image class="icon" src="../../static/images/ic_menu_choice_nor.png"></image> -->
+        <text>客服</text>
+      </view> 
+       <button class="r" bindtap='goBuy' style='margin-right:0;width:630rpx;'>立即购买</button>
+</view>
+<!-- ----------地址列表------------ -->
+<view class="adBox" wx:if="{{adShow}}">
+    <view class="address-list">
+        <view class='addrTit'>
+            <text>地址列表</text><image class='addex' src='../../static/images/clear_input.png' bindtap='closeView'></image>
+        </view>
+        <scroll-view class="scolView" scroll-y="true" wx:if="{{ addressList.length > 0 }}">
+          <view class="item" wx:for="{{addressList}}" wx:key="{{item.id}}" bindtap="seldata" data-addressId="{{item.id}}">
+              <view class="l">
+                  <view class="name">{{item.userName}}</view>
+                  <view class="default" wx:if="{{item.is_default}}">默认</view>
+              </view>
+              <view class="c">
+                  <view class="mobile">{{item.telNumber}}</view>
+                  <view class="address">{{item.full_region+item.detailInfo}}</view>
+              </view>
+              <view class="r">
+                  <image catchtap="deleteAddress" data-address-id="{{item.id}}" class="del" src="/static/images/del-address.png"></image>
+              </view>
+          </view>
+        </scroll-view>
+        <view class="empty-view" wx:if="{{ addressList.length <= 0 }}">
+      <image class="icon" src="http://yanxuan.nosdn.127.net/hxm/yanxuan-wap/p/20161201/style/img/icon-normal/noAddress-26d570cefa.png"></image>
+      <text class="text">收货地址在哪里</text>
+    </view>
+    </view>
+</view>

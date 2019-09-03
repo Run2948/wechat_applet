@@ -1,0 +1,70 @@
+<!--pages/customer/customer.wxml-->
+<view class="add-address">
+    <view class="add-form">
+        <view class="form-item">
+            <input class="input" bindinput="bindinputName" placeholder="客户名称" value="{{customer.uname}}"/>
+        </view>
+        <view class="form-item">
+            <input class="input" bindinput="bindinputMobile" value="{{customer.mobile}}" maxlength="15" type="number" placeholder="客户电话"/>
+        </view>
+         <view class="form-item">
+          <radio-group class="radio-group" bindchange="radioChange">
+            <label class="radio">
+              <radio value="1" checked="{{customer.gender==1}}"/>男
+            </label>
+            <label class="radio">
+              <radio value="2" checked="{{customer.gender==2}}"/>女
+            </label>
+          </radio-group>
+        </view>
+        <view class="form-item">
+            <input class="input" bindinput="bindJobName" placeholder="职业" value="{{customer.job}}"/>
+        </view>
+        <view class="form-item">
+            <input class="input" value="{{customer.full_region}}" disabled="true" bindtap="chooseRegion" placeholder="省份、城市、区县"/>
+        </view>
+        <view class="form-item">
+            <input class="input" bindinput="bindinputCustomer" value="{{customer.detailInfo}}" placeholder="详细地址, 如街道、楼盘号等"/>
+        </view>
+        <view class="form-item">
+          <picker mode="date" value="{{customer.birthday}}" bindchange="bindDateChange" style="width:100%;">
+            <view class="picker">
+            {{customer.birthday?customer.birthday:'客户生日'}}
+            </view>
+          </picker>
+        </view> 
+        <!-- <view class="form-item">
+          <radio-group class="radio-group" bindchange="kradioChange">
+          <label class="radio">
+              <radio value="1" checked="{{customer.customerState==1}}"/>客户
+            </label>
+            <label class="radio">
+              <radio value="2" checked="{{customer.customerState==2}}"/>准客户
+            </label> 
+          </radio-group>
+        </view> -->
+        <view class="form-item" wx:if="{{!openSelectRegion}}">
+            <textarea maxlength="-1" class="input_n" auto-height bindinput="bindinputRemarks" placeholder="备注" value="{{customer.remarks}}"/>
+        </view>
+    </view>
+
+    <view class="btns">
+        <button wx:if="{{isv==2&customerId!=0}}" class="cannel" bindtap="zhCustomer">转换老客户</button>
+        <button class="save" bindtap="saveCustomer">保存</button>
+    </view>
+
+    <view class="region-select" wx:if="{{openSelectRegion}}">
+      <view class="hd">
+        <view class="region-selected">
+          <view class="item {{item.id == 0 ? 'disabled' : ''}} {{(regionType -1) === index ? 'selected' : ''}}" bindtap="selectRegionType" data-region-type-index="{{index}}" wx:for="{{selectRegionList}}" wx:key="{{item.id}}">{{item.name}}</view>
+        </view>
+        <view class="done {{selectRegionDone ? '' : 'disabled'}}" bindtap="doneSelectRegion">确定</view>
+      </view>
+      <scroll-view scroll-y class="bd">
+        <view class="region-list">
+          <view class="item {{item.selected ? 'selected' : ''}}" bindtap="selectRegion" data-region-index="{{index}}" wx:for="{{regionList}}" wx:key="{{item.id}}">{{item.name}}</view>
+        </view>
+      </scroll-view>
+    </view>
+</view>
+<view class="bg-mask" bindtap="cancelSelectRegion" wx:if="{{openSelectRegion}}"></view>

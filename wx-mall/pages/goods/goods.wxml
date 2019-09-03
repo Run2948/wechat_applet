@@ -1,0 +1,260 @@
+<scroll-view class="container" style="height: {{winHeight}}rpx" scroll-y="true">
+  <view wx:if="{{!openAttr}}">
+    <view class='swiBox'>
+      <swiper class="goodsimgs" indicator-dots="true" autoplay="true" interval="3000" duration="1000">
+        <swiper-item wx:for="{{gallery}}" wx:key="{{item.id}}">
+          <image src="{{item.img_url}}" background-size="cover"></image>
+        </swiper-item> 
+      </swiper>
+      <view class='flotbox' wx:if="{{type==2}}">
+            <count-down-list ntype="1" endTime="{{goods.end_time}}" bind:downEnd="aa"></count-down-list>
+      </view> 
+    </view>
+    <view class="goods-info">
+      <view class="c">
+        <view class="tx price">
+           <text class='pri dzprice'>￥{{type==1?goods.group_price ||'0.00':goods.retail_price || '0.00'}}</text>
+           <text class='pri yjprice'>原价：￥{{type==1?goods.retail_price ||'0.00':goods.market_price || '0.00'}}</text>
+           <text class='pri brokerage'>佣金：￥{{goods.user_brokerage_price || '0.00'}}</text>
+           <button open-type="share" class='icon_fx'></button>
+        </view>
+        <view class="tx tsbox">
+            <text class="name">{{goods.name || ''}}</text>
+        </view> 
+        <text class="tx desc" wx:if="{{goods.goods_brief}}">{{goods.goods_brief}}</text> 
+        <view class="brand" wx:if="{{brand.name}}">
+          <navigator url="../brandDetail/brandDetail?id={{brand.id}}">
+            <text>{{brand.name}}</text>
+          </navigator>
+        </view>
+      </view>
+    </view>
+    <view class="section-nav section-attr" bindtap="switchAttrPop">
+      <view class="t">请选择规格数量</view>
+      <image class="i" src="../../static/images/address_right.png" background-size="cover"></image>
+    </view>
+    <view class="section-nav section-attr" bindtap="openCoupon">
+      <view class="t">优惠  领劵</view>
+      <image class="i" src="../../static/images/address_right.png" background-size="cover"></image>
+    </view>
+    <view class='groupBox' wx:if="{{type==1&newBuyLis.length>0}}">
+      <view class="section-nav section-attr" style='margin-bottom:0'>
+        <view class="t">{{groupNum}}在拼团，可直接参与</view>
+        <view class='p' bindtap='openGroup'>
+         <label>更多拼团</label>
+         <image class="i" src="../../static/images/address_right.png" background-size="cover"></image>
+        </view> 
+      </view>
+      <swiper style='height:360rpx' class="ptlist" autoplay="true" vertical="true" interval="3000" duration="1000">
+          <swiper-item wx:for="{{newBuyLis}}" wx:for-item="item" wx:for-index="index">
+            <view class='swili'>
+               <view class='proli' wx:for="{{item}}" wx:for-index="iindex" wx:for-item="iitem">
+                  <view class='left'>
+                    <image src="{{iitem.groupBuyingDetailedList[0].userImg}}"></image>
+                    <label>{{iitem.groupBuyingDetailedList[0].userName}}</label>
+                  </view>
+                  <view class='right'>
+                    <view class="info">
+                       <label>还差{{iitem.successNum-iitem.groupNum}}人拼团</label>
+                       <count-down-list endTime="{{iitem.endTime}}" bind:downEnd="backfun"></count-down-list> 
+                    </view>
+                    <view class='gopt'>
+                      <button data-items="{{iitem}}" bindtap="openPart">去拼团</button>
+                    </view>
+                  </view>
+               </view>
+            </view>
+          </swiper-item>
+      </swiper>
+    </view>
+    <view class="comments" wx:if="{{comment.count > 0}}">
+      <view class="h">
+        <navigator url="../comment/comment?valueId={{goods.id}}&typeId=0">
+          <text class="t">评价({{comment.count > 999 ? '999+' : comment.count}})</text>
+          <text class="i">查看全部</text>
+        </navigator>
+      </view>
+      <view class="b">
+        <view class="item">
+          <view class="info">
+            <view class="user">
+              <image src="{{comment.data.avatar}}"></image>
+              <text>{{comment.data.nickname}}</text>
+            </view>
+            <view class="time">{{comment.data.add_time}}</view>
+          </view>
+          <view class="content">
+            {{comment.data.content}}
+          </view>
+          <view class="imgs" wx:if="{{comment.data.pic_list.length > 0}}">
+            <image class="img" wx:for="{{comment.data.pic_list}}" wx:key="{{item.id}}" src="{{item.pic_url}}"></image>
+          </view> 
+        </view>
+      </view>
+    </view>
+    <view class="goods-attr">
+      <view class="t">商品详情</view>
+      <view class="l">
+        <view class="item" wx:for="{{attribute}}" wx:key="{{item.name}}">
+          <text class="left">{{item.name}}</text>
+          <text class="right">{{item.value}}</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="detail">
+      <import src="../../lib/wxParse/wxParse.wxml" />
+      <template is="wxParse" data="{{wxParseData:goodsDetail.nodes}}" />
+    </view>
+
+
+    <view class="common-problem">
+      <view class="h">
+        <view class="line"></view>
+        <text class="title">常见问题</text>
+      </view>
+      <view class="b">
+        <view class="item" wx:for="{{issueList}}" wx:key="{{item.id}}">
+          <view class="question-box">
+            <text class="spot"></text>
+            <text class="question">{{item.question}}</text>
+          </view>
+          <view class="answer">
+            {{item.answer}}
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <view class="related-goods" wx:if="{{relatedGoods.length > 0}}">
+      <view class="h">
+        <view class="line"></view>
+        <text class="title">大家都在看</text>
+      </view>
+      <view class="b">
+        <view class="item" wx:for="{{relatedGoods}}" wx:key="{{item.id}}">
+          <navigator url="/pages/goods/goods?id={{item.id}}">
+            <image class="img" src="{{item.list_pic_url}}" background-size="cover"></image>
+            <text class="name">{{item.name}}</text>
+            <!-- <text class="price">￥{{item.retail_price}}</text> -->
+            <view class="pricen">
+           <text class='pri dzpricen'>￥{{item.retail_price}}</text>
+           <text class='pri yjpricen' wx:if="{{item.market_price}}">￥{{item.market_price}}</text></view>
+          </navigator>
+        </view>
+      </view>
+    </view>
+
+  </view>
+
+  <view wx:if="{{openAttr}}" class="attr-pop">
+    <view class="img-info">
+      <image class="img" src="{{proImg?proImg:goods.list_pic_url}}"></image>
+      <view class="info">
+        <view class="c">
+          <view class="p">价格：￥{{checkedSpecPrice?checkedSpecPrice:goods.retail_price}}</view>
+          <view class="a" wx:if="{{productList.length>0}}">已选择：{{checkedSpecText}}</view>
+        </view>
+      </view>
+    </view>
+    <view class="spec-con">
+      <view class="spec-item" wx:for="{{specificationList}}" wx:key="{{item.specification_id}}">
+        <view class="name">{{item.name}}</view>
+        <view class="values">
+          <view class="value {{vitem.checked ? 'selected' : ''}} {{vitem.state ? 'attr_value_disabled' : ''}}" bindtap="clickSkuValue" wx:for="{{item.valueList}}" wx:for-item="vitem" wx:key="{{vitem.id}}" data-value-id="{{vitem.id}}" data-picurl="{{vitem.pic_url}}" data-state="{{vitem.state}}" data-name-id="{{vitem.specification_id}}">{{vitem.value}}</view>
+        </view>
+      </view>
+      <view class="number-item">
+          <view class="name">数量</view>
+          <view class="selnum">
+            <view class="cut" bindtap="cutNumber">-</view>
+            <input value="{{number}}" class="number" disabled="true" type="number" />
+            <view class="add" bindtap="addNumber">+</view>
+          </view>
+      </view>
+    </view>
+  </view>
+  <!-- 优惠卷 -->
+  <view class='coupon' wx:if="{{openCoupon}}" bindtap='colseCoupon'>
+    <scroll-view class="couponBox" scroll-y="true">
+        <view class='tit'>领取优惠卷</view>
+        <view class='couponInfo'>
+            <view class='conLi' wx:for="{{merCoupon}}" wx:for-item="item" catchtap='takeCoupon'>
+              <view class='left'>
+                  <text class='price'>¥{{item.type_money}}</text>
+                  <text>订单满¥{{item.min_goods_amount}}使用</text>
+                  <text>使用时间：{{item.send_start_date}}～{{item.send_end_date}}</text>
+              </view>
+              <view class='right'>
+              <text data-couponId="{{item.id}}">立即领取</text>
+              </view>
+            </view>
+        </view>
+    </scroll-view>
+  </view>
+  <!-- 更多团购 -->
+  <view class='groupTeam' wx:if="{{openGroup}}" bindtap='colseGroup'> 
+    <view class='groupInfo'>
+       <view class='tit'>正在拼团</view>
+       <scroll-view class='groupInfo_n' scroll-y="true">
+       <view class='proli' wx:for="{{groupBuyList}}" key="{{index}}">
+            <view class='left'>
+              <image src="{{item.groupBuyingDetailedList[0].userImg}}"></image>
+              <label>{{item.groupBuyingDetailedList[0].userName}}</label>
+            </view>
+            <view class='right'>
+              <view class="info">
+                <label>还差{{item.successNum-item.groupNum}}人拼团</label>
+                <count-down-list endTime="{{item.endTime}}" bind:downEnd="backfun"></count-down-list>
+              </view>
+              <view class='gopt'>
+                <button data-items="{{item}}" bindtap="openPart">去拼团</button>
+              </view>
+            </view>
+        </view>
+    </scroll-view>
+    </view>
+  </view>
+  <!-- 参团的人 -->
+  <view class='partIn' wx:if="{{openPart}}" bindtap='colsePart'>
+     <view class='partInfo'>
+         <label>参与{{newGroup.groupBuyingDetailedList[0].userName}}的拼单</label>
+         <view class='a'>仅剩{{newGroup.successNum-newGroup.groupNum}}个名额，
+           <count-down-list ntype="2" endTime="{{newGroup.endTime}}" bind:downEnd="backfun"></count-down-list>
+         </view>
+         <view class='b'>
+             <view class='img' wx:for="{{newGroup.groupBuyingDetailedList}}" key="{{index}}">
+                <label wx:if="{{index==0}}">团长</label>
+                <image src="{{item.userImg}}"></image>
+             </view>
+             <text class='n' wx:for="{{newGroup.successNum-newGroup.groupNum}}" key="{{index}}">?</text>
+         </view>
+         <button class='c' bindtap='cimPart'>参与拼团</button>
+     </view>
+  </view>
+
+</scroll-view>
+
+<view class="bottom-btn" wx:if="{{cimPart}}">
+  <view class="l l-collect homeBox" bindtap="goUrl"> 
+    <image class="icon" src="../../static/images/ic_menu_choice_nor.png"></image>
+    <text>首页</text>
+  </view>
+  <view class="l l-collect {{ openAttr ? 'back' : ''}}" bindtap="closeAttrOrCollect">
+    <image class="icon" src="{{ collectBackImage }}"></image>
+  </view>
+  <view class="l l-cart" wx:if="{{type!=1&type!=2}}">
+    <view class="box">
+      <text class="cart-count">{{cartGoodsCount}}</text>
+      <image bindtap="openCartPage" class="icon" src="/static/images/ic_menu_shoping_nor.png"></image>
+
+    </view>
+  </view>
+  <button class="{{type==2?'r':'c'}}" data-ntype="2" wx:if="{{type==0 || type==2}}" disabled="{{isY}}" bindtap="buyGoods">{{type==2?'立即秒杀':'立即购买'}}</button>
+  <button class="c" data-activitytype="1" disabled="{{isY}}" wx:if="{{type==1}}" bindtap="buyGoods">单独购买¥{{yprice || goods.retail_price}}</button>
+  <button class="r" wx:if="{{type==0}}" bindtap="addToCart">加入购物车</button>
+  <button class="r" data-activitytype="2" data-groupBuyingId="{{groupBuyingId}}" data-ntype="1" wx:if="{{type==1}}"  bindtap="buyGoods">发起拼团¥{{checkedSpecPrice || goods.group_price}}</button>
+</view>
+<view class="bottom-btn" wx:else>
+   <button class="r" data-activitytype="2" data-groupBuyingId="{{groupBuyingId}}" data-ntype="1" bindtap="buyGoods">确定</button>
+</view> 

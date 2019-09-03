@@ -1,0 +1,86 @@
+<view class="container">
+    <view class="address-box">
+        <view class="address-item" bindtap="selectAddress" wx:if="{{checkedAddress.id > 0}}">
+            <view class="l">
+                <text class="name">{{checkedAddress.userName}}</text>
+                <text class="default" wx:if="{{checkedAddress.is_default === 1}}">默认</text>
+            </view>
+            <view class="m">
+                <text class="mobile">{{checkedAddress.telNumber}}</text>
+                <text class="address">{{checkedAddress.full_region+checkedAddress.detailInfo}}</text>
+            </view>
+            <view class="r">
+                <image src="/static/images/address_right.png"></image>
+            </view>
+        </view>
+        <view class="address-item address-empty" bindtap="addAddress" wx:if="{{!checkedAddress.id}}">
+            <view class="m">
+               还没有收货地址，去添加
+            </view>
+            <view class="r">
+                <image src="/static/images/address_right.png"></image>
+            </view>
+        </view>
+    </view>
+    <view class="goods-items">
+        <view class="item" wx:for="{{checkedGoodsList}}" wx:key="{{item.id}}">
+          <view class='proName'>{{item.merchantName || ''}}</view>
+          <view class='proBox' wx:for='{{item.cartVoList}}' wx:for-index='iindex' wx:for-item='iitem'>
+              <view class="img">
+                  <image src="{{iitem.list_pic_url}}"></image>
+              </view>
+              <view class="info">
+                  <view class="t">
+                      <text class="name">{{iitem.goods_name || ''}}</text>
+                      <text class="number">x{{iitem.number || 1}}</text>
+                  </view>
+                  <view class="m">{{iitem.goods_specifition_name_value||''}}</view>
+                  <view class="b">￥{{iitem.retail_price || '0.00'}}</view>
+              </view>
+          </view>
+        <view class="coupon-box" data-merid="{{item.merchantId}}" data-price="{{item.orderTotalPrice}}" bindtap='tapCoupon'>
+          <view class="coupon-item">
+            <view class="l">
+                <text class="name">请选择优惠券</text>
+                <text class="txt">{{item.couponName?item.couponName:'不使用优惠卷'}}</text>
+            </view>
+            <view class="r">
+                <image src="/static/images/address_right.png"></image>
+            </view>
+        </view>
+    </view>
+
+      <view class="order-box"> 
+          <view class="order-item">
+              <view class="l">
+                  <text class="name">优惠券</text>
+              </view>
+              <view class="r">
+                  <text class="txt">-￥{{item.couponPrice || 0}}</text>
+              </view>
+          </view>
+          <view class="order-item">
+              <view class="l">
+                  <text class="name">运费</text>
+              </view>
+              <view class="r">
+                  <text class="txt">￥{{item.freightPrice}}</text>
+              </view>
+          </view>
+          <view class="order-item">
+              <view class="l">
+                  <text class="name">商品合计</text>
+              </view>
+              <view class="r">
+                  <text class="txt">￥{{item.actualPrice}}</text>
+              </view>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <view class="order-total">
+        <view class="l">实付：￥{{actualPrice}}</view>
+        <button class="r" disabled="{{isY}}" bindtap="submitOrder">去付款</button>
+    </view>
+</view>

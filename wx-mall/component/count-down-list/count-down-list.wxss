@@ -1,0 +1,39 @@
+/* component/count-down-list/count-down-list.wxss */
+.tui-conutdown-box{
+  display: inline-block; 
+  font-size: 13px;
+}
+.tui-countdown-content_n{
+  width: 200rpx;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items:flex-end;
+} 
+.tui-countdown-content_n label{
+  width: 100%;
+  text-align: center;
+  margin-bottom: 6rpx;
+}
+.tui-countdown-content_n .timebox{
+  width: 100%;
+  margin: 0 auto;
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: center;
+}
+.tui-conutdown-box_n{
+  display: inline-block;
+  font-size: 10px;
+  height: 40rpx;
+  line-height: 40rpx;
+  width: 40rpx;
+  background: #000;
+  color: #fff; 
+  text-align: center;
+  border-radius: 10rpx;
+}
+.tui-conutdown-box_nn{
+  display: inline-block; 
+  font-size: 15px;
+} 

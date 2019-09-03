@@ -1,0 +1,90 @@
+/* pages/group/group.wxss */
+page{
+		background: #F5F5F5;
+	}
+	.content {
+		display: flex;
+		width: 750rpx;
+		flex-direction: column;
+		align-items: center;
+	}
+	.goods .goodinfo{
+		width: 750rpx;
+		height: 300rpx;
+		background: #FFFFFF;
+		margin-top: 6rpx;
+		padding: 20rpx 0;
+	}
+	.goods .goodinfo .cont{
+		width: 710rpx;
+		height: 100%;
+		margin: 0 auto;
+		display: flex;
+		flex-flow: row nowrap;
+		justify-content: flex-start;
+		align-items: center;
+	}
+	.goods .goodinfo .cont .proimg{
+		height: 250rpx;
+		width: 250rpx;
+		background: #ccc;
+	}
+	.goods .goodinfo .cont .proimg image{
+		height: 250rpx;
+		width: 250rpx;
+	}
+	.goods .goodinfo .cont .proinfo{
+		width: 460rpx;
+		height: 100%;
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		align-items: flex-start;
+	}
+	.goods .goodinfo .cont .proinfo .m{
+		margin-left: 20rpx;
+		margin-top: 10rpx;
+	}
+	.tit{
+		font-size: 16px;
+		color: #000000;
+	}
+	.des{
+		color: #999;
+		font-size: 13px;
+	}
+	.goods .goodinfo .cont .proinfo .inbox{
+		width: 390rpx;
+		display: flex;
+		flex-flow: row nowrap;
+		justify-content: space-between;
+		align-items: center;
+	}
+	.inbox label,.inbox text{
+		font-size: 13px;
+		color: #999;
+	}
+	.price{
+		font-size: 14px;
+		color: #fd585c;
+	}
+	.goods .goodinfo .cont .proinfo .opt{
+		width: 390rpx;
+		display: flex;
+		flex-flow: row nowrap;
+		justify-content: space-between;
+		align-items: center;
+	}
+    .opt button{
+		margin: 0;
+		display: inline-block;
+		height: 30px;
+		line-height: 30px;
+		background: #fe5858;
+		color: #FFFFFF;
+		font-size: 13px; 
+	}
+	.opt .group{
+		color: #fe5858;
+		font-size: 13px; 
+	}

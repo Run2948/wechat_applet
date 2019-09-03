@@ -1,0 +1,26 @@
+<!--component/count-down-list/count-down-list.wxml-->
+<view class='tui-countdown-content' wx:if="{{ntype==0}}">
+  剩余
+  <!-- <text class='tui-conutdown-box'>{{model.day}}</text>: -->
+  <text class='tui-conutdown-box'>{{model.hou}}</text> :
+  <text class='tui-conutdown-box'>{{model.min}}</text> :
+  <text class='tui-conutdown-box tui-countdown-bg'>{{model.sec}}</text>
+</view>
+<view class='tui-countdown-content_n' wx:if="{{ntype==1}}">
+  <label>限时秒杀</label>
+  <view class='timebox'>
+      <view class='timeinfo'>
+      <!-- <text class='tui-conutdown-box'>{{model.day}}</text>: -->
+      <text class='tui-conutdown-box_n'>{{model.hou}}</text> :
+      <text class='tui-conutdown-box_n'>{{model.min}}</text> :
+      <text class='tui-conutdown-box_n'>{{model.sec}}</text>
+      </view>
+  </view> 
+</view>
+<view class='tui-countdown-content' wx:if="{{ntype==2}}"> 
+  剩余 
+  <!-- <text class='tui-conutdown-box'>{{model.day}}</text>: -->
+  <text class='tui-conutdown-box_nn'>{{model.hou}}</text> :
+  <text class='tui-conutdown-box_nn'>{{model.min}}</text> :
+  <text class='tui-conutdown-box_nn'>{{model.sec}}</text> 
+</view>

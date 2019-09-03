@@ -1,0 +1,107 @@
+/* pages/spike/spike.wxss */
+page{
+		background: #F5F5F5;
+	}
+	.content {
+		display: flex;
+		width: 750rpx;
+		flex-direction: column;
+		align-items: center;
+		background: #F5F5F5;
+	}
+	.goods .goodinfo{
+		width: 750rpx;
+		height: 300rpx;
+		background: #FFFFFF;
+		margin-top: 6rpx;
+		padding: 20rpx 0;
+	}
+	.goods .goodinfo .cont{
+		width: 710rpx;
+		height: 100%;
+		margin: 0 auto;
+		display: flex;
+		flex-flow: row nowrap;
+		justify-content: flex-start;
+		align-items: center;
+	}
+	.goods .goodinfo .cont .proimg{
+		height: 250rpx;
+		width: 250rpx;
+		background: #ccc;
+	}
+	.proimg image{
+		height: 100%;
+		width: 100%;
+	}
+	.goods .goodinfo .cont .proinfo{
+		width: 460rpx;
+		height: 100%;
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		align-items: flex-start;
+	}
+	.goods .goodinfo .cont .proinfo .m{
+		margin-left: 20rpx;
+		margin-top: 10rpx;
+	}
+	.tit{
+		font-size: 16px;
+		color: #000000;
+	}
+	.des{
+		color: #999;
+		font-size: 13px;
+	}
+	.price{
+		font-size: 18px;
+		color: #fd585c;
+	}
+	.priinfo label{
+		margin-right: 20rpx;
+	}
+	.priinfo .line{
+		text-decoration:line-through;
+		color: #999;
+		margin-left: 20rpx;
+	}
+	.goods .goodinfo .cont .proinfo .opt{
+		display: flex;
+		flex-flow: row nowrap;
+		justify-content: flex-start;
+		align-items: center;
+		position: relative;
+	}
+	.goods .goodinfo .cont .proinfo .opt button{
+		height: 26px;
+		line-height: 26px;
+		border: none;
+		font-size: 13px;
+		padding: 0 25rpx;
+		color: #FFFFFF; 
+	}
+	.goods .goodinfo .cont .proinfo .opt .qg{ 
+		background: #fe5858;
+	}
+	.goods .goodinfo .cont .proinfo .opt .sx{
+		background: #ccc; 
+	}
+	.stock,.yq{
+		min-width: 200rpx;
+		height: 26px;
+		border-radius: 26upx; 
+		margin-left: 20rpx; 
+		text-align: center;
+		line-height: 26px;
+	}
+	.goods .goodinfo .cont .proinfo .opt .stock{
+		border: 1px solid #fd5868;
+		background: #ffe7e7;
+		color: #fd5868;
+	}
+	.goods .goodinfo .cont .proinfo .opt .yq{
+		border: 1px solid #666;
+		color: #666;
+		background: #FFFFFF;
+	}

@@ -1,0 +1,113 @@
+<view class="container">
+<view class="search">
+    <navigator url="/pages/search/search" class="input">
+      <image class="icon"></image>
+      <text class="txt">商品搜索, 共{{goodsCount}}款好物</text>
+    </navigator>
+  </view>
+  <swiper class="banner" indicator-dots="true" autoplay="true" interval="3000" duration="1000">
+    <swiper-item wx:for="{{banner}}" wx:key="{{item.id}}">
+      <navigator url="{{item.link}}">
+        <image src="{{item.image_url}}" background-size="cover"></image>
+      </navigator>
+    </swiper-item>
+  </swiper>
+  <!-- 秒杀 -->
+  <view class='spike'><index-type-data name="秒杀" data="{{skill}}" type="2"></index-type-data></view> 
+  <!-- 团购 -->
+  <view class="group"><index-type-data name="超级拼团" data="{{group}}" type="1"></index-type-data></view> 
+  <view class='a-section fx-selected'>
+    <view class="h">
+        <label class="txt">专题精选</label>
+         <navigator class='more' url="../topic/topic" open-type="switchTab">更多</navigator> 
+    </view>
+    <view class='b'>
+       <view class='selBox cont'>
+          <view class='li left'>
+            <navigator url="../topicDetail/topicDetail?id={{topics1.id}}">
+              <image class='picl' src="{{topics1.scene_pic_url}}"></image>
+            </navigator>
+          </view>
+          <view class='li right'>
+             <view class='tb'>
+                <navigator url="../topicDetail/topicDetail?id={{topics2.id}}">
+                  <image class='picr' src="{{topics2.scene_pic_url}}"></image>
+                </navigator>
+             </view>
+             <view class='tb'>
+                <navigator url="../topicDetail/topicDetail?id={{topics3.id}}">
+                 <image class='picr' src="{{topics3.scene_pic_url}}"></image>
+                </navigator>
+             </view>
+          </view>
+       </view>
+    </view>
+ </view>
+
+  <view class="a-section a-new" wx:if="{{newGoods.length > 0}}">
+    <view class="h">
+        <label class="txt">新品首发</label>
+         <navigator class='more' url="../newGoods/newGoods">更多</navigator> 
+    </view>
+    <view class="b">
+      <view class="item" wx:for="{{newGoods}}" wx:for-index="index" wx:for-item="item" wx:key="{{item.id}}">
+        <navigator url="../goods/goods?id={{item.id}}">
+          <image class="img" src="{{item.list_pic_url}}" background-size="cover"></image>
+          <text class="name">{{item.name || ''}}</text>
+          <view class="tx price">
+           <text class='pri dzprice'>￥{{item.retail_price || '0.00'}}</text>
+           <text class='pri yjprice' wx:if="{{item.market_price}}">￥{{item.market_price}}</text>
+          </view>
+          <!-- <text class="price">￥{{item.retail_price}}</text> -->
+        </navigator>
+      </view>
+    </view>
+  </view>
+
+  <view class="a-section a-popular" wx:if="{{hotGoods.length > 0}}">
+    <view class="h">
+        <label class="txt">人气推荐</label>
+         <navigator class='more' url="../hotGoods/hotGoods">更多</navigator> 
+    </view>
+    <view class="b">
+      <view class="item" wx:for="{{hotGoods}}" wx:for-index="index" wx:for-item="item" wx:key="{{item.id}}">
+        <navigator url="/pages/goods/goods?id={{item.id}}">
+          <image class="img" src="{{item.list_pic_url}}" background-size="cover"></image>
+          <view class="right">
+            <view class="text">
+              <text class="name">{{item.name}}</text>
+              <!-- <text class="desc">{{item.goods_brief}}</text> -->
+              <view class="tx price">
+              <text class='pri dzprice'>￥{{item.retail_price}}</text>
+              <text class='pri yjprice' wx:if="{{item.market_price}}">￥{{item.market_price}}</text> 
+              </view>
+            </view>
+          </view>
+        </navigator>
+      </view>
+    </view>
+  </view>
+
+ <view class="a-section good-grid" wx:for="{{floorGoods}}" wx:key="{{item.id}}" wx:if="{{item.goodsList.length>0}}">
+    <view class="h">
+        <label class="txt">{{item.name}}</label>
+         <navigator class='more' url="/pages/category/category?id={{item.id}}">更多</navigator> 
+    </view>
+    <view class="b">
+      <block wx:for="{{item.goodsList}}" wx:for-index="iindex" wx:for-item="iitem" wx:key="{{iitem.id}}">
+        <view class="item {{iindex % 2 == 0 ? '' : 'item-b'}}">
+          <navigator url="../goods/goods?id={{iitem.id}}" class="a">
+            <image class="img" src="{{iitem.list_pic_url}}" background-size="cover"></image>
+            <text class="name">{{iitem.name || ''}}</text>
+            <!-- <text class="price">￥{{iitem.retail_price}}</text> -->
+            <view class="tx price">
+            <text class='pri dzprice'>￥{{iitem.retail_price || '0.00'}}</text>
+            <text class='pri yjprice' wx:if="{{item.market_price}}">￥{{item.market_price}}</text>
+            </view>
+          </navigator>
+        </view>
+      </block>
+    </view>
+  </view>
+
+</view>

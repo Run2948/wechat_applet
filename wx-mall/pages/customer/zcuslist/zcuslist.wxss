@@ -1,0 +1,53 @@
+.container{
+  background: #ffffff;
+}
+.cont{
+  width: 710rpx;
+  margin: 0 auto;
+}
+.selinfo{
+  height: 120rpx;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+}
+.selinfo .sel{
+  height: 60rpx;
+  width: 60rpx;
+}
+.selinfo label{
+  width: 650rpx;
+  color: #666;
+  margin-left: 20rpx;
+}
+.tit{
+  font-size: 30px;
+  color: #000000;
+  margin-bottom: 30rpx;
+}
+.bottom-btn{
+  margin-top: 500rpx;
+}
+.bottom-btn button{
+  width: 350rpx;
+  height: 80rpx;
+  line-height: 80rpx;
+  text-align: center;
+  color: #ffffff;
+  background: #E96900;
+  margin: 0 auto;
+}
+.bottom-new{
+  margin-top: 30rpx;
+}
+.bottom-new button{
+  width: 350rpx;
+  height: 80rpx;
+  line-height: 80rpx;
+  text-align: center;
+  background: none;
+  margin: 0 auto;
+  border: 1px solid #999;
+  color: #333;
+}

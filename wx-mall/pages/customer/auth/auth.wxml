@@ -1,0 +1,16 @@
+<!--pages/customer/auth/auth.wxml--> 
+<view class="add-address">
+    <view class="add-form">
+        <view class="form-item">
+            <input class="input" bindinput="bindinputName" placeholder="真实姓名" value="{{items.name}}"/>
+        </view>
+        <view class="form-item">
+            <input class="input" bindinput="bindinputAmount" value="{{items.amount}}" type="digit" placeholder="提现金额"/>
+        </view> 
+    </view> 
+    <view class="btns">
+        <button class="cannel" bindtap="cancelAddress">重置</button>
+        <button class="save" bindtap="saveCustomer">保存</button>
+    </view> 
+</view> 
+

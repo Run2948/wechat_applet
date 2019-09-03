@@ -1,0 +1,60 @@
+{
+	"description": "项目配置文件。",
+	"setting": {
+		"urlCheck": false,
+		"es6": true,
+		"postcss": true,
+		"minified": true,
+		"newFeature": true
+	},
+	"compileType": "miniprogram",
+	"libVersion": "1.9.0",
+	"appid": "wx213d7c88ef38d750",
+	"projectname": "hz-mall",
+	"condition": {
+		"search": {
+			"current": -1,
+			"list": []
+		},
+		"conversation": {
+			"current": -1,
+			"list": []
+		},
+		"plugin": {
+			"current": -1,
+			"list": []
+		},
+		"game": {
+			"list": []
+		},
+		"miniprogram": {
+			"current": -1,
+			"list": [
+				{
+					"id": 0,
+					"name": "选择优惠券",
+					"pathName": "pages/shopping/selCoupon/selCoupon",
+					"query": "isBuy=false"
+				},
+				{
+					"id": -1,
+					"name": "订单界面",
+					"pathName": "pages/shopping/checkout/checkout",
+					"query": "isBuy=true"
+				},
+				{
+					"id": -1,
+					"name": "我的优惠券",
+					"pathName": "pages/ucenter/coupon/coupon",
+					"query": "isBuy=true"
+				},
+				{
+					"id": -1,
+					"name": "我的订单",
+					"pathName": "pages/ucenter/order/order",
+					"query": ""
+				}
+			]
+		}
+	}
+}

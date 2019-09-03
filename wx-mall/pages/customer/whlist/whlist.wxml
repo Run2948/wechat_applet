@@ -1,0 +1,20 @@
+<!--pages/customer/whlist/whlist.wxml-->
+<view class="container"> 
+  <view class="cus-list" wx:if="{{ whList.length > 0 }}">
+    <view class="cusBox" wx:for="{{whList}}" wx:key="{{item.id}}"> 
+      <view class='common' style="background:linear-gradient(to right, #fc6c64, #fc9e5e)">
+        <view class='cusli'>
+           <image src="{{item.loginPassword}}"></image>    
+        </view>
+        <view class='cusli'>
+           <view class="li">{{item.nickname || ''}}</view>
+        </view> 
+      </view>   
+    </view> 
+  </view> 
+  <view class="empty-view" wx:if="{{ whList.length <= 0 }}">
+      <image class="icon" src="../../../static/images/allorder.png"></image>
+      <text class="text">无粉丝</text>
+  </view>
+</view>
+

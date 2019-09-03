@@ -1,0 +1,38 @@
+<!--pages/group/group.wxml-->
+<view class="content">
+		<view class="goods" wx:if="groupList.length>0">
+			<view class="goodinfo" wx:for="{{groupList}}" key="{{index}}">
+				<view class="cont">
+					<view class="proimg">
+						<image src="{{item.list_pic_url}}"></image>
+					</view>
+					<view class="proinfo">
+						<view class="m tit">{{item.name}}</view>
+						<view class="m des"></view>
+						<view class="m inbox">
+							<label>单买价格：¥{{item.retail_price}}</label>
+							<text>{{item.success_people}}人团</text>
+						</view>
+						<view class="m opt">
+							<text class="price">团购价：¥{{item.group_price}}</text> 
+							<button bindtap="goDetail" data-id="{{item.id}}">立即拼团</button>
+							<!-- <button style="background:#ccc;" wx:if="item.state==2">已结束</button> -->
+						</view>
+					</view>
+				</view>
+			</view>
+			<view wx:if="{{groupList.length>10}}" class="loadmore">
+      <block wx:if="{{nomore}}">
+        <text>{{nomoreText}}</text>
+      </block>
+      <block wx:else>
+        <text class="iconfont icon-loading loading" space="nbsp"></text>
+        <text> {{loadmoreText}}</text>
+      </block>
+    </view>
+		</view>
+    <view class="empty-view" wx:if="{{ groupList.length <= 0 }}">
+      <image class="icon" src="../../../static/images/allorder.png"></image>
+      <text class="text">无订单数据</text>
+    </view>
+	</view>

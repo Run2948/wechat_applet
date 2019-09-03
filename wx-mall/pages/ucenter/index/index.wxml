@@ -1,0 +1,128 @@
+<view class="container" wx:if="{{isshow}}">
+  <button class="userinfo">
+    <view><image wx:if="{{userInfo && userInfo.avatarUrl}}" class="userinfo-avatar" src="{{ userInfo.avatarUrl }}" background-size="cover"></image></view> 
+    <view class='marleft'>
+      <button class='userbutton' open-type="getUserInfo" bindgetuserinfo="bindGetUserInfo"><view class="userinfo-nickname"><text style='font-size:20px;font-weight:bold;'>{{ userInfo.userName?userInfo.userName:userInfo.nickName }}</text></view>
+      </button>
+      <view class="userinfo-mobile" wx:if="{{fUser.nickname}}"> 
+          <text class="txt">推荐人: {{fUser.nickname}}</text>
+          <!-- <button open-type="share" class='txt'>邀请好友</button>  -->
+      </view>
+    </view> 
+	</button>
+  <view class="banner" indicator-dots="true" autoplay="false">
+			<view class="item">  
+				<view class="np">
+					<text class="price">¥{{commission.allProfit/100 || 0}}</text>
+					<text class="name">总分销佣金</text>
+				</view>
+				 <view class="np">
+				 	<text class="price">¥{{commission.getProfit/100 || 0}}</text>
+				 	<text class="name">可提现金额</text>
+				 </view> 
+				 <view class="np"> 
+				 	<text class="price" bindtap='doWithdraw'>提现</text>
+				 </view> 
+			  </view>  
+  </view>
+  <view class="my_order">
+    <view class='cont'>
+      <view class="l">我的订单</view>
+      <view class='r'>
+        <navigator url="/pages/ucenter/order/order?id=-1" class="a"><text>查看全部订单  </text><image class='ordergo' src="../../../static/images/go.png" background-size="cover"></image></navigator>
+        <text class="jt"></text>
+      </view>
+    </view>
+    <view class='order_detai'>
+       <view class='li'>
+         <navigator url="/pages/ucenter/order/order?id=0" class="a">
+          <text class="icon dfk"></text>
+          <text class="txt">待付款</text>
+        </navigator>
+       </view>
+       <view class='li'>
+         <navigator url="/pages/ucenter/order/order?id=201" class="a">
+          <text class="icon dfh"></text>
+          <text class="txt">待发货</text>
+        </navigator>
+       </view>
+       <view class='li'>
+         <navigator url="/pages/ucenter/order/order?id=201" class="a">
+          <text class="icon dsh"></text>
+          <text class="txt">待收货</text>
+        </navigator>
+       </view>
+       <view class='li'>
+         <navigator url="/pages/ucenter/return/return?id=201" class="a">
+          <text class="icon tk"></text>
+          <text class="txt">退货/退款</text>
+        </navigator>
+       </view>
+    </view> 
+  </view> 
+  <view style="clear:both;height:20rpx;background: #eee;width:100%;"></view>
+  <view class="user-menu">
+    <view class='menu_tit'>
+      <text class='menu_top'>我的服务</text>
+    </view> 
+     <button class='service' open-type="share">
+      <view class="item no-border">
+        <navigator url="url" class="a">
+          <text class="icon fyq"></text>
+          <text class="txt">邀请好友</text>
+        </navigator>
+      </view>
+    </button>
+    <view class="item">
+      <navigator url="/pages/ucenter/coupon/coupon" class="a">
+        <text class="icon coupon"></text>
+        <text class="txt">优惠券</text>
+      </navigator>
+    </view> 
+     <view class="item">
+      <navigator url="/pages/customer/list/list" class="a">
+        <text class="icon tj"></text>
+        <text class="txt">推荐商品</text>
+      </navigator>
+    </view>
+    <view class="item">
+      <navigator url="/pages/ucenter/collect/collect" class="a">
+        <text class="icon sc"></text>
+        <text class="txt">我的收藏</text>
+      </navigator>
+    </view>
+    <view class="item">
+      <navigator url="/pages/ucenter/footprint/footprint" class="a">
+        <text class="icon security"></text>
+        <text class="txt">我的足迹</text>
+      </navigator>
+    </view> 
+    <view class="item">
+      <navigator url="/pages/ucenter/feedback/feedback" class="a">
+        <text class="icon feedback"></text>
+        <text class="txt">意见反馈</text>
+      </navigator>
+    </view>
+    <view class="item">
+      <navigator url="../address/address" class="a">
+        <text class="icon address"></text>
+        <text class="txt">地址管理</text>
+      </navigator>
+    </view> 
+     <view class="item item-bottom">
+      <navigator url="../../customer/whlist/whlist" class="a">
+        <text class="icon fs"></text>
+        <text class="txt">我的粉丝</text>
+      </navigator>
+    </view>
+    <button class='service' open-type="contact">
+      <view class="item no-border">
+        <navigator url="url" class="a">
+          <text class="icon kefu"></text>
+          <text class="txt">联系客服</text>
+        </navigator>
+      </view>
+    </button> 
+  </view> 
+  <view class="logout" bindtap="exitLogin">退出登录</view>
+</view>

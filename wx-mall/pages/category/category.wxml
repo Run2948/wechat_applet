@@ -1,0 +1,40 @@
+<view class="container">
+    <view class="cate-nav">
+        <scroll-view scroll-x="true" class="cate-nav-body" style="width: 750rpx;" scroll-left="{{scrollLeft}}">
+            <view  wx:for="{{navList}}" class="item {{ id == item.id ? 'active' : ''}}" data-id="{{item.id}}" data-index="{{index}}" bindtap="switchCate">
+                <view class="name">{{item.name}}</view>
+            </view>
+        </scroll-view>
+    </view>
+    <scroll-view scroll-y="true" scroll-top="{{scrollTop}}" style="height:{{scrollHeight}};">
+
+    <view class="cate-item">
+        <view class="h" wx:if="{{goodsList.length<0}}">
+            <text class="name">{{currentCategory.name}}</text>
+            <text class="desc">{{currentCategory.front_name}}</text>
+        </view>
+        <view class="b">
+            <navigator class="item {{(iindex + 1) % 2 == 0 ? 'item-b' : ''}}"   url="/pages/goods/goods?id={{iitem.id}}&is_service={{iitem.is_service}}" wx:for="{{goodsList}}" wx:for-item="iitem" wx:for-index="iindex" >
+                <image class="img" src="{{iitem.list_pic_url}}" background-size="cover"></image>
+                <text class="name">{{iitem.name}}</text>
+                <text class="price">￥{{iitem.retail_price}}</text>
+            </navigator>
+        </view>
+    </view>
+
+  <view wx:if="{{goodsList.length>4}}" class="loadmore">
+      <block wx:if="{{nomore}}">
+        <text>{{nomoreText}}</text>
+      </block>
+      <block wx:else>
+        <text class="iconfont icon-loading loading" space="nbsp"></text>
+        <text> {{loadmoreText}}</text>
+      </block>
+    </view>
+
+    </scroll-view>
+    <view class="empty-view" wx:if="{{ goodsList.length <= 0 }}">
+      <image class="icon" src="../../../static/images/allorder.png"></image>
+      <text class="text">无产品数据</text>
+    </view>
+</view>

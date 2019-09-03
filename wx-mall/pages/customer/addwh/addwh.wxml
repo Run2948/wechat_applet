@@ -1,0 +1,48 @@
+<!--pages/customer/addwh/addwh.wxml--> 
+<view class="add-address">
+    <view class="add-form">
+      <view class="form-item">
+          <picker mode="date" value="{{customer.birthday}}" bindchange="bindDateChange" style="width:100%;">
+            <view class="picker">
+            {{utime?utime:'时间'}}
+            </view>
+          </picker>
+      </view>
+      <view class="form-item">
+            <input class="input" bindinput="bindinputName4" placeholder="地址" value="{{place}}"/>
+      </view> 
+      <view class="form-item">
+            <input class="input" bindinput="bindinputName2" placeholder="维护方式" value="{{ctype}}"/>
+      </view>  
+       <view class="form-item">
+            <input type="digit" class="input" bindinput="bindinputName3" placeholder="金额" value="{{giftPrice}}"/>
+      </view>
+      <view class="form-item" wx:if="{{state==2}}">
+             <picker bindchange="bindFSChange" style="width:100%" value="{{fs_index}}" range="{{fs_array}}">
+        <view class="picker">{{fs_array[fs_index]}} </view>
+      </picker>
+      </view>  
+    </view>
+
+    <view class="btns">
+        <button class="cannel" bindtap="cancelAddress">重置</button>
+        <button class="save" bindtap="saveCustomer">保存</button>
+    </view>
+
+    <view class="region-select" wx:if="{{openSelectRegion}}">
+      <view class="hd">
+        <view class="region-selected">
+          <view class="item {{item.id == 0 ? 'disabled' : ''}} {{(regionType -1) === index ? 'selected' : ''}}" bindtap="selectRegionType" data-region-type-index="{{index}}" wx:for="{{selectRegionList}}" wx:key="{{item.id}}">{{item.name}}</view>
+        </view>
+        <view class="done {{selectRegionDone ? '' : 'disabled'}}" bindtap="doneSelectRegion">确定</view>
+      </view>
+      <scroll-view scroll-y class="bd">
+        <view class="region-list">
+          <view class="item {{item.selected ? 'selected' : ''}}" bindtap="selectRegion" data-region-index="{{index}}" wx:for="{{regionList}}" wx:key="{{item.id}}">{{item.name}}</view>
+        </view>
+      </scroll-view>
+    </view>
+</view>
+<view class="bg-mask" bindtap="cancelSelectRegion" wx:if="{{openSelectRegion}}"></view>
+
+

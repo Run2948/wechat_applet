@@ -1,0 +1,390 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  
+  <groupId>com.zlkj.cloud.shop</groupId>
+  <artifactId>zlkjshop-cloud-parent</artifactId>
+  <version>1.0-SNAPSHOT</version>
+  <packaging>pom</packaging>
+  
+  <parent>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-parent</artifactId>
+    <version>1.5.4.RELEASE</version>
+  </parent>
+  
+  <properties>
+  	<!-- 指定 项目编译环境 JDK版本 -->
+    <maven.compiler.source>1.8</maven.compiler.source>
+    <maven.compiler.target>1.8</maven.compiler.target>
+    <!-- 统一项目编码 -->
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <commons-lang3.version>3.5</commons-lang3.version>
+    <commons-io.version>2.5</commons-io.version>
+    <commons-fileupload.version>1.3.2</commons-fileupload.version>
+    <commons-codec.version>1.10</commons-codec.version>
+    <commons-beanutils.version>1.9.3</commons-beanutils.version>
+    <fastjson.version>1.1.33</fastjson.version>
+    <guava.version>19.0</guava.version>
+    <pinyin4j.version>2.5.1</pinyin4j.version>
+    <!-- 前台模块 start -->
+    <zlkjshop-cloud-front-member.version>1.0-SNAPSHOT</zlkjshop-cloud-front-member.version>
+    <zlkjshop-cloud-front-notify.version>1.0-SNAPSHOT</zlkjshop-cloud-front-notify.version>
+    <zlkjshop-cloud-front-cms.version>1.0-SNAPSHOT</zlkjshop-cloud-front-cms.version>
+    <zlkjshop-cloud-front-goods.version>1.0-SNAPSHOT</zlkjshop-cloud-front-goods.version>
+    <zlkjshop-cloud-front-order.version>1.0-SNAPSHOT</zlkjshop-cloud-front-order.version>
+    <zlkjshop-cloud-front-activity.version>1.0-SNAPSHOT</zlkjshop-cloud-front-activity.version>
+    <!-- 前台模块 end -->
+    <!-- 后台模块 start -->
+ 	<zlkjshop-cloud-manage-activity.version>1.0-SNAPSHOT</zlkjshop-cloud-manage-activity.version>
+ 	<zlkjshop-cloud-manage-cms.version>1.0-SNAPSHOT</zlkjshop-cloud-manage-cms.version>
+  	<zlkjshop-cloud-manage-goods.version>1.0-SNAPSHOT</zlkjshop-cloud-manage-goods.version>
+   	<zlkjshop-cloud-manage-notify.version>1.0-SNAPSHOT</zlkjshop-cloud-manage-notify.version>
+    <zlkjshop-cloud-manage-order.version>1.0-SNAPSHOT</zlkjshop-cloud-manage-order.version>
+    <zlkjshop-cloud-manage-sys.version>1.0-SNAPSHOT</zlkjshop-cloud-manage-sys.version>
+    <!-- 后台模块 end -->
+    <zlkjshop-cloud-common.version>1.0-SNAPSHOT</zlkjshop-cloud-common.version>
+    <zlkjshop-cloud-id-generator.version>1.0-SNAPSHOT</zlkjshop-cloud-id-generator.version>
+    <zlkjshop-cloud-config.version>1.0-SNAPSHOT</zlkjshop-cloud-config.version>
+    <zlkjshop-cloud-api-gateway.version>1.0-SNAPSHOT</zlkjshop-cloud-api-gateway.version>
+    <zlkjshop-cloud-authorization.version>1.0-SNAPSHOT</zlkjshop-cloud-authorization.version>
+    
+    
+    <zlkjshop-cloud-eureka.version>1.0-SNAPSHOT</zlkjshop-cloud-eureka.version>
+    <zlkjshop-cloud-monitor-dashboard.version>1.0-SNAPSHOT</zlkjshop-cloud-monitor-dashboard.version>
+    <zlkjshop-cloud-monitor-turbine.version>1.0-SNAPSHOT</zlkjshop-cloud-monitor-turbine.version>
+    <!-- 服务接口 start -->
+ 	<zlkjshop-cloud-api-activity.version>1.0-SNAPSHOT</zlkjshop-cloud-api-activity.version>
+  	<zlkjshop-cloud-api-cms.version>1.0-SNAPSHOT</zlkjshop-cloud-api-cms.version>
+  	<zlkjshop-cloud-api-goods.version>1.0-SNAPSHOT</zlkjshop-cloud-api-goods.version>
+    <zlkjshop-cloud-api-order.version>1.0-SNAPSHOT</zlkjshop-cloud-api-order.version>
+    <zlkjshop-cloud-api-notify.version>1.0-SNAPSHOT</zlkjshop-cloud-api-notify.version>
+    <zlkjshop-cloud-api-member.version>1.0-SNAPSHOT</zlkjshop-cloud-api-member.version>
+    <!-- 服务接口 end -->
+  </properties>
+  
+  <modules>
+		<module>zlkjshop-cloud-eureka</module>
+  		<module>zlkjshop-cloud-api-gateway</module>
+  		<module>zlkjshop-cloud-authorization</module>
+		<module>zlkjshop-cloud-monitor-dashboard</module>
+		<module>zlkjshop-cloud-monitor-turbine</module>
+  		<module>zlkjshop-cloud-front</module>
+  		<module>zlkjshop-cloud-manage</module>
+		<module>zlkjshop-cloud-common</module>
+		<module>zlkjshop-cloud-id-generator</module>
+		<module>zlkjshop-cloud-config</module>
+		<!-- api   -->
+		<module>zlkjshop-cloud-api</module>
+
+  </modules>
+  
+  
+  <dependencyManagement>
+	  <dependencies>
+	  
+		  	<dependency>
+			  	  <groupId>com.zlkj.cloud.shop.gateway</groupId>
+				  <artifactId>zlkjshop-cloud-api-gateway</artifactId>
+				  <version>${zlkjshop-cloud-api-gateway.version}</version>
+		  	</dependency>
+		  	
+		  	<dependency>
+		  	  <groupId>com.zlkj.cloud.shop.authorization</groupId>
+			  <artifactId>zlkjshop-cloud-authorization</artifactId>
+			  <version>${zlkjshop-cloud-authorization.version}</version>
+		  	</dependency>
+		  	
+		  	
+		  	<dependency>
+			  	  <groupId>com.zlkj.cloud.shop.eureka</groupId>
+				  <artifactId>zlkjshop-cloud-eureka</artifactId>
+				  <version>${zlkjshop-cloud-eureka.version}</version>
+		  	</dependency>
+		  
+		  <dependency>
+			      <groupId>com.zlkj.cloud.shop.dashboard</groupId>
+				  <artifactId>zlkjshop-cloud-monitor-dashboard</artifactId>
+				  <version>${zlkjshop-cloud-monitor-dashboard.version}</version>
+		  </dependency>
+		  
+		  <dependency>
+			      <groupId>com.zlkj.cloud.shop.turbine</groupId>
+				  <artifactId>zlkjshop-cloud-monitor-turbine</artifactId>
+				  <version>${zlkjshop-cloud-monitor-turbine.version}</version>
+		  </dependency>
+		  
+		  <!--依赖管理，用于管理spring-cloud的依赖，其中Camden.SR3是版本号-->
+		   <dependency>
+				   <groupId>org.springframework.cloud</groupId>
+				   <artifactId>spring-cloud-dependencies</artifactId>
+				   <version>Camden.SR6</version>
+				   <type>pom</type>
+				   <scope>import</scope>
+		   </dependency>
+		   
+		   <!-- 项目公共模块 start -->
+		   <dependency>
+		   	  <groupId>com.zlkj.cloud.shop.common</groupId>
+			  <artifactId>zlkjshop-cloud-common</artifactId>
+			  <version>${zlkjshop-cloud-common.version}</version>
+		  </dependency>
+		  
+		  
+		  <dependency>
+  			<groupId>com.zlkj.cloud.shop</groupId>
+  			<artifactId>zlkjshop-cloud-id-generator</artifactId>
+  			<version>${zlkjshop-cloud-id-generator.version}</version>
+		  </dependency>
+		  
+		  <dependency>
+		      <groupId>com.zlkj.cloud.shop.config</groupId>
+			  <artifactId>zlkjshop-cloud-config</artifactId>
+			  <version>${zlkjshop-cloud-config.version}</version>
+		  </dependency>
+		  
+		  <!-- 项目公共模块 end -->
+		  
+		  <!-- 前台模块 start -->  
+		   <dependency>
+		      <groupId>com.zlkj.cloud.shop.member</groupId>
+			  <artifactId>zlkjshop-cloud-front-member</artifactId>
+			  <version>${zlkjshop-cloud-front-member.version}</version>
+		  </dependency>
+		  
+		  <dependency>
+		      <groupId>com.zlkj.cloud.shop.notify</groupId>
+			  <artifactId>zlkjshop-cloud-front-notify</artifactId>
+			  <version>${zlkjshop-cloud-front-notify.version}</version>
+		  </dependency>
+		  
+		   <dependency>
+		      <groupId>com.zlkj.cloud.shop.cms</groupId>
+			  <artifactId>zlkjshop-cloud-front-cms</artifactId>
+			  <version>${zlkjshop-cloud-front-cms.version}</version>
+		  </dependency>
+		  
+		  <dependency>
+		      <groupId>com.zlkj.cloud.shop.goods</groupId>
+			  <artifactId>zlkjshop-cloud-front-goods</artifactId>
+			  <version>${zlkjshop-cloud-front-goods.version}</version>
+		  </dependency>
+		  
+		  <dependency>
+		      <groupId>com.zlkj.cloud.shop.order</groupId>
+			  <artifactId>zlkjshop-cloud-front-order</artifactId>
+			  <version>${zlkjshop-cloud-front-order.version}</version>
+		  </dependency>
+		  
+		  <dependency>
+		      <groupId>com.zlkj.cloud.shop.activity</groupId>
+			  <artifactId>zlkjshop-cloud-front-activity</artifactId>
+			  <version>${zlkjshop-cloud-front-activity.version}</version>
+		  </dependency>
+		  
+		   <!-- 前台模块 end --> 
+		  
+		  
+		   <!-- 后台模块 start -->
+		    <dependency>
+		      <groupId>com.zlkj.cloud.shop.cms</groupId>
+			  <artifactId>zlkjshop-cloud-manage-cms</artifactId>
+			  <version>${zlkjshop-cloud-manage-cms.version}</version>
+		   </dependency>
+		  
+		     <dependency>
+		      <groupId>com.zlkj.cloud.shop.activity</groupId>
+			  <artifactId>zlkjshop-cloud-manage-activity</artifactId>
+			  <version>${zlkjshop-cloud-manage-activity.version}</version>
+		  </dependency>
+		  
+		  <dependency>
+		      <groupId>com.zlkj.cloud.shop.goods</groupId>
+			  <artifactId>zlkjshop-cloud-manage-goods</artifactId>
+			  <version>${zlkjshop-cloud-manage-goods.version}</version>
+		  </dependency>
+		  
+		  <dependency>
+		      <groupId>com.zlkj.cloud.shop.notify</groupId>
+			  <artifactId>zlkjshop-cloud-manage-notify</artifactId>
+			  <version>${zlkjshop-cloud-manage-notify.version}</version>
+		  </dependency>
+		  
+		  <dependency>
+		      <groupId>com.zlkj.cloud.shop.order</groupId>
+			  <artifactId>zlkjshop-cloud-manage-order</artifactId>
+			  <version>${zlkjshop-cloud-manage-order.version}</version>
+		  </dependency>
+		  
+		  <dependency>
+		      <groupId>com.zlkj.cloud.shop.sys</groupId>
+			  <artifactId>zlkjshop-cloud-manage-sys</artifactId>
+			  <version>${zlkjshop-cloud-manage-sys.version}</version>
+		  </dependency>
+		  
+		  <!-- 后台模块 end -->
+		  
+		  <!-- 服务接口 start -->
+		  
+		  <dependency>
+		      <groupId>com.zlkj.cloud.shop.api.activity</groupId>
+			  <artifactId>zlkjshop-cloud-api-activity</artifactId>
+			  <version>${zlkjshop-cloud-api-activity.version}</version>
+		  </dependency>
+		  
+		  <dependency>
+		      <groupId>com.zlkj.cloud.shop.api.cms</groupId>
+			  <artifactId>zlkjshop-cloud-api-cms</artifactId>
+			  <version>${zlkjshop-cloud-api-cms.version}</version>
+		  </dependency>
+		  
+		   <dependency>
+		      <groupId>com.zlkj.cloud.shop.api.goods</groupId>
+			  <artifactId>zlkjshop-cloud-api-goods</artifactId>
+			  <version>${zlkjshop-cloud-api-goods.version}</version>
+		  </dependency>
+		  
+		   <dependency>
+		      <groupId>com.zlkj.cloud.shop.api.member</groupId>
+			  <artifactId>zlkjshop-cloud-api-member</artifactId>
+			  <version>${zlkjshop-cloud-api-member.version}</version>
+		  </dependency>
+		  
+		   <dependency>
+		      <groupId>com.zlkj.cloud.shop.api.notify</groupId>
+			  <artifactId>zlkjshop-cloud-api-notify</artifactId>
+			  <version>${zlkjshop-cloud-api-notify.version}</version>
+		  </dependency>
+		  
+		  <dependency>
+		      <groupId>com.zlkj.cloud.shop.api.order</groupId>
+			  <artifactId>zlkjshop-cloud-api-order</artifactId>
+			  <version>${zlkjshop-cloud-api-order.version}</version>
+		  </dependency>
+		  <!-- 服务接口 end -->
+		  
+		  
+		  
+		  <!--  json start-->
+		  <dependency>
+		    <groupId>com.alibaba</groupId>
+		    <artifactId>fastjson</artifactId>
+		    <version>${fastjson.version}</version>
+		 </dependency>
+		 
+		<!--  json end-->
+		
+		<!-- google start -->
+		 <dependency>
+	       <groupId>com.google.guava</groupId>
+	       <artifactId>guava</artifactId>
+	       <version>${guava.version}</version>
+        </dependency>
+        <!-- google end -->
+        
+		<dependency>
+		    <groupId>com.belerweb</groupId>
+		    <artifactId>pinyin4j</artifactId>
+		    <version>${pinyin4j.version}</version>
+	    </dependency>
+		
+		
+		<!-- spring aop start -->	  
+		<dependency>
+			<groupId>org.aspectj</groupId>
+			<artifactId>aspectjrt</artifactId>
+			<version>1.7.4</version>
+		</dependency>
+		<dependency>
+			<groupId>org.aspectj</groupId>
+			<artifactId>aspectjweaver</artifactId>
+			<version>1.7.4</version>
+		</dependency>
+		<dependency>
+		    <groupId>cglib</groupId>
+		    <artifactId>cglib-nodep</artifactId>
+		    <version>3.2.4</version>
+		</dependency>
+		<!-- spring aop end -->	
+			  
+		<!-- apache common start -->
+		
+	    <dependency>
+	      <groupId>commons-codec</groupId>
+	      <artifactId>commons-codec</artifactId>
+	      <version>${commons-codec.version}</version>
+	    </dependency>
+	    
+	    <dependency>
+	      <groupId>commons-io</groupId>
+	      <artifactId>commons-io</artifactId>
+	      <version>${commons-io.version}</version>
+	    </dependency>
+	    
+		<dependency>
+		    <groupId>commons-fileupload</groupId>
+		    <artifactId>commons-fileupload</artifactId>
+		    <version>${commons-fileupload.version}</version>
+		</dependency>
+		
+	    <dependency>
+	      <groupId>org.apache.commons</groupId>
+	      <artifactId>commons-lang3</artifactId>
+	      <version>${commons-lang3.version}</version>
+	    </dependency>
+	    
+	    <dependency>
+		    <groupId>commons-beanutils</groupId>
+		    <artifactId>commons-beanutils</artifactId>
+		    <version>${commons-beanutils.version}</version>
+		</dependency>
+	    <!-- common end -->  
+
+	  </dependencies>
+  </dependencyManagement>
+  
+  
+  <build>
+	  <resources>
+		  <resource>
+			  <directory>src/main/resources</directory>
+			  <includes>
+				  <include>**/*.properties</include>
+				  <include>**/*.yml</include>
+				  <include>**/*.xml</include>
+				  <include>**/*.eto</include>
+				  <include>**/*.ttf</include>
+				  <include>**/*.woff2</include>
+				  <include>**/*.css</include>
+				  <include>**/*.js</include>
+				  <include>**/*.html</include>
+				  <include>**/*.ftl</include>
+			  </includes>
+			  <filtering>true</filtering>
+		  </resource>
+
+		  <resource>
+			  <directory>src/main/java</directory>
+			  <includes>
+				  <include>**/*.xml</include>
+			  </includes>
+		  </resource>
+	  </resources>
+	  <pluginManagement>
+		  <plugins>
+			 <plugin>
+			       <groupId>org.apache.maven.plugins</groupId>
+			       <artifactId>maven-compiler-plugin</artifactId>
+			       <configuration>
+			         <encoding>UTF-8</encoding>
+					 	 <!-- Jdk 7解决 ImageUtils.java:[23,32] 程序包com.sun.image.codec.jpeg不存在问题 -->
+						<compilerArguments>
+							<verbose />
+							<bootclasspath>${java.home}/lib/rt.jar;${java.home}/lib/jce.jar</bootclasspath>
+						</compilerArguments>
+			       </configuration>
+			     </plugin>
+		  </plugins>
+	  </pluginManagement>
+  </build>
+
+</project>

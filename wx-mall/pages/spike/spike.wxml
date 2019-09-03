@@ -1,0 +1,39 @@
+<view class="content">
+		<view class="goods" wx:if="spikeList.length>0">
+			<view class="goodinfo" wx:for="{{spikeList}}" wx:for-index="index" wx:for-item="item" wx:key="{{item.id}}">
+				<view class="cont">
+					<view class="proimg">
+						<image src="{{item.list_pic_url}}"></image>
+					</view>
+					<view class="proinfo">
+						<view class="m tit">{{item.name}}</view>
+						<view class="m des"></view>
+						<view class="m priinfo">
+							<label>秒杀价</label>
+							<text class="price">¥{{item.retail_price}}</text>
+							<text class="line">原价：¥{{item.market_price}}</text>
+						</view>
+						<view class="m opt">
+							<button class="qg" data-id="{{item.id}}" bindtap="goDetail">秒杀</button>
+							<!-- <button class="sx" v-if="item.state==1">售馨</button>
+							<button class="sx" v-if="item.state==2">已结束</button>
+							<view :class="item.spikeStockLeft?'stock':'yq'">剩余{{item.spikeStockLeft || 0}}件</text></view> -->
+						</view>
+					</view>
+				</view>
+			</view>
+			<view wx:if="{{spikeList.length>10}}" class="loadmore">
+      <block wx:if="{{nomore}}">
+        <text>{{nomoreText}}</text>
+      </block>
+      <block wx:else>
+        <text class="iconfont icon-loading loading" space="nbsp"></text>
+        <text> {{loadmoreText}}</text>
+      </block>
+    </view>
+		</view>
+		<view class="empty-view" wx:if="{{ spikeList.length <= 0 }}">
+      <image class="icon" src="../../../static/images/allorder.png"></image>
+      <text class="text">无订单数据</text>
+    </view>
+	</view>
