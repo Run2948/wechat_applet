@@ -44,7 +44,7 @@
         <kaptcha.version>0.0.9</kaptcha.version>
         <j2cache.version>2.3.22-release</j2cache.version>
         <ehcache.version>2.10.4</ehcache.version>
-        <jgroups.version>3.6.13.Final</jgroups.version>
+        <jgroups.version>4.0.0.Final</jgroups.version>
         <mybatis.paginator.version>1.2.10</mybatis.paginator.version>
     </properties>
 
