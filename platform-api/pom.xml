@@ -49,7 +49,7 @@
         <dependency>
             <groupId>org.jsoup</groupId>
             <artifactId>jsoup</artifactId>
-            <version>1.8.3</version>
+            <version>1.15.3</version>
         </dependency>
         <!-- 阿里云 短信--> 
 		<dependency>
